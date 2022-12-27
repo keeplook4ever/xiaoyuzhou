@@ -1,0 +1,664 @@
+basePath: /api/v1
+definitions:
+  app.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  manager.AddAuthorForm:
+    properties:
+      age:
+        type: integer
+      createdBy:
+        type: string
+      desc:
+        type: string
+      gender:
+        type: integer
+      name:
+        type: string
+    required:
+    - age
+    - createdBy
+    - desc
+    - gender
+    - name
+    type: object
+  manager.AddTagForm:
+    properties:
+      created_by:
+        type: string
+      name:
+        type: string
+      state:
+        type: integer
+    required:
+    - created_by
+    - name
+    - state
+    type: object
+  manager.auth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+info:
+  contact:
+    email: cwater4t@gmail.com
+    name: cw4t
+  description: 小宇宙项目用户交互API、管理后台API
+  title: 小小の宇宙API文档
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户名和密码
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/manager.auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取Token
+      tags:
+      - Manager
+  /manager/articles:
+    get:
+      parameters:
+      - description: Category ID
+        in: body
+        name: category_id
+        schema:
+          type: integer
+      - description: Author ID
+        in: body
+        name: author_id
+        schema:
+          type: integer
+      - description: State
+        in: body
+        name: state
+        schema:
+          type: integer
+      - description: CreatedBy
+        in: body
+        name: created_by
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取多个文章
+      tags:
+      - Manager
+    post:
+      parameters:
+      - description: 类型ID
+        in: body
+        name: category_id
+        required: true
+        schema:
+          type: integer
+      - description: SeoTitle
+        in: body
+        name: seo_title
+        required: true
+        schema:
+          type: string
+      - description: SeoUrl
+        in: body
+        name: seo_url
+        required: true
+        schema:
+          type: string
+      - description: PageTitle
+        in: body
+        name: page_title
+        required: true
+        schema:
+          type: string
+      - description: MetaDesc
+        in: body
+        name: meta_desc
+        required: true
+        schema:
+          type: string
+      - description: RelatedArticles
+        in: body
+        name: related_articles
+        required: true
+        schema:
+          type: integer
+      - description: 文章内容
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
+      - description: 作者ID
+        in: body
+        name: author_id
+        required: true
+        schema:
+          type: integer
+      - description: 封面图片链接
+        in: body
+        name: cover_image_url
+        required: true
+        schema:
+          type: string
+      - description: 状态(是否启用)
+        in: body
+        name: state
+        required: true
+        schema:
+          type: integer
+      - description: 语言
+        in: body
+        name: language
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加文章
+      tags:
+      - Manager
+  /manager/articles/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除文章
+      tags:
+      - Manager
+    get:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取单个文章
+      tags:
+      - Manager
+    put:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category ID
+        in: body
+        name: category_id
+        schema:
+          type: string
+      - description: Page Title
+        in: body
+        name: page_title
+        schema:
+          type: string
+      - description: SEO Title
+        in: body
+        name: seo_title
+        schema:
+          type: string
+      - description: Desc
+        in: body
+        name: meta_desc
+        schema:
+          type: string
+      - description: Author ID
+        in: body
+        name: author_id
+        schema:
+          type: string
+      - description: Content
+        in: body
+        name: content
+        schema:
+          type: string
+      - description: Cover img URL
+        in: body
+        name: cover_image_url
+        schema:
+          type: string
+      - description: ModifiedBy
+        in: body
+        name: modified_by
+        required: true
+        schema:
+          type: string
+      - description: State
+        in: body
+        name: state
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改文章
+      tags:
+      - Manager
+  /manager/author:
+    post:
+      parameters:
+      - description: 作者详情
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/manager.AddAuthorForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加作者
+      tags:
+      - Manager
+  /manager/author/{id}:
+    put:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Name
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: Gender
+        in: body
+        name: gender
+        schema:
+          type: string
+      - description: Age
+        in: body
+        name: age
+        schema:
+          type: string
+      - description: Desribe of he/she
+        in: body
+        name: desc
+        schema:
+          type: string
+      - description: Modified By
+        in: body
+        name: modified_by
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 编辑作者
+      tags:
+      - Manager
+  /manager/tags:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        type: string
+      - description: State
+        in: query
+        name: state
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取文章类型
+      tags:
+      - Manager
+    post:
+      parameters:
+      - description: 文章类型
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/manager.AddTagForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加文章类型
+      tags:
+      - Manager
+  /manager/tags/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除文章类型
+      tags:
+      - Manager
+    put:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: State
+        in: body
+        name: state
+        schema:
+          type: integer
+      - description: ModifiedBy
+        in: body
+        name: modified_by
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改文章类型
+      tags:
+      - Manager
+  /manager/tags/export:
+    post:
+      parameters:
+      - description: Name
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: State
+        in: body
+        name: state
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 导出文章类型
+      tags:
+      - Manager
+  /manager/tags/import:
+    post:
+      parameters:
+      - description: Image File
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Import Image
+      tags:
+      - Manager
+  /player/article:
+    get:
+      parameters:
+      - description: 用户id
+        in: query
+        name: uid
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: '"为玩家展示文章"'
+      tags:
+      - Player
+  /player/tarot:
+    get:
+      parameters:
+      - description: 用户id
+        in: query
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 免费获取塔罗牌
+      tags:
+      - Player
+  /player/tarot/read:
+    post:
+      parameters:
+      - description: 用户id
+        in: body
+        name: uid
+        required: true
+        schema:
+          type: integer
+      - description: 塔罗牌id
+        in: body
+        name: tarotId
+        required: true
+        schema:
+          type: string
+      - description: 付费id
+        in: body
+        name: paidOrderId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取塔罗牌付费内容
+      tags:
+      - Player
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Token
+    type: apiKey
+swagger: "2.0"
