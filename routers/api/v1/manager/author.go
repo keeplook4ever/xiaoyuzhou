@@ -110,7 +110,7 @@ func EditAuthor(c *gin.Context) {
 		return
 	}
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_EXIST_AUTHOR, nil)
+		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_AUTHOR, nil)
 		return
 	}
 
