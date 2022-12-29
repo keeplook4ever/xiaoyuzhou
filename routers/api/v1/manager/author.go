@@ -17,11 +17,11 @@ type AddAuthorForm struct {
 }
 
 type EditAuthorForm struct {
-	Name       string `json:"name" binding:"required"`
-	Age        int    `json:"age" binding:"required"`
-	Gender     int    `json:"gender" binding:"required"`
+	Name       string `json:"name"`
+	Age        int    `json:"age"`
+	Gender     int    `json:"gender"`
 	ModifiedBy string `json:"modifiedBy" binding:"required"`
-	Desc       string `json:"desc" binding:"required"`
+	Desc       string `json:"desc"`
 }
 
 // AddAuthor
@@ -74,11 +74,7 @@ func AddAuthor(c *gin.Context) {
 // @Summary 编辑作者
 // @Produce json
 // @Param id path int true "ID"
-// @Param name body string false "Name"
-// @Param gender body string false "Gender"
-// @Param age body string false "Age"
-// @Param desc body string false "Desribe of he/she"
-// @Param modified_by body string true "Modified By"
+// @Param _ body EditAuthorForm false "编辑作者"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/author/{id} [put]

@@ -40,6 +40,21 @@ definitions:
     - name
     - state
     type: object
+  manager.EditAuthorForm:
+    properties:
+      age:
+        type: integer
+      desc:
+        type: string
+      gender:
+        type: integer
+      modifiedBy:
+        type: string
+      name:
+        type: string
+    required:
+    - modifiedBy
+    type: object
   manager.auth:
     properties:
       password:
@@ -355,32 +370,11 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Name
+      - description: 编辑作者
         in: body
-        name: name
+        name: _
         schema:
-          type: string
-      - description: Gender
-        in: body
-        name: gender
-        schema:
-          type: string
-      - description: Age
-        in: body
-        name: age
-        schema:
-          type: string
-      - description: Desribe of he/she
-        in: body
-        name: desc
-        schema:
-          type: string
-      - description: Modified By
-        in: body
-        name: modified_by
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/manager.EditAuthorForm'
       produces:
       - application/json
       responses:

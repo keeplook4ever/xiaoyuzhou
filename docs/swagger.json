@@ -493,44 +493,11 @@
                         "required": true
                     },
                     {
-                        "description": "Name",
-                        "name": "name",
+                        "description": "编辑作者",
+                        "name": "_",
                         "in": "body",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Gender",
-                        "name": "gender",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Age",
-                        "name": "age",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Desribe of he/she",
-                        "name": "desc",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Modified By",
-                        "name": "modified_by",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/manager.EditAuthorForm"
                         }
                     }
                 ],
@@ -1019,6 +986,29 @@
                 },
                 "state": {
                     "type": "integer"
+                }
+            }
+        },
+        "manager.EditAuthorForm": {
+            "type": "object",
+            "required": [
+                "modifiedBy"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "modifiedBy": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
