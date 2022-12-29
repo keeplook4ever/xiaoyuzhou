@@ -2,9 +2,12 @@ package manager
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 	"net/http"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
+	"xiaoyuzhou/pkg/setting"
+	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/manager/author_service"
 )
 
@@ -22,6 +25,7 @@ type EditAuthorForm struct {
 	Gender     int    `json:"gender"`
 	ModifiedBy string `json:"modifiedBy" binding:"required"`
 	Desc       string `json:"desc"`
+	Id         int    `json:"id"`
 }
 
 // AddAuthor
@@ -83,11 +87,74 @@ func AddAuthor(c *gin.Context) {
 func EditAuthor(c *gin.Context) {
 	var (
 		appG   = app.Gin{C: c}
-		author EditAuthorForm
+		author = EditAuthorForm{Id: com.StrTo(c.Param("id")).MustInt()}
 	)
 
 	if err := c.ShouldBindJSON(&author); err != nil {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
+
+	authorService := author_service.Author{
+		Name:       author.Name,
+		Age:        author.Age,
+		Gender:     author.Gender,
+		Desc:       author.Desc,
+		ID:         author.Id,
+		ModifiedBy: author.ModifiedBy,
+	}
+
+	exists, err := authorService.ExistByID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
+		return
+	}
+	if !exists {
+		appG.Response(http.StatusOK, e.ERROR_EXIST_AUTHOR, nil)
+		return
+	}
+
+	err = authorService.Edit()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_AUTHOR_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// GetAuthors
+// @Summary 获取作者
+// @Produce json
+// @Param name query string false "Name"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /manager/author [get]
+// @Tags Manager
+// @Security ApiKeyAuth
+func GetAuthors(c *gin.Context) {
+	var appG = app.Gin{C: c}
+	name := c.Query("name")
+
+	authorService := author_service.Author{
+		Name:     name,
+		PageNum:  util.GetPage(c),
+		PageSize: setting.AppSetting.PageSize,
+	}
+	authors, err := authorService.GetAll()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_AUTHOR_FAIL, nil)
+		return
+	}
+
+	count, err := authorService.Count()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_AUTHOR_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
+		"lists": authors,
+		"total": count,
+	})
 }

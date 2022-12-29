@@ -20,9 +20,9 @@ CREATE TABLE `blog_article` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cate_id` int(10) unsigned DEFAULT '0' COMMENT '类型ID',
   `author_id` int(10) unsigned DEFAULT '0' COMMENT '作者ID',
-  `seo_title` varchar(100) DEFAULT '' COMMENT 'SEO文章标题',
+  `seo_title` varchar(100) DEFAULT '' COMMENT 'SEO文章标题' UNIQUE,
   `seo_url` varchar(100) DEFAULT '' COMMENT 'SEO文章URL',
-  `page_title` varchar(100) DEFAULT '' COMMENT '文章页面标题',
+  `page_title` varchar(100) DEFAULT '' COMMENT '文章页面标题' UNIQUE,
   `meta_desc` varchar(255) DEFAULT '' COMMENT '简述',
   `related_articles` varchar(100) DEFAULT '' COMMENT '相关文章ID',
   `content` text COMMENT '内容',
@@ -43,7 +43,7 @@ CREATE TABLE `blog_article` (
 DROP TABLE IF EXISTS `blog_auth`;
 CREATE TABLE `blog_auth` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) DEFAULT '' COMMENT '账号',
+  `username` varchar(50) DEFAULT '' COMMENT '账号' UNIQUE,
   `password` varchar(50) DEFAULT '' COMMENT '密码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -63,7 +63,8 @@ CREATE TABLE `blog_tag` (
   `modified_by` varchar(100) DEFAULT '' COMMENT '修改人',
   `deleted_on` int(10) unsigned DEFAULT '0' COMMENT '删除时间',
   `state` tinyint(3) unsigned DEFAULT '1' COMMENT '状态 0为禁用、1为启用',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章类型管理';
 
 -- -----
@@ -82,5 +83,6 @@ CREATE TABLE `blog_author` (
     `modified_by` varchar(100) DEFAULT '' COMMENT '修改人',
     `deleted_on` int(10) unsigned DEFAULT '0' COMMENT '删除时间',
     `state` tinyint(3) unsigned DEFAULT '1' COMMENT '状态 0为禁用、1为启用',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='作者管理';

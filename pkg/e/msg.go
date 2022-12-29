@@ -34,6 +34,9 @@ var MsgFlags = map[int]string{
 	ERROR_NOT_EXIST_AUTHOR:          "该作者不存在",
 	ERROR_EXIST_AUTHOR:              "该作者已存在",
 	ERROR_ADD_AUTHOR_FAIL:           "添加作者失败",
+	ERROR_EDIT_AUTHOR_FAIL:          "编辑作者失败",
+	ERROR_GET_AUTHOR_FAIL:           "获取作者失败",
+	ERROR_COUNT_AUTHOR_FAIL:         "统计作者失败",
 }
 
 // GetMsg get error information based on Code
