@@ -8,6 +8,51 @@ definitions:
       msg:
         type: string
     type: object
+  manager.AddArticleForm:
+    properties:
+      author_id:
+        type: integer
+      category_id:
+        type: integer
+      content:
+        type: string
+      cover_image_url:
+        type: string
+      language:
+        enum:
+        - zh
+        - en
+        - jp
+        type: string
+      meta_desc:
+        type: string
+      page_title:
+        type: string
+      related_articles:
+        type: string
+      seo_title:
+        type: string
+      seo_url:
+        type: string
+      state:
+        description: 0表示禁用，1表示启用
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - author_id
+    - category_id
+    - content
+    - cover_image_url
+    - language
+    - meta_desc
+    - page_title
+    - related_articles
+    - seo_title
+    - seo_url
+    - state
+    type: object
   manager.AddAuthorForm:
     properties:
       age:
@@ -17,6 +62,11 @@ definitions:
       desc:
         type: string
       gender:
+        default: 2
+        description: 1表示男，2表示女
+        enum:
+        - 1
+        - 2
         type: integer
       name:
         type: string
@@ -34,28 +84,121 @@ definitions:
       name:
         type: string
       state:
+        default: 1
         type: integer
     required:
     - created_by
     - name
     - state
     type: object
-  manager.EditAuthorForm:
+  manager.Article:
+    properties:
+      authorId:
+        type: integer
+      categoryID:
+        type: integer
+      content:
+        type: string
+      coverImageUrl:
+        type: string
+      created_on:
+        type: integer
+      deleted_on:
+        description: 0表示未删除
+        type: integer
+      id:
+        type: integer
+      language:
+        type: string
+      metaDesc:
+        type: string
+      modified_on:
+        type: integer
+      modifiedBy:
+        type: string
+      pageTitle:
+        type: string
+      relatedArticles:
+        type: string
+      seoTitle:
+        type: string
+      seoUrl:
+        type: string
+      state:
+        type: integer
+    type: object
+  manager.Author:
     properties:
       age:
         type: integer
+      created_by:
+        type: string
+      created_on:
+        type: integer
+      deleted_on:
+        description: 0表示未删除
+        type: integer
       desc:
+        description: 简介
         type: string
       gender:
         type: integer
       id:
         type: integer
-      modifiedBy:
+      modified_by:
         type: string
+      modified_on:
+        type: integer
       name:
         type: string
-    required:
-    - modifiedBy
+    type: object
+  manager.GetArticlesResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Article'
+        type: array
+    type: object
+  manager.GetAuthorsResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Author'
+        type: array
+    type: object
+  manager.GetTagsResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Tag'
+        type: array
+    type: object
+  manager.Tag:
+    properties:
+      created_by:
+        type: string
+      created_on:
+        type: integer
+      deleted_on:
+        description: 0表示未删除
+        type: integer
+      id:
+        type: integer
+      modified_by:
+        type: string
+      modified_on:
+        type: integer
+      name:
+        type: string
+      state:
+        description: 0表示禁用，1表示启用
+        type: integer
     type: object
   manager.auth:
     properties:
@@ -104,109 +247,49 @@ paths:
     get:
       parameters:
       - description: Category ID
-        in: body
+        in: query
         name: category_id
-        schema:
-          type: integer
+        type: integer
       - description: Author ID
-        in: body
+        in: query
         name: author_id
-        schema:
-          type: integer
+        type: integer
       - description: State
-        in: body
+        in: query
         name: state
-        schema:
-          type: integer
+        type: integer
       - description: CreatedBy
-        in: body
+        in: query
         name: created_by
-        schema:
-          type: integer
+        type: integer
+      - description: ID
+        in: query
+        name: id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/app.Response'
+            $ref: '#/definitions/manager.GetArticlesResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
       security:
       - ApiKeyAuth: []
-      summary: 获取多个文章
+      summary: 获取文章
       tags:
       - Manager
     post:
       parameters:
-      - description: 类型ID
+      - description: 文章详情
         in: body
-        name: category_id
+        name: _
         required: true
         schema:
-          type: integer
-      - description: SeoTitle
-        in: body
-        name: seo_title
-        required: true
-        schema:
-          type: string
-      - description: SeoUrl
-        in: body
-        name: seo_url
-        required: true
-        schema:
-          type: string
-      - description: PageTitle
-        in: body
-        name: page_title
-        required: true
-        schema:
-          type: string
-      - description: MetaDesc
-        in: body
-        name: meta_desc
-        required: true
-        schema:
-          type: string
-      - description: RelatedArticles
-        in: body
-        name: related_articles
-        required: true
-        schema:
-          type: integer
-      - description: 文章内容
-        in: body
-        name: content
-        required: true
-        schema:
-          type: string
-      - description: 作者ID
-        in: body
-        name: author_id
-        required: true
-        schema:
-          type: integer
-      - description: 封面图片链接
-        in: body
-        name: cover_image_url
-        required: true
-        schema:
-          type: string
-      - description: 状态(是否启用)
-        in: body
-        name: state
-        required: true
-        schema:
-          type: integer
-      - description: 语言
-        in: body
-        name: language
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/manager.AddArticleForm'
       produces:
       - application/json
       responses:
@@ -247,29 +330,6 @@ paths:
       summary: 删除文章
       tags:
       - Manager
-    get:
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 获取单个文章
-      tags:
-      - Manager
     put:
       parameters:
       - description: ID
@@ -278,51 +338,42 @@ paths:
         required: true
         type: integer
       - description: Category ID
-        in: body
+        in: formData
         name: category_id
-        schema:
-          type: string
+        type: integer
       - description: Page Title
-        in: body
+        in: formData
         name: page_title
-        schema:
-          type: string
+        type: string
       - description: SEO Title
-        in: body
+        in: formData
         name: seo_title
-        schema:
-          type: string
+        type: string
       - description: Desc
-        in: body
+        in: formData
         name: meta_desc
-        schema:
-          type: string
+        type: string
       - description: Author ID
-        in: body
+        in: formData
         name: author_id
-        schema:
-          type: string
+        type: integer
       - description: Content
-        in: body
+        in: formData
         name: content
-        schema:
-          type: string
+        type: string
       - description: Cover img URL
-        in: body
+        in: formData
         name: cover_image_url
-        schema:
-          type: string
+        type: string
       - description: ModifiedBy
-        in: body
+        in: formData
         name: modified_by
         required: true
-        schema:
-          type: string
+        type: string
       - description: State
-        in: body
+        in: formData
         name: state
-        schema:
-          type: integer
+        type: integer
       produces:
       - application/json
       responses:
@@ -346,13 +397,17 @@ paths:
         in: query
         name: name
         type: string
+      - description: ID
+        in: query
+        name: id
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/app.Response'
+            $ref: '#/definitions/manager.GetAuthorsResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -389,16 +444,37 @@ paths:
   /manager/author/{id}:
     put:
       parameters:
+      - description: Name
+        in: formData
+        name: name
+        type: string
+      - description: Age
+        in: formData
+        name: age
+        type: integer
+      - default: 2
+        description: Gender
+        enum:
+        - 1
+        - 2
+        in: formData
+        name: gender
+        type: integer
+      - description: ModifiedBy
+        in: formData
+        name: modified_by
+        required: true
+        type: string
+      - description: Desc
+        in: formData
+        name: desc
+        required: true
+        type: string
       - description: ID
         in: path
         name: id
         required: true
         type: integer
-      - description: 编辑作者
-        in: body
-        name: _
-        schema:
-          $ref: '#/definitions/manager.EditAuthorForm'
       produces:
       - application/json
       responses:
@@ -428,13 +504,17 @@ paths:
         in: query
         name: state
         type: integer
+      - description: ID
+        in: query
+        name: id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/app.Response'
+            $ref: '#/definitions/manager.GetTagsResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -500,22 +580,20 @@ paths:
         required: true
         type: integer
       - description: Name
-        in: body
+        in: formData
         name: name
         required: true
-        schema:
-          type: string
-      - description: State
-        in: body
+        type: string
+      - default: 1
+        description: State
+        in: formData
         name: state
-        schema:
-          type: integer
+        type: integer
       - description: ModifiedBy
-        in: body
+        in: formData
         name: modified_by
         required: true
-        schema:
-          type: string
+        type: string
       produces:
       - application/json
       responses:
@@ -530,59 +608,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改文章类型
-      tags:
-      - Manager
-  /manager/tags/export:
-    post:
-      parameters:
-      - description: Name
-        in: body
-        name: name
-        schema:
-          type: string
-      - description: State
-        in: body
-        name: state
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 导出文章类型
-      tags:
-      - Manager
-  /manager/tags/import:
-    post:
-      parameters:
-      - description: Image File
-        in: formData
-        name: image
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: Import Image
       tags:
       - Manager
   /player/article:

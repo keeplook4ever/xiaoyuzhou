@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 	"net/http"
+	"xiaoyuzhou/models/manager"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/setting"
@@ -14,18 +15,9 @@ import (
 type AddAuthorForm struct {
 	Name      string `json:"name" binding:"required"`
 	Age       int    `json:"age" binding:"required"`
-	Gender    int    `json:"gender" binding:"required"`
+	Gender    int    `json:"gender" binding:"required" enums:"1,2" default:"2"` //1表示男，2表示女
 	CreatedBy string `json:"createdBy" binding:"required"`
 	Desc      string `json:"desc" binding:"required"`
-}
-
-type EditAuthorForm struct {
-	Name       string `json:"name"`
-	Age        int    `json:"age"`
-	Gender     int    `json:"gender"`
-	ModifiedBy string `json:"modifiedBy" binding:"required"`
-	Desc       string `json:"desc"`
-	Id         int    `json:"id"`
 }
 
 // AddAuthor
@@ -74,11 +66,24 @@ func AddAuthor(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+type EditAuthorForm struct {
+	Name       string `form:"name"`
+	Age        int    `form:"age"`
+	Gender     int    `form:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
+	ModifiedBy string `form:"modified_by" binding:"required"`
+	Desc       string `form:"desc" binding:"required"`
+	Id         int    `form:"id" binding:"required"`
+}
+
 // EditAuthor
 // @Summary 编辑作者
 // @Produce json
 // @Param id path int true "ID"
-// @Param _ body EditAuthorForm false "编辑作者"
+// @Param name formData string false "Name"
+// @Param age formData int false "Age"
+// @Param gender formData int false "Gender" Enums(1,2) default(2)
+// @Param modified_by formData string true "ModifiedBy"
+// @Param desc formData string true "Desc"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/author/{id} [put]
@@ -87,10 +92,10 @@ func AddAuthor(c *gin.Context) {
 func EditAuthor(c *gin.Context) {
 	var (
 		appG   = app.Gin{C: c}
-		author = EditAuthorForm{Id: com.StrTo(c.Param("id")).MustInt()}
+		author = EditAuthorForm{}
 	)
 
-	if err := c.ShouldBindJSON(&author); err != nil {
+	if err := c.ShouldBind(&author); err != nil {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
@@ -123,11 +128,17 @@ func EditAuthor(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+type GetAuthorsResponse struct {
+	Lists []manager.Author `json:"lists"`
+	Count int              `json:"count"`
+}
+
 // GetAuthors
 // @Summary 获取作者
 // @Produce json
 // @Param name query string false "Name"
-// @Success 200 {object} app.Response
+// @Param id query string false "ID"
+// @Success 200 {object} GetAuthorsResponse
 // @Failure 500 {object} app.Response
 // @Router /manager/author [get]
 // @Tags Manager
@@ -135,9 +146,10 @@ func EditAuthor(c *gin.Context) {
 func GetAuthors(c *gin.Context) {
 	var appG = app.Gin{C: c}
 	name := c.Query("name")
-
+	id := com.StrTo(c.Query("id")).MustInt()
 	authorService := author_service.Author{
 		Name:     name,
+		ID:       id,
 		PageNum:  util.GetPage(c),
 		PageSize: setting.AppSetting.PageSize,
 	}
@@ -153,8 +165,9 @@ func GetAuthors(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
-		"lists": authors,
-		"total": count,
-	})
+	var res GetAuthorsResponse
+	res.Lists = authors
+	res.Count = count
+
+	appG.Response(http.StatusOK, e.SUCCESS, res)
 }

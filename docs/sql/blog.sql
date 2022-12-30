@@ -18,7 +18,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `blog_article`;
 CREATE TABLE `blog_article` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cate_id` int(10) unsigned DEFAULT '0' COMMENT '类型ID',
+  `category_id` int(10) unsigned DEFAULT '0' COMMENT '类型ID',
   `author_id` int(10) unsigned DEFAULT '0' COMMENT '作者ID',
   `seo_title` varchar(100) DEFAULT '' COMMENT 'SEO文章标题' UNIQUE,
   `seo_url` varchar(100) DEFAULT '' COMMENT 'SEO文章URL',

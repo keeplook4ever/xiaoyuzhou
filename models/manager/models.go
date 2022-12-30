@@ -17,7 +17,7 @@ type Model struct {
 	ID         int `gorm:"primary_key" json:"id"`
 	CreatedOn  int `json:"created_on"`
 	ModifiedOn int `json:"modified_on"`
-	DeletedOn  int `json:"deleted_on"`
+	DeletedOn  int `json:"deleted_on"` // 0表示未删除
 }
 
 // Setup initializes the database instance
@@ -43,6 +43,9 @@ func Setup() {
 	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&Author{}, &Article{}, &Tag{})
+
 }
 
 // CloseDB closes database connection (unnecessary)

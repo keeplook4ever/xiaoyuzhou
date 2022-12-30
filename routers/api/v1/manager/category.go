@@ -2,6 +2,7 @@ package manager
 
 import (
 	"net/http"
+	"xiaoyuzhou/models/manager"
 	"xiaoyuzhou/service/manager/category_service"
 
 	"github.com/astaxie/beego/validation"
@@ -10,10 +11,14 @@ import (
 
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
-	"xiaoyuzhou/pkg/export"
 	"xiaoyuzhou/pkg/setting"
 	"xiaoyuzhou/pkg/util"
 )
+
+type GetTagsResponse struct {
+	Lists []manager.Tag `json:"lists"`
+	Count int           `json:"count"`
+}
 
 // GetTags
 // @Summary 获取文章类型
@@ -21,7 +26,8 @@ import (
 // @Produce  json
 // @Param name query string false "Name"
 // @Param state query int false "State"
-// @Success 200 {object} app.Response
+// @Param id query int false "ID"
+// @Success 200 {object} GetTagsResponse
 // @Failure 500 {object} app.Response
 // @Tags Manager
 // @Security ApiKeyAuth
@@ -29,13 +35,14 @@ import (
 func GetTags(c *gin.Context) {
 	appG := app.Gin{C: c}
 	name := c.Query("name")
-
+	id := com.StrTo(c.Query("id")).MustInt()
 	state := -1
 	if arg := c.Query("state"); arg != "" {
 		state = com.StrTo(arg).MustInt()
 	}
 
 	tagService := category_service.Tag{
+		ID:       id,
 		Name:     name,
 		State:    state,
 		PageNum:  util.GetPage(c),
@@ -53,16 +60,17 @@ func GetTags(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
-		"lists": tags,
-		"total": count,
-	})
+	var res GetTagsResponse
+	res.Lists = tags
+	res.Count = count
+
+	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
 type AddTagForm struct {
 	Name      string `json:"name" binding:"required"`
 	CreatedBy string `json:"created_by" binding:"required"`
-	State     int    `json:"state" binding:"required"`
+	State     int    `json:"state" binding:"required" default:"1"`
 }
 
 // AddTag
@@ -109,19 +117,19 @@ func AddTag(c *gin.Context) {
 }
 
 type EditTagForm struct {
-	ID         int    `form:"id" valid:"required;Min(1)"`
-	Name       string `form:"name" valid:"required;MaxSize(100)"`
-	ModifiedBy string `form:"modified_by" valid:"required;MaxSize(100)"`
-	State      int    `form:"state" valid:"Range(0,1)"`
+	ID         int    `form:"id" binding:"required"`
+	Name       string `form:"name" binding:"required"`
+	ModifiedBy string `form:"modified_by" binding:"required"`
+	State      int    `form:"state" enums:"0,1"` // 0表示禁用，1表示启用
 }
 
 // EditTag
 // @Summary 修改文章类型
 // @Produce  json
 // @Param id path int true "ID"
-// @Param name body string true "Name"
-// @Param state body int false "State"
-// @Param modified_by body string true "ModifiedBy"
+// @Param name formData string true "Name"
+// @Param state formData int false "State" default(1)
+// @Param modified_by formData string true "ModifiedBy"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/tags/{id} [put]
@@ -132,10 +140,8 @@ func EditTag(c *gin.Context) {
 		appG = app.Gin{C: c}
 		form = EditTagForm{ID: com.StrTo(c.Param("id")).MustInt()}
 	)
-
-	httpCode, errCode := app.BindAndValid(c, &form)
-	if errCode != e.SUCCESS {
-		appG.Response(httpCode, errCode, nil)
+	if err := c.ShouldBind(&form); err != nil {
+		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
 
@@ -204,39 +210,4 @@ func DeleteTag(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
-}
-
-// ExportTag
-// @Summary 导出文章类型
-// @Produce  json
-// @Param name body string false "Name"
-// @Param state body int false "State"
-// @Success 200 {object} app.Response
-// @Failure 500 {object} app.Response
-// @Router /manager/tags/export [post]
-// @Tags Manager
-// @Security ApiKeyAuth
-func ExportTag(c *gin.Context) {
-	appG := app.Gin{C: c}
-	name := c.PostForm("name")
-	state := -1
-	if arg := c.PostForm("state"); arg != "" {
-		state = com.StrTo(arg).MustInt()
-	}
-
-	tagService := category_service.Tag{
-		Name:  name,
-		State: state,
-	}
-
-	filename, err := tagService.Export()
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXPORT_CATEGORY_FAIL, nil)
-		return
-	}
-
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
-		"export_url":      export.GetExcelFullUrl(filename),
-		"export_save_url": export.GetExcelPath() + filename,
-	})
 }

@@ -80,13 +80,9 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.PUT("/tags/:id", manager.EditTag)
 		//删除指定标签
 		apiManagerV1.DELETE("/tags/:id", manager.DeleteTag)
-		//导出标签
-		r.POST("/tags/export", manager.ExportTag)
 
-		//获取文章列表
+		//获取文章
 		apiManagerV1.GET("/articles", manager.GetArticles)
-		//获取指定文章
-		apiManagerV1.GET("/articles/:id", manager.GetArticle)
 		//新建文章
 		apiManagerV1.POST("/articles", manager.AddArticle)
 		//更新指定文章
@@ -100,6 +96,8 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.POST("/author", manager.AddAuthor)
 		//修改作者信息
 		apiManagerV1.PUT("/author/:id", manager.EditAuthor)
+		//获取作者
+		apiManagerV1.GET("/author", manager.GetAuthors)
 	}
 
 	return r

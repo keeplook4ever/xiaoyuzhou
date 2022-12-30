@@ -39,13 +39,13 @@ func (a *Author) Edit() error {
 	if a.Name != "" {
 		data["name"] = a.Name
 	}
-	if a.Age > 0 {
+	if a.Age > 20 && a.Age < 60 {
 		data["age"] = a.Age
 	}
 	if a.Desc != "" {
 		data["desc"] = a.Desc
 	}
-	if a.Gender > 0 {
+	if a.Gender > 0 && a.Gender < 3 {
 		data["gender"] = a.Gender
 	}
 
@@ -93,5 +93,8 @@ func (a *Author) getMaps() map[string]interface{} {
 		maps["name"] = a.Name
 	}
 
+	if a.ID != 0 {
+		maps["id"] = a.ID
+	}
 	return maps
 }

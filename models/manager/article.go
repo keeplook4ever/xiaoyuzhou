@@ -6,10 +6,6 @@ import (
 
 type Article struct {
 	Model
-
-	TagID int `json:"tag_id" gorm:"index"`
-	Tag   Tag `json:"tag"`
-
 	CategoryID      int
 	SeoTitle        string
 	SeoUrl          string
@@ -52,7 +48,7 @@ func GetArticleTotal(maps interface{}) (int, error) {
 // GetArticles gets a list of articles based on paging constraints
 func GetArticles(pageNum int, pageSize int, maps interface{}) ([]*Article, error) {
 	var articles []*Article
-	err := db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+	err := db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -64,11 +60,6 @@ func GetArticles(pageNum int, pageSize int, maps interface{}) ([]*Article, error
 func GetArticle(id int) (*Article, error) {
 	var article Article
 	err := db.Where("id = ? AND deleted_on = ? ", id, 0).First(&article).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
-	}
-
-	err = db.Model(&article).Related(&article.Tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -88,7 +79,7 @@ func EditArticle(id int, data interface{}) error {
 // AddArticle add a single article
 func AddArticle(data map[string]interface{}) error {
 	article := Article{
-		CategoryID:      data["cate_id"].(int),
+		CategoryID:      data["category_id"].(int),
 		SeoTitle:        data["seo_title"].(string),
 		SeoUrl:          data["seo_url"].(string),
 		PageTitle:       data["page_title"].(string),

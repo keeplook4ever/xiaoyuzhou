@@ -63,46 +63,44 @@
                 "tags": [
                     "Manager"
                 ],
-                "summary": "获取多个文章",
+                "summary": "获取文章",
                 "parameters": [
                     {
+                        "type": "integer",
                         "description": "Category ID",
                         "name": "category_id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "query"
                     },
                     {
+                        "type": "integer",
                         "description": "Author ID",
                         "name": "author_id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "query"
                     },
                     {
+                        "type": "integer",
                         "description": "State",
                         "name": "state",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "query"
                     },
                     {
+                        "type": "integer",
                         "description": "CreatedBy",
                         "name": "created_by",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/app.Response"
+                            "$ref": "#/definitions/manager.GetArticlesResponse"
                         }
                     },
                     "500": {
@@ -128,102 +126,12 @@
                 "summary": "添加文章",
                 "parameters": [
                     {
-                        "description": "类型ID",
-                        "name": "category_id",
+                        "description": "文章详情",
+                        "name": "_",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "SeoTitle",
-                        "name": "seo_title",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "SeoUrl",
-                        "name": "seo_url",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "PageTitle",
-                        "name": "page_title",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "MetaDesc",
-                        "name": "meta_desc",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "RelatedArticles",
-                        "name": "related_articles",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "文章内容",
-                        "name": "content",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "作者ID",
-                        "name": "author_id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "封面图片链接",
-                        "name": "cover_image_url",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "状态(是否启用)",
-                        "name": "state",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "语言",
-                        "name": "language",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/manager.AddArticleForm"
                         }
                     }
                 ],
@@ -244,43 +152,6 @@
             }
         },
         "/manager/articles/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "获取单个文章",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            },
             "put": {
                 "security": [
                     {
@@ -303,77 +174,59 @@
                         "required": true
                     },
                     {
+                        "type": "integer",
                         "description": "Category ID",
                         "name": "category_id",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "Page Title",
                         "name": "page_title",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "SEO Title",
                         "name": "seo_title",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "Desc",
                         "name": "meta_desc",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "integer",
                         "description": "Author ID",
                         "name": "author_id",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "Content",
                         "name": "content",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "Cover img URL",
                         "name": "cover_image_url",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "ModifiedBy",
                         "name": "modified_by",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData",
+                        "required": true
                     },
                     {
+                        "type": "integer",
                         "description": "State",
                         "name": "state",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -449,13 +302,19 @@
                         "description": "Name",
                         "name": "name",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/app.Response"
+                            "$ref": "#/definitions/manager.GetAuthorsResponse"
                         }
                     },
                     "500": {
@@ -522,19 +381,48 @@
                 "summary": "编辑作者",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Name",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Age",
+                        "name": "age",
+                        "in": "formData"
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2
+                        ],
+                        "type": "integer",
+                        "default": 2,
+                        "description": "Gender",
+                        "name": "gender",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ModifiedBy",
+                        "name": "modified_by",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Desc",
+                        "name": "desc",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "description": "ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "编辑作者",
-                        "name": "_",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/manager.EditAuthorForm"
-                        }
                     }
                 ],
                 "responses": {
@@ -582,13 +470,19 @@
                         "description": "State",
                         "name": "state",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/app.Response"
+                            "$ref": "#/definitions/manager.GetTagsResponse"
                         }
                     },
                     "500": {
@@ -639,93 +533,6 @@
                 }
             }
         },
-        "/manager/tags/export": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "导出文章类型",
-                "parameters": [
-                    {
-                        "description": "Name",
-                        "name": "name",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "State",
-                        "name": "state",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/manager/tags/import": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "Import Image",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Image File",
-                        "name": "image",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/manager/tags/{id}": {
             "put": {
                 "security": [
@@ -749,30 +556,25 @@
                         "required": true
                     },
                     {
+                        "type": "string",
                         "description": "Name",
                         "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData",
+                        "required": true
                     },
                     {
+                        "type": "integer",
+                        "default": 1,
                         "description": "State",
                         "name": "state",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "in": "formData"
                     },
                     {
+                        "type": "string",
                         "description": "ModifiedBy",
                         "name": "modified_by",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -979,6 +781,67 @@
                 }
             }
         },
+        "manager.AddArticleForm": {
+            "type": "object",
+            "required": [
+                "author_id",
+                "category_id",
+                "content",
+                "cover_image_url",
+                "language",
+                "meta_desc",
+                "page_title",
+                "related_articles",
+                "seo_title",
+                "seo_url",
+                "state"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "cover_image_url": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string",
+                    "enum": [
+                        "zh",
+                        "en",
+                        "jp"
+                    ]
+                },
+                "meta_desc": {
+                    "type": "string"
+                },
+                "page_title": {
+                    "type": "string"
+                },
+                "related_articles": {
+                    "type": "string"
+                },
+                "seo_title": {
+                    "type": "string"
+                },
+                "seo_url": {
+                    "type": "string"
+                },
+                "state": {
+                    "description": "0表示禁用，1表示启用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                }
+            }
+        },
         "manager.AddAuthorForm": {
             "type": "object",
             "required": [
@@ -999,7 +862,13 @@
                     "type": "string"
                 },
                 "gender": {
-                    "type": "integer"
+                    "description": "1表示男，2表示女",
+                    "type": "integer",
+                    "default": 2,
+                    "enum": [
+                        1,
+                        2
+                    ]
                 },
                 "name": {
                     "type": "string"
@@ -1021,20 +890,83 @@
                     "type": "string"
                 },
                 "state": {
+                    "type": "integer",
+                    "default": 1
+                }
+            }
+        },
+        "manager.Article": {
+            "type": "object",
+            "properties": {
+                "authorId": {
+                    "type": "integer"
+                },
+                "categoryID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "coverImageUrl": {
+                    "type": "string"
+                },
+                "created_on": {
+                    "type": "integer"
+                },
+                "deleted_on": {
+                    "description": "0表示未删除",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "metaDesc": {
+                    "type": "string"
+                },
+                "modifiedBy": {
+                    "type": "string"
+                },
+                "modified_on": {
+                    "type": "integer"
+                },
+                "pageTitle": {
+                    "type": "string"
+                },
+                "relatedArticles": {
+                    "type": "string"
+                },
+                "seoTitle": {
+                    "type": "string"
+                },
+                "seoUrl": {
+                    "type": "string"
+                },
+                "state": {
                     "type": "integer"
                 }
             }
         },
-        "manager.EditAuthorForm": {
+        "manager.Author": {
             "type": "object",
-            "required": [
-                "modifiedBy"
-            ],
             "properties": {
                 "age": {
                     "type": "integer"
                 },
+                "created_by": {
+                    "type": "string"
+                },
+                "created_on": {
+                    "type": "integer"
+                },
+                "deleted_on": {
+                    "description": "0表示未删除",
+                    "type": "integer"
+                },
                 "desc": {
+                    "description": "简介",
                     "type": "string"
                 },
                 "gender": {
@@ -1043,11 +975,87 @@
                 "id": {
                     "type": "integer"
                 },
-                "modifiedBy": {
+                "modified_by": {
                     "type": "string"
+                },
+                "modified_on": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "manager.GetArticlesResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.Article"
+                    }
+                }
+            }
+        },
+        "manager.GetAuthorsResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.Author"
+                    }
+                }
+            }
+        },
+        "manager.GetTagsResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.Tag"
+                    }
+                }
+            }
+        },
+        "manager.Tag": {
+            "type": "object",
+            "properties": {
+                "created_by": {
+                    "type": "string"
+                },
+                "created_on": {
+                    "type": "integer"
+                },
+                "deleted_on": {
+                    "description": "0表示未删除",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "modified_on": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "state": {
+                    "description": "0表示禁用，1表示启用",
+                    "type": "integer"
                 }
             }
         },

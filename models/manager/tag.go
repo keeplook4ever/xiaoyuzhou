@@ -10,7 +10,7 @@ type Tag struct {
 	Name       string `json:"name"`
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	State      int    `json:"state"` //0表示禁用，1表示启用
 }
 
 // ExistTagByName checks if there is a tag with the same name
@@ -111,4 +111,12 @@ func CleanAllTag() (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GetTagByID(id int) (tag Tag, err error) {
+	err = db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
+	//if err != nil && err != gorm.ErrRecordNotFound {
+	//	return nil, err
+	//}
+	return tag, err
 }

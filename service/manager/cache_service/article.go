@@ -8,13 +8,13 @@ import (
 )
 
 type Article struct {
-	ID       int
-	TagID    int
-	State    int
-	AuthorId int
-
-	PageNum  int
-	PageSize int
+	ID        int
+	TagID     int
+	State     int
+	AuthorId  int
+	CreatedBy string
+	PageNum   int
+	PageSize  int
 }
 
 func (a *Article) GetArticleKey() string {

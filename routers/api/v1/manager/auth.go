@@ -55,3 +55,7 @@ func GetAuth(c *gin.Context) {
 		"token": token,
 	})
 }
+
+type TokenResponse struct {
+	Token string `json:"token"`
+}

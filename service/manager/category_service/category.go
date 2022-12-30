@@ -34,6 +34,10 @@ func (t *Tag) ExistByID() (bool, error) {
 	return manager.ExistTagByID(t.ID)
 }
 
+func (t *Tag) GetByID() (manager.Tag, error) {
+	return manager.GetTagByID(t.ID)
+}
+
 func (t *Tag) Add() error {
 	return manager.AddTag(t.Name, t.State, t.CreatedBy)
 }
@@ -152,6 +156,9 @@ func (t *Tag) getMaps() map[string]interface{} {
 	}
 	if t.State >= 0 {
 		maps["state"] = t.State
+	}
+	if t.ID > 0 {
+		maps["id"] = t.ID
 	}
 
 	return maps
