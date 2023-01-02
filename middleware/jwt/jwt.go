@@ -29,8 +29,9 @@ func JWT() gin.HandlerFunc {
 				default:
 					code = e.ERROR_AUTH_CHECK_TOKEN_FAIL
 				}
+			} else {
+				c.Set("username", clams.Username)
 			}
-			c.Set("username", clams.Username)
 		}
 
 		if code != e.SUCCESS {

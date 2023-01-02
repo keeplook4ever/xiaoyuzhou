@@ -89,8 +89,9 @@ func AddArticle(c *gin.Context) {
 		CoverImageUrl:   article.CoverImageUrl,
 		State:           article.State,
 		Language:        article.Language,
+		CreatedBy:       "", // 根据登录态获取
 	}
-	if err := articleService.Add(); err != nil {
+	if err = articleService.Add(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
 		return
 	}
@@ -122,7 +123,6 @@ type EditArticleForm struct {
 // @Param author_id formData int false "Author ID"
 // @Param content formData string false "Content"
 // @Param cover_image_url formData string false "Cover img URL"
-// @Param modified_by formData string true "ModifiedBy"
 // @Param state formData int false "State"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -148,7 +148,7 @@ func EditArticle(c *gin.Context) {
 		MetaDesc:      article.MetaDesc,
 		Content:       article.Content,
 		CoverImageUrl: article.CoverImageUrl,
-		ModifiedBy:    article.ModifiedBy,
+		ModifiedBy:    "", // 后端获取，通过登录态
 		AuthorId:      article.AuthorId,
 		State:         article.State,
 	}
@@ -278,7 +278,7 @@ func GetArticles(c *gin.Context) {
 	}
 
 	// 从登录态获取
-	//createdBy := c.Query("created_by")
+	createdBy := c.Query("created_by")
 
 	id := com.StrTo(c.Query("id")).MustInt()
 
@@ -289,8 +289,8 @@ func GetArticles(c *gin.Context) {
 	}
 
 	articleService := article_service.Article{
-		ID: id,
-		//CreatedBy:  createdBy,
+		ID:         id,
+		CreatedBy:  createdBy,
 		CategoryID: tagId,
 		AuthorId:   authorId,
 		State:      state,

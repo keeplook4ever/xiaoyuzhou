@@ -36,11 +36,27 @@ func AddUser(name, passwd string) error {
 	return nil
 }
 
-func GetUser(name string) (User, error) {
-	var user User
-	err := db.Model(&User{}).Select("id").Where("name = ? AND deleted_on = ?", name, 0).First(&user).Error
+func GetUser(name string) ([]User, error) {
+	var user []User
+
+	err := db.Where(&User{Name: name}).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return user, err
+		return nil, err
 	}
 	return user, nil
+}
+
+// CheckUser checks if user exists
+func CheckUser(username, password string) (bool, error) {
+	var user User
+	err := db.Select("id").Where(User{Name: username, Passwd: password}).First(&user).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return false, err
+	}
+
+	if user.ID > 0 {
+		return true, nil
+	}
+
+	return false, nil
 }

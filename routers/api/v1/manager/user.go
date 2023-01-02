@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
+	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/manager/user_service"
 )
 
@@ -99,7 +100,6 @@ func GetCurrentLoginUserInfo(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
 	)
-	// TODO 需要还原
 	username := c.GetString("username")
 
 	userService := user_service.User{
@@ -111,8 +111,56 @@ func GetCurrentLoginUserInfo(c *gin.Context) {
 		return
 	}
 	var resp GetUserResponse
-	resp.Id = user.ID
-	resp.Name = user.Name
+	resp.Id = user[0].ID
+	resp.Name = user[0].Name
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
+}
 
+type auth struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+// GetAuth
+// @Summary 获取Token
+// @Accept json
+// @Produce  json
+// @Param _ body auth true "用户名和密码"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /manager/user/auth [post]
+// @Tags Manager
+func GetAuth(c *gin.Context) {
+	appG := app.Gin{C: c}
+	var auth_ auth
+	if err := c.ShouldBindJSON(&auth_); err != nil {
+		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		return
+	}
+
+	userService := user_service.User{Name: auth_.Username, Passwd: auth_.Password}
+	isExist, err := userService.Check()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
+	if !isExist {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH, nil)
+		return
+	}
+
+	token, err := util.GenerateToken(auth_.Username, auth_.Password)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_TOKEN, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+		"token": token,
+	})
+}
+
+type TokenResponse struct {
+	Token string `json:"token"`
 }

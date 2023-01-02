@@ -48,7 +48,7 @@ CREATE TABLE `blog_auth` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `blog_auth` (`id`, `username`, `password`) VALUES ('1', 'test', 'test123');
+INSERT INTO `blog_user` (`id`, `name`, `passwd`) VALUES ('1', 'test', 'test123');
 
 -- ----------------------------
 -- Table structure for blog_tag
