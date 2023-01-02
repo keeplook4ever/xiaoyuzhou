@@ -21,7 +21,7 @@ type AddUserForm struct {
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/user [post]
-// @Tags manager
+// @Tags Manager
 // @Security ApiKeyAuth
 func AddUser(c *gin.Context) {
 	var (
@@ -63,7 +63,7 @@ func AddUser(c *gin.Context) {
 // @Param name query string false "name"
 // @Router /manager/user [get]
 // @Security ApiKeyAuth
-// @Tags manager
+// @Tags Manager
 // @Success 200 {object} GetUserResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -93,7 +93,7 @@ type GetUserResponse struct {
 // @Summary 通过登录态获取当前登录用户信息
 // @Router /manager/user/info [get]
 // @Security ApiKeyAuth
-// @Tags manager
+// @Tags Manager
 // @Success 200 {object} GetUserResponse
 // @Failure 500 {object} app.Response
 func GetCurrentLoginUserInfo(c *gin.Context) {
