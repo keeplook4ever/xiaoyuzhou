@@ -6,18 +6,18 @@ import (
 
 type Article struct {
 	Model
-	CategoryID      int
-	SeoTitle        string
-	SeoUrl          string
-	PageTitle       string
-	MetaDesc        string
-	RelatedArticles string
-	Content         string
-	AuthorId        int
-	CoverImageUrl   string
-	State           int
-	Language        string
-	ModifiedBy      string
+	CategoryID      int    `json:"category_id"`
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles string `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorId        int    `json:"author_id"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state"`
+	Language        string `json:"language"`
+	ModifiedBy      string `json:"modified_by"`
 }
 
 // ExistArticleByID checks if an article exists based on ID
