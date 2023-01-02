@@ -389,6 +389,13 @@ const docTemplate = `{
                 "summary": "编辑作者",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "description": "Name",
                         "name": "name",
@@ -413,23 +420,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "ModifiedBy",
-                        "name": "modified_by",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "Desc",
                         "name": "desc",
                         "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
                         "required": true
                     }
                 ],
@@ -449,7 +442,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/manager/tags": {
+        "/manager/category": {
             "get": {
                 "security": [
                     {
@@ -490,7 +483,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetTagsResponse"
+                            "$ref": "#/definitions/manager.GetCategoryResponse"
                         }
                     },
                     "500": {
@@ -521,7 +514,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/manager.AddTagForm"
+                            "$ref": "#/definitions/manager.AddCategoryForm"
                         }
                     }
                 ],
@@ -541,7 +534,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/manager/tags/{id}": {
+        "/manager/category/{id}": {
             "put": {
                 "security": [
                     {
@@ -567,8 +560,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Name",
                         "name": "name",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "integer",
@@ -576,13 +568,6 @@ const docTemplate = `{
                         "description": "State",
                         "name": "state",
                         "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ModifiedBy",
-                        "name": "modified_by",
-                        "in": "formData",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -627,6 +612,121 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/user": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "manager"
+                ],
+                "summary": "获取用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/manager.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "manager"
+                ],
+                "summary": "添加用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "passwd",
+                        "name": "passwd",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/user/info": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "manager"
+                ],
+                "summary": "通过登录态获取当前登录用户信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/manager.GetUserResponse"
                         }
                     },
                     "500": {
@@ -854,7 +954,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "age",
-                "createdBy",
                 "desc",
                 "gender",
                 "name"
@@ -862,9 +961,6 @@ const docTemplate = `{
             "properties": {
                 "age": {
                     "type": "integer"
-                },
-                "createdBy": {
-                    "type": "string"
                 },
                 "desc": {
                     "type": "string"
@@ -883,17 +979,13 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.AddTagForm": {
+        "manager.AddCategoryForm": {
             "type": "object",
             "required": [
-                "created_by",
                 "name",
                 "state"
             ],
             "properties": {
-                "created_by": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -994,6 +1086,37 @@ const docTemplate = `{
                 }
             }
         },
+        "manager.Category": {
+            "type": "object",
+            "properties": {
+                "created_by": {
+                    "type": "string"
+                },
+                "created_on": {
+                    "type": "integer"
+                },
+                "deleted_on": {
+                    "description": "0表示未删除",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "modified_by": {
+                    "type": "string"
+                },
+                "modified_on": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "state": {
+                    "description": "0表示禁用，1表示启用",
+                    "type": "integer"
+                }
+            }
+        },
         "manager.GetArticlesResponse": {
             "type": "object",
             "properties": {
@@ -1022,7 +1145,7 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.GetTagsResponse": {
+        "manager.GetCategoryResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -1031,39 +1154,19 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.Tag"
+                        "$ref": "#/definitions/manager.Category"
                     }
                 }
             }
         },
-        "manager.Tag": {
+        "manager.GetUserResponse": {
             "type": "object",
             "properties": {
-                "created_by": {
-                    "type": "string"
-                },
-                "created_on": {
-                    "type": "integer"
-                },
-                "deleted_on": {
-                    "description": "0表示未删除",
-                    "type": "integer"
-                },
                 "id": {
-                    "type": "integer"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "modified_on": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
-                },
-                "state": {
-                    "description": "0表示禁用，1表示启用",
-                    "type": "integer"
                 }
             }
         },

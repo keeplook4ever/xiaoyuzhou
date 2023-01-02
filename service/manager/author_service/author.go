@@ -57,7 +57,7 @@ func (a *Author) GetAll() ([]manager.Author, error) {
 		authors, cacheTags []manager.Author
 	)
 
-	cache := cache_service.Tag{
+	cache := cache_service.Category{
 		PageNum:  a.PageNum,
 		PageSize: a.PageSize,
 	}

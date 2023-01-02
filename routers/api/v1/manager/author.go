@@ -13,11 +13,10 @@ import (
 )
 
 type AddAuthorForm struct {
-	Name      string `json:"name" binding:"required"`
-	Age       int    `json:"age" binding:"required"`
-	Gender    int    `json:"gender" binding:"required" enums:"1,2" default:"2"` //1表示男，2表示女
-	CreatedBy string `json:"createdBy" binding:"required"`
-	Desc      string `json:"desc" binding:"required"`
+	Name   string `json:"name" binding:"required"`
+	Age    int    `json:"age" binding:"required"`
+	Gender int    `json:"gender" binding:"required" enums:"1,2" default:"2"` //1表示男，2表示女
+	Desc   string `json:"desc" binding:"required"`
 }
 
 // AddAuthor
@@ -45,7 +44,7 @@ func AddAuthor(c *gin.Context) {
 		Age:       author.Age,
 		Gender:    author.Gender,
 		Desc:      author.Desc,
-		CreatedBy: author.CreatedBy,
+		CreatedBy: "", // 创建者从登录用户token获取
 	}
 	exists, err := authorService.ExistByName()
 	if err != nil {
@@ -67,12 +66,11 @@ func AddAuthor(c *gin.Context) {
 }
 
 type EditAuthorForm struct {
-	Name       string `form:"name"`
-	Age        int    `form:"age"`
-	Gender     int    `form:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
-	ModifiedBy string `form:"modified_by" binding:"required"`
-	Desc       string `form:"desc" binding:"required"`
-	Id         int    `form:"id" binding:"required"`
+	Name   string `form:"name"`
+	Age    int    `form:"age"`
+	Gender int    `form:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
+	Desc   string `form:"desc" binding:"required"`
+	Id     int    `form:"id" binding:"required"`
 }
 
 // EditAuthor
@@ -82,7 +80,6 @@ type EditAuthorForm struct {
 // @Param name formData string false "Name"
 // @Param age formData int false "Age"
 // @Param gender formData int false "Gender" Enums(1,2) default(2)
-// @Param modified_by formData string true "ModifiedBy"
 // @Param desc formData string true "Desc"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -106,7 +103,7 @@ func EditAuthor(c *gin.Context) {
 		Gender:     author.Gender,
 		Desc:       author.Desc,
 		ID:         author.Id,
-		ModifiedBy: author.ModifiedBy,
+		ModifiedBy: "", //修改者从登录用户态获取
 	}
 
 	exists, err := authorService.ExistByID()

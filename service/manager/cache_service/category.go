@@ -7,7 +7,7 @@ import (
 	"xiaoyuzhou/pkg/e"
 )
 
-type Tag struct {
+type Category struct {
 	ID    int
 	Name  string
 	State int
@@ -16,9 +16,9 @@ type Tag struct {
 	PageSize int
 }
 
-func (t *Tag) GetTagsKey() string {
+func (t *Category) GetCategoryKey() string {
 	keys := []string{
-		e.CACHE_TAG,
+		e.CACHE_CATEGORY,
 		"LIST",
 	}
 

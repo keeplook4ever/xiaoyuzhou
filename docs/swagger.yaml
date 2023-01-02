@@ -57,8 +57,6 @@ definitions:
     properties:
       age:
         type: integer
-      createdBy:
-        type: string
       desc:
         type: string
       gender:
@@ -72,22 +70,18 @@ definitions:
         type: string
     required:
     - age
-    - createdBy
     - desc
     - gender
     - name
     type: object
-  manager.AddTagForm:
+  manager.AddCategoryForm:
     properties:
-      created_by:
-        type: string
       name:
         type: string
       state:
         default: 1
         type: integer
     required:
-    - created_by
     - name
     - state
     type: object
@@ -152,34 +146,7 @@ definitions:
       name:
         type: string
     type: object
-  manager.GetArticlesResponse:
-    properties:
-      count:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/manager.Article'
-        type: array
-    type: object
-  manager.GetAuthorsResponse:
-    properties:
-      count:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/manager.Author'
-        type: array
-    type: object
-  manager.GetTagsResponse:
-    properties:
-      count:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/manager.Tag'
-        type: array
-    type: object
-  manager.Tag:
+  manager.Category:
     properties:
       created_by:
         type: string
@@ -199,6 +166,40 @@ definitions:
       state:
         description: 0表示禁用，1表示启用
         type: integer
+    type: object
+  manager.GetArticlesResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Article'
+        type: array
+    type: object
+  manager.GetAuthorsResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Author'
+        type: array
+    type: object
+  manager.GetCategoryResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.Category'
+        type: array
+    type: object
+  manager.GetUserResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   manager.auth:
     properties:
@@ -444,6 +445,11 @@ paths:
   /manager/author/{id}:
     put:
       parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Name
         in: formData
         name: name
@@ -460,21 +466,11 @@ paths:
         in: formData
         name: gender
         type: integer
-      - description: ModifiedBy
-        in: formData
-        name: modified_by
-        required: true
-        type: string
       - description: Desc
         in: formData
         name: desc
         required: true
         type: string
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -491,7 +487,7 @@ paths:
       summary: 编辑作者
       tags:
       - Manager
-  /manager/tags:
+  /manager/category:
     get:
       consumes:
       - application/json
@@ -514,7 +510,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetTagsResponse'
+            $ref: '#/definitions/manager.GetCategoryResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -531,7 +527,7 @@ paths:
         name: _
         required: true
         schema:
-          $ref: '#/definitions/manager.AddTagForm'
+          $ref: '#/definitions/manager.AddCategoryForm'
       produces:
       - application/json
       responses:
@@ -548,7 +544,7 @@ paths:
       summary: 添加文章类型
       tags:
       - Manager
-  /manager/tags/{id}:
+  /manager/category/{id}:
     delete:
       parameters:
       - description: ID
@@ -582,18 +578,12 @@ paths:
       - description: Name
         in: formData
         name: name
-        required: true
         type: string
       - default: 1
         description: State
         in: formData
         name: state
         type: integer
-      - description: ModifiedBy
-        in: formData
-        name: modified_by
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -610,6 +600,77 @@ paths:
       summary: 修改文章类型
       tags:
       - Manager
+  /manager/user:
+    get:
+      parameters:
+      - description: id
+        in: query
+        name: id
+        type: integer
+      - description: name
+        in: query
+        name: name
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/manager.GetUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户
+      tags:
+      - manager
+    post:
+      parameters:
+      - description: name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: passwd
+        in: formData
+        name: passwd
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加用户
+      tags:
+      - manager
+  /manager/user/info:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/manager.GetUserResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 通过登录态获取当前登录用户信息
+      tags:
+      - manager
   /player/article:
     get:
       parameters:

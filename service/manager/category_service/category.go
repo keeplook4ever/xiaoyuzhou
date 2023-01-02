@@ -15,7 +15,7 @@ import (
 	"xiaoyuzhou/pkg/logging"
 )
 
-type Tag struct {
+type Category struct {
 	ID         int
 	Name       string
 	CreatedBy  string
@@ -26,53 +26,55 @@ type Tag struct {
 	PageSize int
 }
 
-func (t *Tag) ExistByName() (bool, error) {
-	return manager.ExistTagByName(t.Name)
+func (t *Category) ExistByName() (bool, error) {
+	return manager.ExistCategoryByName(t.Name)
 }
 
-func (t *Tag) ExistByID() (bool, error) {
-	return manager.ExistTagByID(t.ID)
+func (t *Category) ExistByID() (bool, error) {
+	return manager.ExistCategoryByID(t.ID)
 }
 
-func (t *Tag) GetByID() (manager.Tag, error) {
-	return manager.GetTagByID(t.ID)
+func (t *Category) GetByID() (manager.Category, error) {
+	return manager.GetCategoryByID(t.ID)
 }
 
-func (t *Tag) Add() error {
-	return manager.AddTag(t.Name, t.State, t.CreatedBy)
+func (t *Category) Add() error {
+	return manager.AddCategory(t.Name, t.State, t.CreatedBy)
 }
 
-func (t *Tag) Edit() error {
+func (t *Category) Edit() error {
 	data := make(map[string]interface{})
 	data["modified_by"] = t.ModifiedBy
-	data["name"] = t.Name
+	if t.Name != "" {
+		data["name"] = t.Name
+	}
 	if t.State >= 0 {
 		data["state"] = t.State
 	}
 
-	return manager.EditTag(t.ID, data)
+	return manager.EditCategory(t.ID, data)
 }
 
-func (t *Tag) Delete() error {
-	return manager.DeleteTag(t.ID)
+func (t *Category) Delete() error {
+	return manager.DeleteCategory(t.ID)
 }
 
-func (t *Tag) Count() (int, error) {
-	return manager.GetTagTotal(t.getMaps())
+func (t *Category) Count() (int, error) {
+	return manager.GetCategoryTotal(t.getMaps())
 }
 
-func (t *Tag) GetAll() ([]manager.Tag, error) {
+func (t *Category) GetAll() ([]manager.Category, error) {
 	var (
-		tags, cacheTags []manager.Tag
+		categories, cacheTags []manager.Category
 	)
 
-	cache := cache_service.Tag{
+	cache := cache_service.Category{
 		State: t.State,
 
 		PageNum:  t.PageNum,
 		PageSize: t.PageSize,
 	}
-	key := cache.GetTagsKey()
+	key := cache.GetCategoryKey()
 	if gredis.Exists(key) {
 		data, err := gredis.Get(key)
 		if err != nil {
@@ -83,17 +85,17 @@ func (t *Tag) GetAll() ([]manager.Tag, error) {
 		}
 	}
 
-	tags, err := manager.GetTags(t.PageNum, t.PageSize, t.getMaps())
+	categories, err := manager.GetCategory(t.PageNum, t.PageSize, t.getMaps())
 	if err != nil {
 		return nil, err
 	}
 
-	gredis.Set(key, tags, 3600)
-	return tags, nil
+	gredis.Set(key, categories, 3600)
+	return categories, nil
 }
 
-func (t *Tag) Export() (string, error) {
-	tags, err := t.GetAll()
+func (t *Category) Export() (string, error) {
+	categories, err := t.GetAll()
 	if err != nil {
 		return "", err
 	}
@@ -113,7 +115,7 @@ func (t *Tag) Export() (string, error) {
 		cell.Value = title
 	}
 
-	for _, v := range tags {
+	for _, v := range categories {
 		values := []string{
 			strconv.Itoa(v.ID),
 			v.Name,
@@ -131,7 +133,7 @@ func (t *Tag) Export() (string, error) {
 	}
 
 	time := strconv.Itoa(int(time.Now().Unix()))
-	filename := "tags-" + time + export.EXT
+	filename := "category-" + time + export.EXT
 
 	dirFullPath := export.GetExcelFullPath()
 	err = file.IsNotExistMkDir(dirFullPath)
@@ -147,7 +149,7 @@ func (t *Tag) Export() (string, error) {
 	return filename, nil
 }
 
-func (t *Tag) getMaps() map[string]interface{} {
+func (t *Category) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 	maps["deleted_on"] = 0
 

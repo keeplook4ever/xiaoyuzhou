@@ -6,9 +6,9 @@ import (
 	"xiaoyuzhou/pkg/e"
 )
 
-func (t *Tag) GetAuthorsKey() string {
+func (t *Category) GetAuthorsKey() string {
 	keys := []string{
-		e.CACHE_TAG,
+		e.CACHE_CATEGORY,
 		"LIST",
 	}
 

@@ -72,14 +72,14 @@ func InitRouter() *gin.Engine {
 	apiManagerV1 := r.Group("/api/v1/manager/")
 	apiManagerV1.Use(jwt.JWT())
 	{
-		//获取标签列表
-		apiManagerV1.GET("/tags", manager.GetTags)
-		//新建标签
-		apiManagerV1.POST("/tags", manager.AddTag)
-		//更新指定标签
-		apiManagerV1.PUT("/tags/:id", manager.EditTag)
-		//删除指定标签
-		apiManagerV1.DELETE("/tags/:id", manager.DeleteTag)
+		//获取类型列表
+		apiManagerV1.GET("/category", manager.GetCategory)
+		//新建类型
+		apiManagerV1.POST("/category", manager.AddCategory)
+		//更新指定类型
+		apiManagerV1.PUT("/category/:id", manager.EditCategory)
+		//删除指定类型
+		apiManagerV1.DELETE("/category/:id", manager.DeleteCategory)
 
 		//获取文章
 		apiManagerV1.GET("/articles", manager.GetArticles)
@@ -98,6 +98,13 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.PUT("/author/:id", manager.EditAuthor)
 		//获取作者
 		apiManagerV1.GET("/author", manager.GetAuthors)
+
+		//添加用户
+		apiManagerV1.POST("/user", manager.AddUser)
+		//获取用户
+		apiManagerV1.GET("/user", manager.GetUser)
+
+		apiManagerV1.GET("/user/info", manager.GetCurrentLoginUserInfo)
 	}
 
 	return r

@@ -15,24 +15,24 @@ import (
 	"xiaoyuzhou/pkg/util"
 )
 
-type GetTagsResponse struct {
-	Lists []manager.Tag `json:"lists"`
-	Count int           `json:"count"`
+type GetCategoryResponse struct {
+	Lists []manager.Category `json:"lists"`
+	Count int                `json:"count"`
 }
 
-// GetTags
+// GetCategory
 // @Summary 获取文章类型
 // @Accept json
 // @Produce  json
 // @Param name query string false "Name"
 // @Param state query int false "State"
 // @Param id query int false "ID"
-// @Success 200 {object} GetTagsResponse
+// @Success 200 {object} GetCategoryResponse
 // @Failure 500 {object} app.Response
 // @Tags Manager
 // @Security ApiKeyAuth
-// @Router /manager/tags [get]
-func GetTags(c *gin.Context) {
+// @Router /manager/category [get]
+func GetCategory(c *gin.Context) {
 	appG := app.Gin{C: c}
 	name := c.Query("name")
 	id := com.StrTo(c.Query("id")).MustInt()
@@ -41,63 +41,62 @@ func GetTags(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 	}
 
-	tagService := category_service.Tag{
+	categoryService := category_service.Category{
 		ID:       id,
 		Name:     name,
 		State:    state,
 		PageNum:  util.GetPage(c),
 		PageSize: setting.AppSetting.PageSize,
 	}
-	tags, err := tagService.GetAll()
+	categories, err := categoryService.GetAll()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_CATEGORYS_FAIL, nil)
 		return
 	}
 
-	count, err := tagService.Count()
+	count, err := categoryService.Count()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_CATEGORY_FAIL, nil)
 		return
 	}
 
-	var res GetTagsResponse
-	res.Lists = tags
+	var res GetCategoryResponse
+	res.Lists = categories
 	res.Count = count
 
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-type AddTagForm struct {
-	Name      string `json:"name" binding:"required"`
-	CreatedBy string `json:"created_by" binding:"required"`
-	State     int    `json:"state" binding:"required" default:"1"`
+type AddCategoryForm struct {
+	Name  string `json:"name" binding:"required"`
+	State int    `json:"state" binding:"required" default:"1"`
 }
 
-// AddTag
+// AddCategory
 // @Summary 添加文章类型
 // @Produce  json
-// @Param _ body AddTagForm true "文章类型"
+// @Param _ body AddCategoryForm true "文章类型"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /manager/tags [post]
+// @Router /manager/category [post]
 // @Tags Manager
 // @Security ApiKeyAuth
-func AddTag(c *gin.Context) {
+func AddCategory(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
-		form AddTagForm
+		form AddCategoryForm
 	)
 	if err := c.ShouldBindJSON(&form); err != nil {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
 
-	tagService := category_service.Tag{
+	categoryService := category_service.Category{
 		Name:      form.Name,
-		CreatedBy: form.CreatedBy,
+		CreatedBy: "", // 后端获取登录态用户
 		State:     form.State,
 	}
-	exists, err := tagService.ExistByName()
+	exists, err := categoryService.ExistByName()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
@@ -107,7 +106,7 @@ func AddTag(c *gin.Context) {
 		return
 	}
 
-	err = tagService.Add()
+	err = categoryService.Add()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_CATEGORY_FAIL, nil)
 		return
@@ -116,43 +115,41 @@ func AddTag(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
-type EditTagForm struct {
-	ID         int    `form:"id" binding:"required"`
-	Name       string `form:"name" binding:"required"`
-	ModifiedBy string `form:"modified_by" binding:"required"`
-	State      int    `form:"state" enums:"0,1"` // 0表示禁用，1表示启用
+type EditCategoryForm struct {
+	ID    int    `form:"id" binding:"required"`
+	Name  string `form:"name"`
+	State int    `form:"state" enums:"0,1"` // 0表示禁用，1表示启用
 }
 
-// EditTag
+// EditCategory
 // @Summary 修改文章类型
 // @Produce  json
 // @Param id path int true "ID"
-// @Param name formData string true "Name"
+// @Param name formData string false "Name"
 // @Param state formData int false "State" default(1)
-// @Param modified_by formData string true "ModifiedBy"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /manager/tags/{id} [put]
+// @Router /manager/category/{id} [put]
 // @Tags Manager
 // @Security ApiKeyAuth
-func EditTag(c *gin.Context) {
+func EditCategory(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
-		form = EditTagForm{ID: com.StrTo(c.Param("id")).MustInt()}
+		form = EditCategoryForm{ID: com.StrTo(c.Param("id")).MustInt()}
 	)
 	if err := c.ShouldBind(&form); err != nil {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
 
-	tagService := category_service.Tag{
+	categoryService := category_service.Category{
 		ID:         form.ID,
 		Name:       form.Name,
-		ModifiedBy: form.ModifiedBy,
+		ModifiedBy: "", // 修改者从登录用户态获取
 		State:      form.State,
 	}
 
-	exists, err := tagService.ExistByID()
+	exists, err := categoryService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
@@ -163,7 +160,7 @@ func EditTag(c *gin.Context) {
 		return
 	}
 
-	err = tagService.Edit()
+	err = categoryService.Edit()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_CATEGORY_FAIL, nil)
 		return
@@ -172,16 +169,16 @@ func EditTag(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
-// DeleteTag
+// DeleteCategory
 // @Summary 删除文章类型
 // @Produce  json
 // @Param id path int true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /manager/tags/{id} [delete]
+// @Router /manager/category/{id} [delete]
 // @Tags Manager
 // @Security ApiKeyAuth
-func DeleteTag(c *gin.Context) {
+func DeleteCategory(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
 	id := com.StrTo(c.Param("id")).MustInt()
@@ -192,8 +189,8 @@ func DeleteTag(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 	}
 
-	tagService := category_service.Tag{ID: id}
-	exists, err := tagService.ExistByID()
+	categoryService := category_service.Category{ID: id}
+	exists, err := categoryService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
@@ -204,7 +201,7 @@ func DeleteTag(c *gin.Context) {
 		return
 	}
 
-	if err := tagService.Delete(); err != nil {
+	if err = categoryService.Delete(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DELETE_CATEGORY_FAIL, nil)
 		return
 	}

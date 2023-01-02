@@ -37,6 +37,9 @@ var MsgFlags = map[int]string{
 	ERROR_EDIT_AUTHOR_FAIL:          "编辑作者失败",
 	ERROR_GET_AUTHOR_FAIL:           "获取作者失败",
 	ERROR_COUNT_AUTHOR_FAIL:         "统计作者失败",
+	ERROR_CHECK_EXIST_USER:          "检查用户失败",
+	ERROR_USER_HAS_EXIST:            "用户已经存在",
+	ERROR_CREAT_USER:                "创建用户失败",
 }
 
 // GetMsg get error information based on Code

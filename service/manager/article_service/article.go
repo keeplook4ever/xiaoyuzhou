@@ -70,13 +70,13 @@ func (a *Article) Get() ([]*manager.Article, error) {
 	)
 
 	cache := cache_service.Article{
-		ID:        a.ID,
-		CreatedBy: a.CreatedBy,
-		TagID:     a.CategoryID,
-		State:     a.State,
-		AuthorId:  a.AuthorId,
-		PageNum:   a.PageNum,
-		PageSize:  a.PageSize,
+		ID:         a.ID,
+		CreatedBy:  a.CreatedBy,
+		CategoryID: a.CategoryID,
+		State:      a.State,
+		AuthorId:   a.AuthorId,
+		PageNum:    a.PageNum,
+		PageSize:   a.PageSize,
 	}
 	key := cache.GetArticlesKey()
 	if gredis.Exists(key) {

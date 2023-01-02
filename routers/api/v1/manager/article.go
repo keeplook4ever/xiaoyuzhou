@@ -53,7 +53,7 @@ func AddArticle(c *gin.Context) {
 	}
 
 	// 判断是否类型存在
-	categoryService := category_service.Tag{ID: article.CategoryID}
+	categoryService := category_service.Category{ID: article.CategoryID}
 	exists, err := categoryService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
@@ -163,7 +163,7 @@ func EditArticle(c *gin.Context) {
 	}
 
 	// 判断类型是否存在
-	tagService := category_service.Tag{ID: article.CategoryID}
+	tagService := category_service.Category{ID: article.CategoryID}
 	exists, err = tagService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
@@ -277,7 +277,8 @@ func GetArticles(c *gin.Context) {
 		valid.Min(authorId, 1, "author_id")
 	}
 
-	createdBy := c.Query("created_by")
+	// 从登录态获取
+	//createdBy := c.Query("created_by")
 
 	id := com.StrTo(c.Query("id")).MustInt()
 
@@ -288,8 +289,8 @@ func GetArticles(c *gin.Context) {
 	}
 
 	articleService := article_service.Article{
-		ID:         id,
-		CreatedBy:  createdBy,
+		ID: id,
+		//CreatedBy:  createdBy,
 		CategoryID: tagId,
 		AuthorId:   authorId,
 		State:      state,

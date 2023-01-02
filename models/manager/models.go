@@ -44,7 +44,7 @@ func Setup() {
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 
-	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&Author{}, &Article{}, &Tag{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
 
 }
 
