@@ -11,6 +11,8 @@ type Category struct {
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
 	State      int    `json:"state"` //0表示禁用，1表示启用
+
+	Articles []Article `json:"articles,omitempty"`
 }
 
 // ExistCategoryByName checks if there is a Category with the same name
@@ -50,8 +52,10 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]Category, error
 	)
 
 	if pageSize > 0 && pageNum > 0 {
+		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
 		err = db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
 	} else {
+		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Error
 		err = db.Where(maps).Find(&tags).Error
 	}
 

@@ -87,13 +87,18 @@ definitions:
     type: object
   manager.Article:
     properties:
-      authorId:
+      author_id:
         type: integer
-      categoryID:
+      category:
+        allOf:
+        - $ref: '#/definitions/manager.Category'
+        description: 一个文章属于一个类型
+      category_id:
+        description: 默认外键
         type: integer
       content:
         type: string
-      coverImageUrl:
+      cover_image_url:
         type: string
       created_on:
         type: integer
@@ -104,19 +109,19 @@ definitions:
         type: integer
       language:
         type: string
-      metaDesc:
+      meta_desc:
+        type: string
+      modified_by:
         type: string
       modified_on:
         type: integer
-      modifiedBy:
+      page_title:
         type: string
-      pageTitle:
+      related_articles:
         type: string
-      relatedArticles:
+      seo_title:
         type: string
-      seoTitle:
-        type: string
-      seoUrl:
+      seo_url:
         type: string
       state:
         type: integer
@@ -148,6 +153,10 @@ definitions:
     type: object
   manager.Category:
     properties:
+      articles:
+        items:
+          $ref: '#/definitions/manager.Article'
+        type: array
       created_by:
         type: string
       created_on:
@@ -219,31 +228,6 @@ info:
   title: 小小の宇宙API文档
   version: "1.0"
 paths:
-  /auth:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 用户名和密码
-        in: body
-        name: _
-        required: true
-        schema:
-          $ref: '#/definitions/manager.auth'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: 获取Token
-      tags:
-      - Manager
   /manager/articles:
     get:
       parameters:
@@ -365,11 +349,6 @@ paths:
       - description: Cover img URL
         in: formData
         name: cover_image_url
-        type: string
-      - description: ModifiedBy
-        in: formData
-        name: modified_by
-        required: true
         type: string
       - description: State
         in: formData
@@ -628,7 +607,7 @@ paths:
       - ApiKeyAuth: []
       summary: 获取用户
       tags:
-      - manager
+      - Manager
     post:
       parameters:
       - description: name
@@ -654,7 +633,32 @@ paths:
       - ApiKeyAuth: []
       summary: 添加用户
       tags:
-      - manager
+      - Manager
+  /manager/user/auth:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户名和密码
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/manager.auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取Token
+      tags:
+      - Manager
   /manager/user/info:
     get:
       responses:
@@ -670,7 +674,7 @@ paths:
       - ApiKeyAuth: []
       summary: 通过登录态获取当前登录用户信息
       tags:
-      - manager
+      - Manager
   /player/article:
     get:
       parameters:

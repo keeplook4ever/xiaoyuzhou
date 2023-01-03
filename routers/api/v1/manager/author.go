@@ -44,7 +44,7 @@ func AddAuthor(c *gin.Context) {
 		Age:       author.Age,
 		Gender:    author.Gender,
 		Desc:      author.Desc,
-		CreatedBy: "", // 创建者从登录用户token获取
+		CreatedBy: c.GetString("username"), // 创建者从登录用户token获取
 	}
 	exists, err := authorService.ExistByName()
 	if err != nil {
@@ -103,7 +103,7 @@ func EditAuthor(c *gin.Context) {
 		Gender:     author.Gender,
 		Desc:       author.Desc,
 		ID:         author.Id,
-		ModifiedBy: "", //修改者从登录用户态获取
+		ModifiedBy: c.GetString("username"), //修改者从登录用户态获取
 	}
 
 	exists, err := authorService.ExistByID()

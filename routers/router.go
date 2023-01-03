@@ -28,7 +28,7 @@ func InitRouter() *gin.Engine {
 	r.StaticFS("/api/v1/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/api/v1/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
-	r.POST("/api/v1/auth", manager.GetAuth)
+	r.POST("/api/v1/manager/user/auth", manager.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/api/v1/upload", manager.UploadImage)
 
@@ -103,7 +103,7 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.POST("/user", manager.AddUser)
 		//获取用户
 		apiManagerV1.GET("/user", manager.GetUser)
-
+		//获取当前登录用户信息
 		apiManagerV1.GET("/user/info", manager.GetCurrentLoginUserInfo)
 	}
 

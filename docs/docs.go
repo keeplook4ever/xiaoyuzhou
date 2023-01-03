@@ -19,45 +19,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "获取Token",
-                "parameters": [
-                    {
-                        "description": "用户名和密码",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/manager.auth"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/manager/articles": {
             "get": {
                 "security": [
@@ -222,13 +183,6 @@ const docTemplate = `{
                         "description": "Cover img URL",
                         "name": "cover_image_url",
                         "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ModifiedBy",
-                        "name": "modified_by",
-                        "in": "formData",
-                        "required": true
                     },
                     {
                         "type": "integer",
@@ -631,7 +585,7 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "manager"
+                    "Manager"
                 ],
                 "summary": "获取用户",
                 "parameters": [
@@ -676,7 +630,7 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "manager"
+                    "Manager"
                 ],
                 "summary": "添加用户",
                 "parameters": [
@@ -711,6 +665,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/user/auth": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取Token",
+                "parameters": [
+                    {
+                        "description": "用户名和密码",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/manager.auth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/user/info": {
             "get": {
                 "security": [
@@ -719,7 +712,7 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "manager"
+                    "Manager"
                 ],
                 "summary": "通过登录态获取当前登录用户信息",
                 "responses": {
@@ -998,16 +991,25 @@ const docTemplate = `{
         "manager.Article": {
             "type": "object",
             "properties": {
-                "authorId": {
+                "author_id": {
                     "type": "integer"
                 },
-                "categoryID": {
+                "category": {
+                    "description": "一个文章属于一个类型",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/manager.Category"
+                        }
+                    ]
+                },
+                "category_id": {
+                    "description": "默认外键",
                     "type": "integer"
                 },
                 "content": {
                     "type": "string"
                 },
-                "coverImageUrl": {
+                "cover_image_url": {
                     "type": "string"
                 },
                 "created_on": {
@@ -1023,25 +1025,25 @@ const docTemplate = `{
                 "language": {
                     "type": "string"
                 },
-                "metaDesc": {
+                "meta_desc": {
                     "type": "string"
                 },
-                "modifiedBy": {
+                "modified_by": {
                     "type": "string"
                 },
                 "modified_on": {
                     "type": "integer"
                 },
-                "pageTitle": {
+                "page_title": {
                     "type": "string"
                 },
-                "relatedArticles": {
+                "related_articles": {
                     "type": "string"
                 },
-                "seoTitle": {
+                "seo_title": {
                     "type": "string"
                 },
-                "seoUrl": {
+                "seo_url": {
                     "type": "string"
                 },
                 "state": {
@@ -1089,6 +1091,12 @@ const docTemplate = `{
         "manager.Category": {
             "type": "object",
             "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.Article"
+                    }
+                },
                 "created_by": {
                     "type": "string"
                 },

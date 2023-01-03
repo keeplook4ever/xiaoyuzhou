@@ -89,7 +89,7 @@ func AddArticle(c *gin.Context) {
 		CoverImageUrl:   article.CoverImageUrl,
 		State:           article.State,
 		Language:        article.Language,
-		CreatedBy:       "", // 根据登录态获取
+		CreatedBy:       c.GetString("username"), // 根据登录态获取
 	}
 	if err = articleService.Add(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
@@ -148,7 +148,7 @@ func EditArticle(c *gin.Context) {
 		MetaDesc:      article.MetaDesc,
 		Content:       article.Content,
 		CoverImageUrl: article.CoverImageUrl,
-		ModifiedBy:    "", // 后端获取，通过登录态
+		ModifiedBy:    c.GetString("username"), // 后端获取，通过登录态
 		AuthorId:      article.AuthorId,
 		State:         article.State,
 	}
@@ -277,7 +277,6 @@ func GetArticles(c *gin.Context) {
 		valid.Min(authorId, 1, "author_id")
 	}
 
-	// 从登录态获取
 	createdBy := c.Query("created_by")
 
 	id := com.StrTo(c.Query("id")).MustInt()

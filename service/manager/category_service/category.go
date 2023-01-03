@@ -69,8 +69,7 @@ func (t *Category) GetAll() ([]manager.Category, error) {
 	)
 
 	cache := cache_service.Category{
-		State: t.State,
-
+		State:    t.State,
 		PageNum:  t.PageNum,
 		PageSize: t.PageSize,
 	}

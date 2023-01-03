@@ -1,12 +1,7 @@
 package article_service
 
 import (
-	"encoding/json"
 	"xiaoyuzhou/models/manager"
-	"xiaoyuzhou/service/manager/cache_service"
-
-	"xiaoyuzhou/pkg/gredis"
-	"xiaoyuzhou/pkg/logging"
 )
 
 type Article struct {
@@ -64,37 +59,55 @@ func (a *Article) Edit() error {
 	})
 }
 
-func (a *Article) Get() ([]*manager.Article, error) {
+type ArticleReturn struct {
+	Id              int    `json:"id"`
+	CategoryID      int    `json:"category_id"`
+	CategoryName    string `json:"category_name"`
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles string `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorId        int    `json:"author_id"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state"`
+	Language        string `json:"language"`
+	ModifiedBy      string `json:"modified_by"`
+}
+
+func (a *Article) Get() ([]manager.Article, error) {
 	var (
-		articles, cacheArticles []*manager.Article
+		articles []manager.Article
+		//cacheArticles []manager.Article
 	)
 
-	cache := cache_service.Article{
-		ID:         a.ID,
-		CreatedBy:  a.CreatedBy,
-		CategoryID: a.CategoryID,
-		State:      a.State,
-		AuthorId:   a.AuthorId,
-		PageNum:    a.PageNum,
-		PageSize:   a.PageSize,
-	}
-	key := cache.GetArticlesKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logging.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheArticles)
-			return cacheArticles, nil
-		}
-	}
+	//cache := cache_service.Article{
+	//	ID:         a.ID,
+	//	CreatedBy:  a.CreatedBy,
+	//	CategoryID: a.CategoryID,
+	//	State:      a.State,
+	//	AuthorId:   a.AuthorId,
+	//	PageNum:    a.PageNum,
+	//	PageSize:   a.PageSize,
+	//}
+	//key := cache.GetArticlesKey()
+	//if gredis.Exists(key) {
+	//	data, err := gredis.Get(key)
+	//	if err != nil {
+	//		logging.Info(err)
+	//	} else {
+	//		json.Unmarshal(data, &cacheArticles)
+	//		return cacheArticles, nil
+	//	}
+	//}
 
 	articles, err := manager.GetArticles(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
 
-	gredis.Set(key, articles, 3600)
+	//gredis.Set(key, articles, 3600)
 	return articles, nil
 }
 

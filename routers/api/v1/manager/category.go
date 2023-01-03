@@ -93,7 +93,7 @@ func AddCategory(c *gin.Context) {
 
 	categoryService := category_service.Category{
 		Name:      form.Name,
-		CreatedBy: "", // 后端获取登录态用户
+		CreatedBy: c.GetString("username"), // 后端获取登录态用户
 		State:     form.State,
 	}
 	exists, err := categoryService.ExistByName()
@@ -145,7 +145,7 @@ func EditCategory(c *gin.Context) {
 	categoryService := category_service.Category{
 		ID:         form.ID,
 		Name:       form.Name,
-		ModifiedBy: "", // 修改者从登录用户态获取
+		ModifiedBy: c.GetString("username"), // 修改者从登录用户态获取
 		State:      form.State,
 	}
 

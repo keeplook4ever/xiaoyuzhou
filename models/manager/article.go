@@ -6,7 +6,26 @@ import (
 
 type Article struct {
 	Model
+	CategoryID int      `json:"category_id"`        // 默认外键
+	Category   Category `json:"category,omitempty"` // 一个文章属于一个类型
+
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles string `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorId        int    `json:"author_id"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state"`
+	Language        string `json:"language"`
+	ModifiedBy      string `json:"modified_by"`
+}
+
+type ArticleWant struct {
+	ID              int    `json:"id"`
 	CategoryID      int    `json:"category_id"`
+	CategoryName    string `json:"category_name"`
 	SeoTitle        string `json:"seo_title"`
 	SeoUrl          string `json:"seo_url"`
 	PageTitle       string `json:"page_title"`
@@ -46,9 +65,13 @@ func GetArticleTotal(maps interface{}) (int, error) {
 }
 
 // GetArticles gets a list of articles based on paging constraints
-func GetArticles(pageNum int, pageSize int, maps interface{}) ([]*Article, error) {
-	var articles []*Article
-	err := db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+func GetArticles(pageNum int, pageSize int, maps interface{}) ([]Article, error) {
+	var articles []Article
+	//articles := make([]map[string]interface{}, 0)
+	err := db.Preload("Category").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+
+	//err := db.Preload("Category").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
