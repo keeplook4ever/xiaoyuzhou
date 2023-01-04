@@ -87,54 +87,14 @@ definitions:
     - name
     - state
     type: object
-  manager.Article:
-    properties:
-      author:
-        allOf:
-        - $ref: '#/definitions/manager.Author'
-        description: 一个文章属于一个作者
-      author_id:
-        type: integer
-      category:
-        allOf:
-        - $ref: '#/definitions/manager.Category'
-        description: 一个文章属于一个类型
-      category_id:
-        description: 默认外键
-        type: integer
-      content:
-        type: string
-      cover_image_url:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      language:
-        type: string
-      meta_desc:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      page_title:
-        type: string
-      related_articles:
-        type: string
-      seo_title:
-        type: string
-      seo_url:
-        type: string
-      state:
-        type: integer
-    type: object
   manager.ArticleDto:
     properties:
+      author_id:
+        type: integer
       author_name:
         type: string
+      category_id:
+        type: integer
       category_name:
         type: string
       content:
@@ -158,20 +118,13 @@ definitions:
       state:
         type: integer
     type: object
-  manager.Author:
+  manager.AuthorDto:
     properties:
       age:
         type: integer
-      articles:
-        items:
-          $ref: '#/definitions/manager.Article'
-        type: array
       created_by:
         type: string
-      createdAt:
-        type: string
       desc:
-        description: 简介
         type: string
       gender:
         type: integer
@@ -179,31 +132,20 @@ definitions:
         type: integer
       modified_by:
         type: string
-      modifiedAt:
-        type: string
       name:
         type: string
     type: object
-  manager.Category:
+  manager.CategoryDto:
     properties:
-      articles:
-        items:
-          $ref: '#/definitions/manager.Article'
-        type: array
       created_by:
-        type: string
-      createdAt:
         type: string
       id:
         type: integer
       modified_by:
         type: string
-      modifiedAt:
-        type: string
       name:
         type: string
       state:
-        description: 0表示禁用，1表示启用
         type: integer
     type: object
   manager.GetArticlesResponse:
@@ -221,7 +163,7 @@ definitions:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.Author'
+          $ref: '#/definitions/manager.AuthorDto'
         type: array
     type: object
   manager.GetCategoryResponse:
@@ -230,7 +172,7 @@ definitions:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.Category'
+          $ref: '#/definitions/manager.CategoryDto'
         type: array
     type: object
   manager.GetUserResponse:

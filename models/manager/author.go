@@ -17,6 +17,28 @@ type Author struct {
 	Articles []Article `json:"articles,omitempty"`
 }
 
+type AuthorDto struct {
+	ID         uint   `json:"id"`
+	Name       string `json:"name"`
+	Gender     int    `json:"gender"`
+	Age        int    `json:"age"`
+	Desc       string `json:"desc"`
+	CreatedBy  string `json:"created_by"`
+	ModifiedBy string `json:"modified_by"`
+}
+
+func (a *Author) ToAuthorDto() AuthorDto {
+	return AuthorDto{
+		ID:         a.ID,
+		Name:       a.Name,
+		Gender:     a.Gender,
+		Age:        a.Age,
+		Desc:       a.Desc,
+		CreatedBy:  a.CreatedBy,
+		ModifiedBy: a.ModifiedBy,
+	}
+}
+
 // ExistAuthorByID checks if an author exists based on ID
 func ExistAuthorByID(id int) (bool, error) {
 	var author Author
@@ -75,9 +97,9 @@ func GetAuthorTotal(maps interface{}) (int64, error) {
 	return count, nil
 }
 
-func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]Author, error) {
+func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]AuthorDto, error) {
 	var (
-		authors []Author
+		authors []AuthorDto
 		err     error
 	)
 
@@ -90,6 +112,9 @@ func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]Author, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-
-	return authors, nil
+	resp := make([]AuthorDto, 0)
+	for _, a := range authors {
+		resp = append(resp, a)
+	}
+	return resp, nil
 }

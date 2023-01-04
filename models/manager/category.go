@@ -15,6 +15,24 @@ type Category struct {
 	Articles []Article `json:"articles,omitempty"`
 }
 
+type CategoryDto struct {
+	ID         uint   `json:"id"`
+	Name       string `json:"name"`
+	CreatedBy  string `json:"created_by"`
+	ModifiedBy string `json:"modified_by"`
+	State      int    `json:"state"`
+}
+
+func (c *Category) ToCategoryDto() CategoryDto {
+	return CategoryDto{
+		ID:         c.ID,
+		Name:       c.Name,
+		CreatedBy:  c.CreatedBy,
+		ModifiedBy: c.ModifiedBy,
+		State:      c.State,
+	}
+}
+
 // ExistCategoryByName checks if there is a Category with the same name
 func ExistCategoryByName(name string) (bool, error) {
 	var tag Category
@@ -45,9 +63,9 @@ func AddCategory(name string, state int, createdBy string) error {
 }
 
 // GetCategory gets a list of tags based on paging and constraints
-func GetCategory(pageNum int, pageSize int, maps interface{}) ([]Category, error) {
+func GetCategory(pageNum int, pageSize int, maps interface{}) ([]CategoryDto, error) {
 	var (
-		tags []Category
+		tags []CategoryDto
 		err  error
 	)
 
@@ -63,6 +81,10 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]Category, error
 		return nil, err
 	}
 
+	resp := make([]CategoryDto, 0)
+	for _, c := range tags {
+		resp = append(resp, c)
+	}
 	return tags, nil
 }
 

@@ -57,9 +57,9 @@ func (t *Category) Count() (int64, error) {
 	return manager.GetCategoryTotal(t.getMaps())
 }
 
-func (t *Category) GetAll() ([]manager.Category, error) {
+func (t *Category) GetAll() ([]manager.CategoryDto, error) {
 	var (
-		categories, cacheTags []manager.Category
+		categories, cacheTags []manager.CategoryDto
 	)
 
 	cache := cache_service.Category{

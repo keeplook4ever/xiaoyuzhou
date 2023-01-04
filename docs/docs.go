@@ -990,81 +990,17 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.Article": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "一个文章属于一个作者",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/manager.Author"
-                        }
-                    ]
-                },
-                "author_id": {
-                    "type": "integer"
-                },
-                "category": {
-                    "description": "一个文章属于一个类型",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/manager.Category"
-                        }
-                    ]
-                },
-                "category_id": {
-                    "description": "默认外键",
-                    "type": "integer"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "cover_image_url": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "meta_desc": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "page_title": {
-                    "type": "string"
-                },
-                "related_articles": {
-                    "type": "string"
-                },
-                "seo_title": {
-                    "type": "string"
-                },
-                "seo_url": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "integer"
-                }
-            }
-        },
         "manager.ArticleDto": {
             "type": "object",
             "properties": {
+                "author_id": {
+                    "type": "integer"
+                },
                 "author_name": {
                     "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
                 },
                 "category_name": {
                     "type": "string"
@@ -1101,26 +1037,16 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.Author": {
+        "manager.AuthorDto": {
             "type": "object",
             "properties": {
                 "age": {
                     "type": "integer"
                 },
-                "articles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/manager.Article"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
                 "created_by": {
                     "type": "string"
                 },
                 "desc": {
-                    "description": "简介",
                     "type": "string"
                 },
                 "gender": {
@@ -1128,9 +1054,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "modifiedAt": {
-                    "type": "string"
                 },
                 "modified_by": {
                     "type": "string"
@@ -1140,26 +1063,14 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.Category": {
+        "manager.CategoryDto": {
             "type": "object",
             "properties": {
-                "articles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/manager.Article"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
                 "created_by": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
-                },
-                "modifiedAt": {
-                    "type": "string"
                 },
                 "modified_by": {
                     "type": "string"
@@ -1168,7 +1079,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "state": {
-                    "description": "0表示禁用，1表示启用",
                     "type": "integer"
                 }
             }
@@ -1196,7 +1106,7 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.Author"
+                        "$ref": "#/definitions/manager.AuthorDto"
                     }
                 }
             }
@@ -1210,7 +1120,7 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.Category"
+                        "$ref": "#/definitions/manager.CategoryDto"
                     }
                 }
             }

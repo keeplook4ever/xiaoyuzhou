@@ -126,8 +126,8 @@ func EditAuthor(c *gin.Context) {
 }
 
 type GetAuthorsResponse struct {
-	Lists []manager.Author `json:"lists"`
-	Count int64            `json:"count"`
+	Lists []manager.AuthorDto `json:"lists"`
+	Count int64               `json:"count"`
 }
 
 // GetAuthors

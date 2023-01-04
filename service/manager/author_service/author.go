@@ -52,9 +52,9 @@ func (a *Author) Edit() error {
 	return manager.EditAuthor(a.ID, data)
 }
 
-func (a *Author) GetAll() ([]manager.Author, error) {
+func (a *Author) GetAll() ([]manager.AuthorDto, error) {
 	var (
-		authors, cacheTags []manager.Author
+		authors, cacheTags []manager.AuthorDto
 	)
 
 	cache := cache_service.Category{

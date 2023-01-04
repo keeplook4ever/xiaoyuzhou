@@ -16,8 +16,8 @@ import (
 )
 
 type GetCategoryResponse struct {
-	Lists []manager.Category `json:"lists"`
-	Count int64              `json:"count"`
+	Lists []manager.CategoryDto `json:"lists"`
+	Count int64                 `json:"count"`
 }
 
 // GetCategory
