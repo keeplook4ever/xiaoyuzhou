@@ -1,22 +1,29 @@
 package manager
 
-import "github.com/jinzhu/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Author struct {
-	Model
+	ID         int       `gorm:"primary_key,autoIncrement,column:id;not null"`
+	CreatedAt  time.Time `gorm:"autoCreateTime;column:created_at;not null"`
+	ModifiedAt time.Time `gorm:"autoUpdateTime;column:modified_at;not null"`
 
-	Name       string `json:"name"`
-	Gender     int    `json:"gender"`
-	Age        int    `json:"age"`
-	Desc       string `json:"desc"` // 简介
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
+	Name       string `gorm:"column:name;not null;unique" json:"name"`
+	Gender     int    `gorm:"column:gender;not null" json:"gender"`
+	Age        int    `gorm:"column:age;not null" json:"age"`
+	Desc       string `gorm:"column:desc;not null" json:"desc"` // 简介
+	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`
+	ModifiedBy string `gorm:"column:modified_by;not null" json:"modified_by"`
+
+	Articles []Article `json:"articles,omitempty"`
 }
 
 // ExistAuthorByID checks if an author exists based on ID
 func ExistAuthorByID(id int) (bool, error) {
 	var author Author
-	err := db.Model(&Author{}).Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&author).Error
+	err := db.Model(&Author{}).Select("id").Where("id = ?", id).First(&author).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -29,7 +36,7 @@ func ExistAuthorByID(id int) (bool, error) {
 
 func ExistAuthorByName(name string) (bool, error) {
 	var author Author
-	err := db.Model(&Author{}).Select("id").Where("name = ? AND deleted_on = ?", name, 0).First(&author).Error
+	err := db.Model(&Author{}).Select("id").Where("name = ? ", name).First(&author).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -55,15 +62,15 @@ func AddAuthor(name string, gender int, age int, desc string, createdBy string) 
 }
 
 func EditAuthor(id int, data interface{}) error {
-	if err := db.Model(&Author{}).Where("id = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
+	if err := db.Model(&Author{}).Where("id = ?", id).Updates(data).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func GetAuthorTotal(maps interface{}) (int, error) {
-	var count int
+func GetAuthorTotal(maps interface{}) (int64, error) {
+	var count int64
 	if err := db.Model(&Author{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}

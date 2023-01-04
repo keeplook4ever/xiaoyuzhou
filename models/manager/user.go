@@ -1,16 +1,19 @@
 package manager
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
-	Model
+	ID         int       `gorm:"column:id;primary_key;autoIncrement;" json:"id"`
+	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime;not null;type:datetime;default:CURRENT_TIMESTAMP;" json:"created_at"`
+	ModifiedAt time.Time `gorm:"column:modified_at;autoUpdateTime;not null;type:datetime;default:CURRENT_TIMESTAMP;" json:"modified_at"`
 
-	Name       string `json:"name" gorm:"unique"` // 用户名唯一
-	Passwd     string `json:"passwd"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
+	Name       string `gorm:"unique;not null" json:"name" ` // 用户名唯一
+	Passwd     string `gorm:"not null;not null" json:"passwd"`
+	CreatedBy  string `gorm:"not null;not null" json:"created_by"`
+	ModifiedBy string `gorm:"not null;not null" json:"modified_by"`
 }
 
 func ExistUserByName(name string) (bool, error) {

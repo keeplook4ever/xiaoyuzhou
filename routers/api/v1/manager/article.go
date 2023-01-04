@@ -29,8 +29,8 @@ type AddArticleForm struct {
 	Content         string `json:"content" binding:"required"`
 	AuthorId        int    `json:"author_id"  binding:"required"`
 	CoverImageUrl   string `json:"cover_image_url" binding:"required"`
-	State           int    `json:"state" binding:"required" enums:"0,1"` // 0表示禁用，1表示启用
-	Language        string `json:"language" binding:"required" enums:"zh,en,jp"`
+	State           int    `json:"state" binding:"required" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
+	Language        string `json:"language" binding:"required" enums:"jp,zh,en" default:"jp"`
 }
 
 // AddArticle
@@ -238,8 +238,8 @@ func DeleteArticle(c *gin.Context) {
 }
 
 type GetArticlesResponse struct {
-	Lists []manager.Article `json:"lists"`
-	Count int               `json:"count"`
+	Lists []manager.ArticleDto `json:"lists"`
+	Count int                  `json:"count"`
 }
 
 // GetArticles

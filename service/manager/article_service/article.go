@@ -1,7 +1,11 @@
 package article_service
 
 import (
+	"encoding/json"
 	"xiaoyuzhou/models/manager"
+	"xiaoyuzhou/pkg/gredis"
+	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/service/manager/cache_service"
 )
 
 type Article struct {
@@ -76,38 +80,38 @@ type ArticleReturn struct {
 	ModifiedBy      string `json:"modified_by"`
 }
 
-func (a *Article) Get() ([]manager.Article, error) {
+func (a *Article) Get() ([]manager.ArticleDto, error) {
 	var (
-		articles []manager.Article
-		//cacheArticles []manager.Article
+		articles      []manager.ArticleDto
+		cacheArticles []manager.ArticleDto
 	)
 
-	//cache := cache_service.Article{
-	//	ID:         a.ID,
-	//	CreatedBy:  a.CreatedBy,
-	//	CategoryID: a.CategoryID,
-	//	State:      a.State,
-	//	AuthorId:   a.AuthorId,
-	//	PageNum:    a.PageNum,
-	//	PageSize:   a.PageSize,
-	//}
-	//key := cache.GetArticlesKey()
-	//if gredis.Exists(key) {
-	//	data, err := gredis.Get(key)
-	//	if err != nil {
-	//		logging.Info(err)
-	//	} else {
-	//		json.Unmarshal(data, &cacheArticles)
-	//		return cacheArticles, nil
-	//	}
-	//}
+	cache := cache_service.Article{
+		ID:         a.ID,
+		CreatedBy:  a.CreatedBy,
+		CategoryID: a.CategoryID,
+		State:      a.State,
+		AuthorId:   a.AuthorId,
+		PageNum:    a.PageNum,
+		PageSize:   a.PageSize,
+	}
+	key := cache.GetArticlesKey()
+	if gredis.Exists(key) {
+		data, err := gredis.Get(key)
+		if err != nil {
+			logging.Info(err)
+		} else {
+			json.Unmarshal(data, &cacheArticles)
+			return cacheArticles, nil
+		}
+	}
 
 	articles, err := manager.GetArticles(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
 
-	//gredis.Set(key, articles, 3600)
+	gredis.Set(key, articles, 3600)
 	return articles, nil
 }
 
@@ -119,13 +123,12 @@ func (a *Article) ExistByID() (bool, error) {
 	return manager.ExistArticleByID(a.ID)
 }
 
-func (a *Article) Count() (int, error) {
+func (a *Article) Count() (int64, error) {
 	return manager.GetArticleTotal(a.getMaps())
 }
 
 func (a *Article) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
-	maps["deleted_on"] = 0
 	if a.State != -1 {
 		maps["state"] = a.State
 	}

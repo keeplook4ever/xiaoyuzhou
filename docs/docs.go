@@ -912,10 +912,11 @@ const docTemplate = `{
                 },
                 "language": {
                     "type": "string",
+                    "default": "jp",
                     "enum": [
+                        "jp",
                         "zh",
-                        "en",
-                        "jp"
+                        "en"
                     ]
                 },
                 "meta_desc": {
@@ -936,9 +937,10 @@ const docTemplate = `{
                 "state": {
                     "description": "0表示禁用，1表示启用",
                     "type": "integer",
+                    "default": 1,
                     "enum": [
-                        0,
-                        1
+                        1,
+                        0
                     ]
                 }
             }
@@ -991,6 +993,14 @@ const docTemplate = `{
         "manager.Article": {
             "type": "object",
             "properties": {
+                "author": {
+                    "description": "一个文章属于一个作者",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/manager.Author"
+                        }
+                    ]
+                },
                 "author_id": {
                     "type": "integer"
                 },
@@ -1012,12 +1022,11 @@ const docTemplate = `{
                 "cover_image_url": {
                     "type": "string"
                 },
-                "created_on": {
-                    "type": "integer"
+                "created_at": {
+                    "type": "string"
                 },
-                "deleted_on": {
-                    "description": "0表示未删除",
-                    "type": "integer"
+                "created_by": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -1028,11 +1037,52 @@ const docTemplate = `{
                 "meta_desc": {
                     "type": "string"
                 },
+                "modified_at": {
+                    "type": "string"
+                },
                 "modified_by": {
                     "type": "string"
                 },
-                "modified_on": {
+                "page_title": {
+                    "type": "string"
+                },
+                "related_articles": {
+                    "type": "string"
+                },
+                "seo_title": {
+                    "type": "string"
+                },
+                "seo_url": {
+                    "type": "string"
+                },
+                "state": {
                     "type": "integer"
+                }
+            }
+        },
+        "manager.ArticleDto": {
+            "type": "object",
+            "properties": {
+                "author_name": {
+                    "type": "string"
+                },
+                "category_name": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "cover_image_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "meta_desc": {
+                    "type": "string"
                 },
                 "page_title": {
                     "type": "string"
@@ -1057,15 +1107,17 @@ const docTemplate = `{
                 "age": {
                     "type": "integer"
                 },
-                "created_by": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.Article"
+                    }
+                },
+                "createdAt": {
                     "type": "string"
                 },
-                "created_on": {
-                    "type": "integer"
-                },
-                "deleted_on": {
-                    "description": "0表示未删除",
-                    "type": "integer"
+                "created_by": {
+                    "type": "string"
                 },
                 "desc": {
                     "description": "简介",
@@ -1077,11 +1129,11 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "modified_by": {
+                "modifiedAt": {
                     "type": "string"
                 },
-                "modified_on": {
-                    "type": "integer"
+                "modified_by": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -1097,24 +1149,20 @@ const docTemplate = `{
                         "$ref": "#/definitions/manager.Article"
                     }
                 },
-                "created_by": {
+                "createdAt": {
                     "type": "string"
                 },
-                "created_on": {
-                    "type": "integer"
-                },
-                "deleted_on": {
-                    "description": "0表示未删除",
-                    "type": "integer"
+                "created_by": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "modified_by": {
+                "modifiedAt": {
                     "type": "string"
                 },
-                "modified_on": {
-                    "type": "integer"
+                "modified_by": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -1134,7 +1182,7 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.Article"
+                        "$ref": "#/definitions/manager.ArticleDto"
                     }
                 }
             }

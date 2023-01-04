@@ -81,13 +81,12 @@ func (a *Author) GetAll() ([]manager.Author, error) {
 	return authors, nil
 }
 
-func (a *Author) Count() (int, error) {
+func (a *Author) Count() (int64, error) {
 	return manager.GetAuthorTotal(a.getMaps())
 }
 
 func (a *Author) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
-	maps["deleted_on"] = 0
 
 	if a.Name != "" {
 		maps["name"] = a.Name

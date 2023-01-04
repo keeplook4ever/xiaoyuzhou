@@ -1,16 +1,19 @@
 package manager
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type Category struct {
-	Model
+	ID         int       `gorm:"column:id;primary_key;autoIncrement;not null"`
+	CreatedAt  time.Time `gorm:"autoCreateTime;column:created_at;not null"`
+	ModifiedAt time.Time `gorm:"autoUpdateTime;column:modified_at;not null"`
 
-	Name       string `json:"name"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"` //0表示禁用，1表示启用
+	Name       string `gorm:"column:name;not null;unique" json:"name"`
+	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`
+	ModifiedBy string `gorm:"column:modified_by;not null" json:"modified_by"`
+	State      int    `gorm:"column:state;not null;default:1" json:"state"` //0表示禁用，1表示启用
 
 	Articles []Article `json:"articles,omitempty"`
 }
@@ -18,7 +21,7 @@ type Category struct {
 // ExistCategoryByName checks if there is a Category with the same name
 func ExistCategoryByName(name string) (bool, error) {
 	var tag Category
-	err := db.Select("id").Where("name = ? AND deleted_on = ? ", name, 0).First(&tag).Error
+	err := db.Select("id").Where("name = ?", name).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -67,8 +70,8 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]Category, error
 }
 
 // GetCategoryTotal counts the total number of tags based on the constraint
-func GetCategoryTotal(maps interface{}) (int, error) {
-	var count int
+func GetCategoryTotal(maps interface{}) (int64, error) {
+	var count int64
 	if err := db.Model(&Category{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
@@ -79,7 +82,7 @@ func GetCategoryTotal(maps interface{}) (int, error) {
 // ExistCategoryByID determines whether a Category exists based on the ID
 func ExistCategoryByID(id int) (bool, error) {
 	var tag Category
-	err := db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
+	err := db.Select("id").Where("id = ? ", id).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -101,7 +104,7 @@ func DeleteCategory(id int) error {
 
 // EditCategory modify a single Category
 func EditCategory(id int, data interface{}) error {
-	if err := db.Model(&Category{}).Where("id = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
+	if err := db.Model(&Category{}).Where("id = ? ", id).Updates(data).Error; err != nil {
 		return err
 	}
 
@@ -110,17 +113,17 @@ func EditCategory(id int, data interface{}) error {
 
 // CleanAllCategory clear all Category
 func CleanAllCategory() (bool, error) {
-	if err := db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Category{}).Error; err != nil {
+	if err := db.Unscoped().Delete(&Category{}).Error; err != nil {
 		return false, err
 	}
 
 	return true, nil
 }
 
-func GetCategoryByID(id int) (tag Category, err error) {
-	err = db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
-	//if err != nil && err != gorm.ErrRecordNotFound {
-	//	return nil, err
-	//}
+func GetCategoryByID(id int) (tag *Category, err error) {
+	err = db.Select("id").Where("id = ? ", id).First(&tag).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
 	return tag, err
 }

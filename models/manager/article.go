@@ -1,30 +1,34 @@
 package manager
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type Article struct {
-	Model
-	CategoryID int      `json:"category_id"`        // 默认外键
-	Category   Category `json:"category,omitempty"` // 一个文章属于一个类型
+	ID         int       `gorm:"column:id;primary_key;autoIncrement;not null" json:"id"`
+	CreatedAt  time.Time `gorm:"column:created_at;type:datetime;not null;autoCreateTime" json:"created_at"`
+	ModifiedAt time.Time `gorm:"column:modified_at;type:datetime;not null;autoUpdateTime" json:"modified_at"`
+	CategoryID int       `gorm:"column:category_id" json:"category_id"`           // 默认外键
+	Category   Category  `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
-	SeoTitle        string `json:"seo_title"`
-	SeoUrl          string `json:"seo_url"`
-	PageTitle       string `json:"page_title"`
-	MetaDesc        string `json:"meta_desc"`
-	RelatedArticles string `json:"related_articles"`
-	Content         string `json:"content"`
-	AuthorId        int    `json:"author_id"`
-	CoverImageUrl   string `json:"cover_image_url"`
-	State           int    `json:"state"`
-	Language        string `json:"language"`
-	ModifiedBy      string `json:"modified_by"`
+	SeoTitle        string `gorm:"column:seo_title;not null;unique" json:"seo_title"`
+	SeoUrl          string `gorm:"column:seo_url;not null;unique" json:"seo_url"`
+	PageTitle       string `gorm:"column:page_title;not null;unique" json:"page_title"`
+	MetaDesc        string `gorm:"column:meta_desc;not null;unique" json:"meta_desc"`
+	RelatedArticles string `gorm:"column:related_articles" json:"related_articles"`
+	Content         string `gorm:"column:content;not null" json:"content"`
+	AuthorId        int    `gorm:"column:author_id;not null" json:"author_id"`
+	Author          Author `gorm:"foreignKey:AuthorId" json:"author,omitempty"` // 一个文章属于一个作者
+	CoverImageUrl   string `gorm:"column:cover_image_url;not null" json:"cover_image_url"`
+	State           int    `gorm:"column:state;not null" json:"state"`
+	Language        string `gorm:"column:language;not null" json:"language"`
+	CreatedBy       string `gorm:"column:created_by;not null" json:"created_by"`
+	ModifiedBy      string `gorm:"column:modified_by;not null" json:"modified_by"`
 }
 
-type ArticleWant struct {
+type ArticleDto struct {
 	ID              int    `json:"id"`
-	CategoryID      int    `json:"category_id"`
 	CategoryName    string `json:"category_name"`
 	SeoTitle        string `json:"seo_title"`
 	SeoUrl          string `json:"seo_url"`
@@ -32,17 +36,34 @@ type ArticleWant struct {
 	MetaDesc        string `json:"meta_desc"`
 	RelatedArticles string `json:"related_articles"`
 	Content         string `json:"content"`
-	AuthorId        int    `json:"author_id"`
+	AuthorName      string `json:"author_name"`
 	CoverImageUrl   string `json:"cover_image_url"`
 	State           int    `json:"state"`
 	Language        string `json:"language"`
-	ModifiedBy      string `json:"modified_by"`
+}
+
+// ToArticleDto 从数据库结构抽取前端需要的字段返回
+func (itself *Article) ToArticleDto() ArticleDto {
+	return ArticleDto{
+		ID:              itself.ID,
+		CategoryName:    itself.Category.Name,
+		SeoUrl:          itself.SeoUrl,
+		SeoTitle:        itself.SeoTitle,
+		PageTitle:       itself.PageTitle,
+		MetaDesc:        itself.MetaDesc,
+		RelatedArticles: itself.MetaDesc,
+		Content:         itself.Content,
+		AuthorName:      itself.Author.Name,
+		CoverImageUrl:   itself.CoverImageUrl,
+		State:           itself.State,
+		Language:        itself.Language,
+	}
 }
 
 // ExistArticleByID checks if an article exists based on ID
 func ExistArticleByID(id int) (bool, error) {
 	var article Article
-	err := db.Model(&Article{}).Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&article).Error
+	err := db.Model(&Article{}).Select("id").Where("id = ? ", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -55,8 +76,8 @@ func ExistArticleByID(id int) (bool, error) {
 }
 
 // GetArticleTotal gets the total number of articles based on the constraints
-func GetArticleTotal(maps interface{}) (int, error) {
-	var count int
+func GetArticleTotal(maps interface{}) (int64, error) {
+	var count int64
 	if err := db.Model(&Article{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
@@ -65,24 +86,26 @@ func GetArticleTotal(maps interface{}) (int, error) {
 }
 
 // GetArticles gets a list of articles based on paging constraints
-func GetArticles(pageNum int, pageSize int, maps interface{}) ([]Article, error) {
+func GetArticles(pageNum int, pageSize int, maps interface{}) ([]ArticleDto, error) {
 	var articles []Article
-	//articles := make([]map[string]interface{}, 0)
-	err := db.Preload("Category").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 
-	//err := db.Preload("Category").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
-
+	err := db.Preload("Category").Preload("Author").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 
-	return articles, nil
+	resp := make([]ArticleDto, len(articles))
+
+	for i, aa := range articles {
+		resp[i] = aa.ToArticleDto()
+	}
+	return resp, nil
 }
 
 // GetArticle Get a single article based on ID
 func GetArticle(id int) (*Article, error) {
 	var article Article
-	err := db.Where("id = ? AND deleted_on = ? ", id, 0).First(&article).Error
+	err := db.Where("id = ? ", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -92,7 +115,7 @@ func GetArticle(id int) (*Article, error) {
 
 // EditArticle modify a single article
 func EditArticle(id int, data interface{}) error {
-	if err := db.Model(&Article{}).Where("id = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
+	if err := db.Model(&Article{}).Where("id = ? ", id).Updates(data).Error; err != nil {
 		return err
 	}
 
@@ -132,7 +155,7 @@ func DeleteArticle(id int) error {
 
 // CleanAllArticle clear all article
 func CleanAllArticle() error {
-	if err := db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{}).Error; err != nil {
+	if err := db.Unscoped().Delete(&Article{}).Error; err != nil {
 		return err
 	}
 
