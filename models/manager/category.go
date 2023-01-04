@@ -2,13 +2,10 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Category struct {
-	ID         int       `gorm:"column:id;primary_key;autoIncrement;not null"`
-	CreatedAt  time.Time `gorm:"autoCreateTime;column:created_at;not null"`
-	ModifiedAt time.Time `gorm:"autoUpdateTime;column:modified_at;not null"`
+	gorm.Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
 
 	Name       string `gorm:"column:name;not null;unique" json:"name"`
 	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`

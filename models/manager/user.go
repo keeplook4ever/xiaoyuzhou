@@ -2,14 +2,10 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {
-	ID         int       `gorm:"column:id;primary_key;autoIncrement;" json:"id"`
-	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime;not null;type:datetime;default:CURRENT_TIMESTAMP;" json:"created_at"`
-	ModifiedAt time.Time `gorm:"column:modified_at;autoUpdateTime;not null;type:datetime;default:CURRENT_TIMESTAMP;" json:"modified_at"`
-
+	gorm.Model        // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
 	Name       string `gorm:"unique;not null" json:"name" ` // 用户名唯一
 	Passwd     string `gorm:"not null;not null" json:"passwd"`
 	CreatedBy  string `gorm:"not null;not null" json:"created_by"`

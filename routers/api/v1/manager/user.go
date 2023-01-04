@@ -86,7 +86,7 @@ type GetUserForm struct {
 
 type GetUserResponse struct {
 	Name string `json:"name"`
-	Id   int    `json:"id"`
+	Id   uint   `json:"id"`
 }
 
 // GetCurrentLoginUserInfo

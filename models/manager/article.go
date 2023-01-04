@@ -2,15 +2,12 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Article struct {
-	ID         int       `gorm:"column:id;primary_key;autoIncrement;not null" json:"id"`
-	CreatedAt  time.Time `gorm:"column:created_at;type:datetime;not null;autoCreateTime" json:"created_at"`
-	ModifiedAt time.Time `gorm:"column:modified_at;type:datetime;not null;autoUpdateTime" json:"modified_at"`
-	CategoryID int       `gorm:"column:category_id" json:"category_id"`           // 默认外键
-	Category   Category  `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
+	gorm.Model          // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
+	CategoryID int      `gorm:"column:category_id" json:"category_id"` // 默认外键
+	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
 	SeoTitle        string `gorm:"column:seo_title;not null;unique" json:"seo_title"`
 	SeoUrl          string `gorm:"column:seo_url;not null;unique" json:"seo_url"`
@@ -28,7 +25,7 @@ type Article struct {
 }
 
 type ArticleDto struct {
-	ID              int    `json:"id"`
+	ID              uint   `json:"id"`
 	CategoryName    string `json:"category_name"`
 	SeoTitle        string `json:"seo_title"`
 	SeoUrl          string `json:"seo_url"`
