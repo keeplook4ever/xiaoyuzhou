@@ -7,7 +7,7 @@ import (
 	"xiaoyuzhou/pkg/e"
 )
 
-type Category struct {
+type CategoryInput struct {
 	ID    int
 	Name  string
 	State int
@@ -16,7 +16,7 @@ type Category struct {
 	PageSize int
 }
 
-func (t *Category) GetCategoryKey() string {
+func (t *CategoryInput) GetCategoryKey() string {
 	keys := []string{
 		e.CACHE_CATEGORY,
 		"LIST",

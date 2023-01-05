@@ -9,36 +9,36 @@ import (
 	"xiaoyuzhou/pkg/logging"
 )
 
-type Category struct {
-	ID         int
-	Name       string
-	CreatedBy  string
-	ModifiedBy string
-	State      int
+type CategoryInput struct {
+	ID        int
+	Name      string
+	CreatedBy string
+	UpdatedBy string
+	State     int
 
 	PageNum  int
 	PageSize int
 }
 
-func (t *Category) ExistByName() (bool, error) {
+func (t *CategoryInput) ExistByName() (bool, error) {
 	return manager.ExistCategoryByName(t.Name)
 }
 
-func (t *Category) ExistByID() (bool, error) {
+func (t *CategoryInput) ExistByID() (bool, error) {
 	return manager.ExistCategoryByID(t.ID)
 }
 
-func (t *Category) GetByID() (*manager.Category, error) {
+func (t *CategoryInput) GetByID() (*manager.Category, error) {
 	return manager.GetCategoryByID(t.ID)
 }
 
-func (t *Category) Add() error {
-	return manager.AddCategory(t.Name, t.State, t.CreatedBy)
+func (t *CategoryInput) Add() error {
+	return manager.AddCategory(t.Name, t.State, t.CreatedBy, t.UpdatedBy)
 }
 
-func (t *Category) Edit() error {
+func (t *CategoryInput) Edit() error {
 	data := make(map[string]interface{})
-	data["modified_by"] = t.ModifiedBy
+	data["updated_by"] = t.UpdatedBy
 	if t.Name != "" {
 		data["name"] = t.Name
 	}
@@ -49,20 +49,20 @@ func (t *Category) Edit() error {
 	return manager.EditCategory(t.ID, data)
 }
 
-func (t *Category) Delete() error {
+func (t *CategoryInput) Delete() error {
 	return manager.DeleteCategory(t.ID)
 }
 
-func (t *Category) Count() (int64, error) {
+func (t *CategoryInput) Count() (int64, error) {
 	return manager.GetCategoryTotal(t.getMaps())
 }
 
-func (t *Category) GetAll() ([]manager.CategoryDto, error) {
+func (t *CategoryInput) GetAll() ([]manager.CategoryDto, error) {
 	var (
 		categories, cacheTags []manager.CategoryDto
 	)
 
-	cache := cache_service.Category{
+	cache := cache_service.CategoryInput{
 		State:    t.State,
 		PageNum:  t.PageNum,
 		PageSize: t.PageSize,
@@ -88,7 +88,7 @@ func (t *Category) GetAll() ([]manager.CategoryDto, error) {
 }
 
 //
-//func (t *Category) Export() (string, error) {
+//func (t *CategoryInput) Export() (string, error) {
 //	categories, err := t.GetAll()
 //	if err != nil {
 //		return "", err
@@ -115,7 +115,7 @@ func (t *Category) GetAll() ([]manager.CategoryDto, error) {
 //			v.Name,
 //			v.CreatedBy,
 //			strconv.Itoa(v.CreatedAt),
-//			v.ModifiedBy,
+//			v.UpdatedBy,
 //			strconv.Itoa(v.ModifiedAt),
 //		}
 //
@@ -143,7 +143,7 @@ func (t *Category) GetAll() ([]manager.CategoryDto, error) {
 //	return filename, nil
 //}
 
-func (t *Category) getMaps() map[string]interface{} {
+func (t *CategoryInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 
 	if t.Name != "" {

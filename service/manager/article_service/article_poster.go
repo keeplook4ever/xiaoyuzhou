@@ -16,15 +16,15 @@ import (
 
 type ArticlePoster struct {
 	PosterName string
-	*Article
+	*ArticleInput
 	Qr *qrcode.QrCode
 }
 
-func NewArticlePoster(posterName string, article *Article, qr *qrcode.QrCode) *ArticlePoster {
+func NewArticlePoster(posterName string, article *ArticleInput, qr *qrcode.QrCode) *ArticlePoster {
 	return &ArticlePoster{
-		PosterName: posterName,
-		Article:    article,
-		Qr:         qr,
+		PosterName:   posterName,
+		ArticleInput: article,
+		Qr:           qr,
 	}
 }
 

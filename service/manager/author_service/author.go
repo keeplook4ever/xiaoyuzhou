@@ -2,40 +2,42 @@ package author_service
 
 import (
 	"encoding/json"
+	"time"
 	"xiaoyuzhou/models/manager"
 	"xiaoyuzhou/pkg/gredis"
 	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/service/manager/cache_service"
 )
 
-type Author struct {
-	ID         int
-	Name       string
-	Gender     int
-	Age        int
-	Desc       string // 简介
-	CreatedBy  string // 创建者
-	ModifiedBy string
-	PageNum    int
-	PageSize   int
+type AuthorInput struct {
+	ID        int
+	Name      string
+	Gender    int
+	Age       int
+	Desc      string // 简介
+	CreatedBy string // 创建者
+	CreatedAt time.Time
+	UpdatedBy string
+	PageNum   int
+	PageSize  int
 }
 
-func (a *Author) ExistByID() (bool, error) {
+func (a *AuthorInput) ExistByID() (bool, error) {
 	return manager.ExistAuthorByID(a.ID)
 }
 
-func (a *Author) ExistByName() (bool, error) {
+func (a *AuthorInput) ExistByName() (bool, error) {
 	return manager.ExistAuthorByName(a.Name)
 }
 
-func (a *Author) Add() error {
-	return manager.AddAuthor(a.Name, a.Gender, a.Age, a.Desc, a.CreatedBy)
+func (a *AuthorInput) Add() error {
+	return manager.AddAuthor(a.Name, a.Gender, a.Age, a.Desc, a.CreatedBy, a.UpdatedBy)
 }
 
-func (a *Author) Edit() error {
+func (a *AuthorInput) Edit() error {
 
 	data := make(map[string]interface{})
-	data["modified_by"] = a.ModifiedBy
+	data["updated_by"] = a.UpdatedBy
 	if a.Name != "" {
 		data["name"] = a.Name
 	}
@@ -52,12 +54,12 @@ func (a *Author) Edit() error {
 	return manager.EditAuthor(a.ID, data)
 }
 
-func (a *Author) GetAll() ([]manager.AuthorDto, error) {
+func (a *AuthorInput) GetAll() ([]manager.AuthorDto, error) {
 	var (
 		authors, cacheTags []manager.AuthorDto
 	)
 
-	cache := cache_service.Category{
+	cache := cache_service.CategoryInput{
 		PageNum:  a.PageNum,
 		PageSize: a.PageSize,
 	}
@@ -81,11 +83,11 @@ func (a *Author) GetAll() ([]manager.AuthorDto, error) {
 	return authors, nil
 }
 
-func (a *Author) Count() (int64, error) {
+func (a *AuthorInput) Count() (int64, error) {
 	return manager.GetAuthorTotal(a.getMaps())
 }
 
-func (a *Author) getMaps() map[string]interface{} {
+func (a *AuthorInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 
 	if a.Name != "" {

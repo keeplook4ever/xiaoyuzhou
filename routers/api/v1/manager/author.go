@@ -39,12 +39,13 @@ func AddAuthor(c *gin.Context) {
 		return
 	}
 
-	authorService := author_service.Author{
+	authorService := author_service.AuthorInput{
 		Name:      author.Name,
 		Age:       author.Age,
 		Gender:    author.Gender,
 		Desc:      author.Desc,
 		CreatedBy: c.GetString("username"), // 创建者从登录用户token获取
+		UpdatedBy: c.GetString("username"), //默认更新者是创建者
 	}
 	exists, err := authorService.ExistByName()
 	if err != nil {
@@ -97,13 +98,13 @@ func EditAuthor(c *gin.Context) {
 		return
 	}
 
-	authorService := author_service.Author{
-		Name:       author.Name,
-		Age:        author.Age,
-		Gender:     author.Gender,
-		Desc:       author.Desc,
-		ID:         author.Id,
-		ModifiedBy: c.GetString("username"), //修改者从登录用户态获取
+	authorService := author_service.AuthorInput{
+		Name:      author.Name,
+		Age:       author.Age,
+		Gender:    author.Gender,
+		Desc:      author.Desc,
+		ID:        author.Id,
+		UpdatedBy: c.GetString("username"), //修改者从登录用户态获取
 	}
 
 	exists, err := authorService.ExistByID()
@@ -144,7 +145,7 @@ func GetAuthors(c *gin.Context) {
 	var appG = app.Gin{C: c}
 	name := c.Query("name")
 	id := com.StrTo(c.Query("id")).MustInt()
-	authorService := author_service.Author{
+	authorService := author_service.AuthorInput{
 		Name:     name,
 		ID:       id,
 		PageNum:  util.GetPage(c),

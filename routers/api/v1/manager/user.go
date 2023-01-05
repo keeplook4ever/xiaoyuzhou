@@ -3,6 +3,7 @@ package manager
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"xiaoyuzhou/models/manager"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/util"
@@ -34,9 +35,11 @@ func AddUser(c *gin.Context) {
 		return
 	}
 
-	userService := user_service.User{
-		Name:   user.Name,
-		Passwd: user.Passwd,
+	userService := user_service.UserInput{
+		Name:      user.Name,
+		Passwd:    user.Passwd,
+		CreatedBy: c.GetString("username"),
+		UpdatedBy: c.GetString("username"),
 	}
 	exists, err := userService.ExistByName()
 	if err != nil {
@@ -77,6 +80,16 @@ func GetUser(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
+
+	userService := user_service.UserInput{}
+	users, err := userService.GetUser()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+	count := len(users)
+	// 定义返回数据
+	appG.Response(http.StatusOK, e.SUCCESS, GetUserResponse{Lists: users, Count: count})
 }
 
 type GetUserForm struct {
@@ -85,8 +98,8 @@ type GetUserForm struct {
 }
 
 type GetUserResponse struct {
-	Name string `json:"name"`
-	Id   uint   `json:"id"`
+	Lists []manager.UserDto `json:"lists"`
+	Count int               `json:"count"`
 }
 
 // GetCurrentLoginUserInfo
@@ -102,18 +115,19 @@ func GetCurrentLoginUserInfo(c *gin.Context) {
 	)
 	username := c.GetString("username")
 
-	userService := user_service.User{
+	userService := user_service.UserInput{
 		Name: username,
 	}
-	user, err := userService.GetUserByName()
+	user, err := userService.GetUser()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
-	var resp GetUserResponse
-	resp.Id = user[0].ID
-	resp.Name = user[0].Name
-	appG.Response(http.StatusOK, e.SUCCESS, resp)
+
+	appG.Response(http.StatusOK, e.SUCCESS, GetUserResponse{
+		Lists: user,
+		Count: 1,
+	})
 }
 
 type auth struct {
@@ -138,7 +152,7 @@ func GetAuth(c *gin.Context) {
 		return
 	}
 
-	userService := user_service.User{Name: auth_.Username, Passwd: auth_.Password}
+	userService := user_service.UserInput{Name: auth_.Username, Passwd: auth_.Password}
 	isExist, err := userService.Check()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)

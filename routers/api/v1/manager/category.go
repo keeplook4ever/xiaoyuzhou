@@ -41,7 +41,7 @@ func GetCategory(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 	}
 
-	categoryService := category_service.Category{
+	categoryService := category_service.CategoryInput{
 		ID:       id,
 		Name:     name,
 		State:    state,
@@ -91,10 +91,11 @@ func AddCategory(c *gin.Context) {
 		return
 	}
 
-	categoryService := category_service.Category{
+	categoryService := category_service.CategoryInput{
 		Name:      form.Name,
 		CreatedBy: c.GetString("username"), // 后端获取登录态用户
 		State:     form.State,
+		UpdatedBy: c.GetString("username"), // 默认更新者是创建者
 	}
 	exists, err := categoryService.ExistByName()
 	if err != nil {
@@ -142,11 +143,11 @@ func EditCategory(c *gin.Context) {
 		return
 	}
 
-	categoryService := category_service.Category{
-		ID:         form.ID,
-		Name:       form.Name,
-		ModifiedBy: c.GetString("username"), // 修改者从登录用户态获取
-		State:      form.State,
+	categoryService := category_service.CategoryInput{
+		ID:        form.ID,
+		Name:      form.Name,
+		UpdatedBy: c.GetString("username"), // 修改者从登录用户态获取
+		State:     form.State,
 	}
 
 	exists, err := categoryService.ExistByID()
@@ -189,7 +190,7 @@ func DeleteCategory(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 	}
 
-	categoryService := category_service.Category{ID: id}
+	categoryService := category_service.CategoryInput{ID: id}
 	exists, err := categoryService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)

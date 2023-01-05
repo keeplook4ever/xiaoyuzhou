@@ -2,13 +2,14 @@ package article_service
 
 import (
 	"encoding/json"
+	"time"
 	"xiaoyuzhou/models/manager"
 	"xiaoyuzhou/pkg/gredis"
 	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/service/manager/cache_service"
 )
 
-type Article struct {
+type ArticleInput struct {
 	ID              int
 	CategoryID      int
 	SeoTitle        string
@@ -21,13 +22,15 @@ type Article struct {
 	CoverImageUrl   string
 	State           int
 	Language        string
-	ModifiedBy      string
+	UpdatedBy       string
+	UpdatedAt       time.Time
 	CreatedBy       string
+	CreatedAt       time.Time
 	PageNum         int
 	PageSize        int
 }
 
-func (a *Article) Add() error {
+func (a *ArticleInput) Add() error {
 	article := map[string]interface{}{
 		"category_id":      a.CategoryID,
 		"seo_title":        a.SeoTitle,
@@ -40,16 +43,14 @@ func (a *Article) Add() error {
 		"cover_image_url":  a.CoverImageUrl,
 		"state":            a.State,
 		"language":         a.Language,
+		"created_by":       a.CreatedBy,
+		"updated_by":       a.UpdatedBy,
 	}
 
-	if err := manager.AddArticle(article); err != nil {
-		return err
-	}
-
-	return nil
+	return manager.AddArticle(article)
 }
 
-func (a *Article) Edit() error {
+func (a *ArticleInput) Edit() error {
 	return manager.EditArticle(a.ID, map[string]interface{}{
 		"category_id":     a.CategoryID,
 		"seo_title":       a.SeoTitle,
@@ -58,7 +59,8 @@ func (a *Article) Edit() error {
 		"content":         a.Content,
 		"cover_image_url": a.CoverImageUrl,
 		"state":           a.State,
-		"modified_by":     a.ModifiedBy,
+		"updated_by":      a.UpdatedBy,
+		"updated_at":      a.UpdatedAt,
 		"author_id":       a.AuthorId,
 	})
 }
@@ -80,13 +82,13 @@ type ArticleReturn struct {
 	ModifiedBy      string `json:"modified_by"`
 }
 
-func (a *Article) Get() ([]manager.ArticleDto, error) {
+func (a *ArticleInput) Get() ([]manager.ArticleDto, error) {
 	var (
 		articles      []manager.ArticleDto
 		cacheArticles []manager.ArticleDto
 	)
 
-	cache := cache_service.Article{
+	cache := cache_service.ArticleInput{
 		ID:         a.ID,
 		CreatedBy:  a.CreatedBy,
 		CategoryID: a.CategoryID,
@@ -115,19 +117,19 @@ func (a *Article) Get() ([]manager.ArticleDto, error) {
 	return articles, nil
 }
 
-func (a *Article) Delete() error {
+func (a *ArticleInput) Delete() error {
 	return manager.DeleteArticle(a.ID)
 }
 
-func (a *Article) ExistByID() (bool, error) {
+func (a *ArticleInput) ExistByID() (bool, error) {
 	return manager.ExistArticleByID(a.ID)
 }
 
-func (a *Article) Count() (int64, error) {
+func (a *ArticleInput) Count() (int64, error) {
 	return manager.GetArticleTotal(a.getMaps())
 }
 
-func (a *Article) getMaps() map[string]interface{} {
+func (a *ArticleInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 	if a.State != -1 {
 		maps["state"] = a.State

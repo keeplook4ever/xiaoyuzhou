@@ -2,34 +2,38 @@ package manager
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type Category struct {
 	gorm.Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
 
-	Name       string `gorm:"column:name;not null;unique" json:"name"`
-	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`
-	ModifiedBy string `gorm:"column:modified_by;not null" json:"modified_by"`
-	State      int    `gorm:"column:state;not null;default:1" json:"state"` //0表示禁用，1表示启用
-
-	Articles []Article `json:"articles,omitempty"`
+	Name      string    `gorm:"column:name;not null;unique" json:"name"`
+	CreatedBy string    `gorm:"column:created_by;not null" json:"created_by"`
+	UpdatedBy string    `gorm:"column:updated_by;not null" json:"updated_by"`
+	State     int       `gorm:"column:state;not null;default:1" json:"state"` //0表示禁用，1表示启用
+	Articles  []Article `json:"articles,omitempty"`
 }
 
 type CategoryDto struct {
-	ID         uint   `json:"id"`
-	Name       string `json:"name"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	ID        uint      `json:"id"`
+	Name      string    `json:"name"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	State     int       `json:"state"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (c *Category) ToCategoryDto() CategoryDto {
 	return CategoryDto{
-		ID:         c.ID,
-		Name:       c.Name,
-		CreatedBy:  c.CreatedBy,
-		ModifiedBy: c.ModifiedBy,
-		State:      c.State,
+		ID:        c.ID,
+		Name:      c.Name,
+		CreatedBy: c.CreatedBy,
+		UpdatedBy: c.UpdatedBy,
+		State:     c.State,
+		CreatedAt: c.CreatedAt,
+		UpdatedAt: c.UpdatedAt,
 	}
 }
 
@@ -49,11 +53,12 @@ func ExistCategoryByName(name string) (bool, error) {
 }
 
 // AddCategory Add a Category
-func AddCategory(name string, state int, createdBy string) error {
+func AddCategory(name string, state int, createdBy string, updatedBy string) error {
 	tag := Category{
 		Name:      name,
 		State:     state,
 		CreatedBy: createdBy,
+		UpdatedBy: updatedBy,
 	}
 	if err := db.Create(&tag).Error; err != nil {
 		return err
@@ -65,7 +70,7 @@ func AddCategory(name string, state int, createdBy string) error {
 // GetCategory gets a list of tags based on paging and constraints
 func GetCategory(pageNum int, pageSize int, maps interface{}) ([]CategoryDto, error) {
 	var (
-		tags []CategoryDto
+		tags []Category
 		err  error
 	)
 
@@ -83,9 +88,9 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]CategoryDto, er
 
 	resp := make([]CategoryDto, 0)
 	for _, c := range tags {
-		resp = append(resp, c)
+		resp = append(resp, c.ToCategoryDto())
 	}
-	return tags, nil
+	return resp, nil
 }
 
 // GetCategoryTotal counts the total number of tags based on the constraint

@@ -2,6 +2,7 @@ package manager
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type Article struct {
@@ -21,24 +22,28 @@ type Article struct {
 	State           int    `gorm:"column:state;not null" json:"state"`
 	Language        string `gorm:"column:language;not null" json:"language"`
 	CreatedBy       string `gorm:"column:created_by;not null" json:"created_by"`
-	ModifiedBy      string `gorm:"column:modified_by;not null" json:"modified_by"`
+	UpdatedBy       string `gorm:"column:updated_by;not null" json:"updated_by"`
 }
 
 type ArticleDto struct {
-	ID              uint   `json:"id"`
-	CategoryID      uint   `json:"category_id"`
-	CategoryName    string `json:"category_name"`
-	SeoTitle        string `json:"seo_title"`
-	SeoUrl          string `json:"seo_url"`
-	PageTitle       string `json:"page_title"`
-	MetaDesc        string `json:"meta_desc"`
-	RelatedArticles string `json:"related_articles"`
-	Content         string `json:"content"`
-	AuthorID        uint   `json:"author_id"`
-	AuthorName      string `json:"author_name"`
-	CoverImageUrl   string `json:"cover_image_url"`
-	State           int    `json:"state"`
-	Language        string `json:"language"`
+	ID              uint      `json:"id"`
+	CategoryID      uint      `json:"category_id"`
+	CategoryName    string    `json:"category_name"`
+	SeoTitle        string    `json:"seo_title"`
+	SeoUrl          string    `json:"seo_url"`
+	PageTitle       string    `json:"page_title"`
+	MetaDesc        string    `json:"meta_desc"`
+	RelatedArticles string    `json:"related_articles"`
+	Content         string    `json:"content"`
+	AuthorID        uint      `json:"author_id"`
+	AuthorName      string    `json:"author_name"`
+	CoverImageUrl   string    `json:"cover_image_url"`
+	State           int       `json:"state"`
+	Language        string    `json:"language"`
+	CreatedAt       time.Time `json:"created_at"`
+	CreatedBy       string    `json:"created_by"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	UpdatedBy       string    `json:"updated_by"`
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
@@ -58,6 +63,10 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		CoverImageUrl:   itself.CoverImageUrl,
 		State:           itself.State,
 		Language:        itself.Language,
+		CreatedAt:       itself.CreatedAt,
+		UpdatedAt:       itself.UpdatedAt,
+		CreatedBy:       itself.CreatedBy,
+		UpdatedBy:       itself.UpdatedBy,
 	}
 }
 
@@ -137,6 +146,8 @@ func AddArticle(data map[string]interface{}) error {
 		CoverImageUrl:   data["cover_image_url"].(string),
 		State:           data["state"].(int),
 		Language:        data["language"].(string),
+		CreatedBy:       data["created_by"].(string),
+		UpdatedBy:       data["updated_by"].(string),
 	}
 	if err := db.Create(&article).Error; err != nil {
 		return err

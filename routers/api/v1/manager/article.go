@@ -53,7 +53,7 @@ func AddArticle(c *gin.Context) {
 	}
 
 	// 判断是否类型存在
-	categoryService := category_service.Category{ID: article.CategoryID}
+	categoryService := category_service.CategoryInput{ID: article.CategoryID}
 	exists, err := categoryService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
@@ -66,7 +66,7 @@ func AddArticle(c *gin.Context) {
 	}
 
 	// 判断是否作者存在
-	authorService := author_service.Author{ID: article.AuthorId}
+	authorService := author_service.AuthorInput{ID: article.AuthorId}
 	exists, err = authorService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
@@ -77,7 +77,7 @@ func AddArticle(c *gin.Context) {
 		return
 	}
 
-	articleService := article_service.Article{
+	articleService := article_service.ArticleInput{
 		CategoryID:      article.CategoryID,
 		SeoTitle:        article.SeoTitle,
 		SeoUrl:          article.SeoUrl,
@@ -90,6 +90,7 @@ func AddArticle(c *gin.Context) {
 		State:           article.State,
 		Language:        article.Language,
 		CreatedBy:       c.GetString("username"), // 根据登录态获取
+		UpdatedBy:       c.GetString("username"),
 	}
 	if err = articleService.Add(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
@@ -140,7 +141,7 @@ func EditArticle(c *gin.Context) {
 		return
 	}
 
-	articleService := article_service.Article{
+	articleService := article_service.ArticleInput{
 		ID:            article.ID,
 		CategoryID:    article.CategoryID,
 		PageTitle:     article.PageTitle,
@@ -148,7 +149,7 @@ func EditArticle(c *gin.Context) {
 		MetaDesc:      article.MetaDesc,
 		Content:       article.Content,
 		CoverImageUrl: article.CoverImageUrl,
-		ModifiedBy:    c.GetString("username"), // 后端获取，通过登录态
+		UpdatedBy:     c.GetString("username"), // 后端获取，通过登录态
 		AuthorId:      article.AuthorId,
 		State:         article.State,
 	}
@@ -163,7 +164,7 @@ func EditArticle(c *gin.Context) {
 	}
 
 	// 判断类型是否存在
-	tagService := category_service.Category{ID: article.CategoryID}
+	tagService := category_service.CategoryInput{ID: article.CategoryID}
 	exists, err = tagService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
@@ -176,7 +177,7 @@ func EditArticle(c *gin.Context) {
 	}
 
 	// 判断是否作者存在
-	authorService := author_service.Author{ID: article.AuthorId}
+	authorService := author_service.AuthorInput{ID: article.AuthorId}
 	exists, err = authorService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
@@ -217,7 +218,7 @@ func DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	articleService := article_service.Article{ID: id}
+	articleService := article_service.ArticleInput{ID: id}
 	exists, err := articleService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_CHECK_EXIST_ARTICLE_FAIL, nil)
@@ -287,7 +288,7 @@ func GetArticles(c *gin.Context) {
 		return
 	}
 
-	articleService := article_service.Article{
+	articleService := article_service.ArticleInput{
 		ID:         id,
 		CreatedBy:  createdBy,
 		CategoryID: tagId,
@@ -322,7 +323,7 @@ const (
 
 func GenerateArticlePoster(c *gin.Context) {
 	appG := app.Gin{C: c}
-	article := &article_service.Article{}
+	article := &article_service.ArticleInput{}
 	qr := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto)
 	posterName := article_service.GetPosterFlag() + "-" + qrcode.GetQrCodeFileName(qr.URL) + qr.GetQrCodeExt()
 	articlePoster := article_service.NewArticlePoster(posterName, article, qr)

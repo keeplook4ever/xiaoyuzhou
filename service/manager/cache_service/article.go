@@ -7,7 +7,7 @@ import (
 	"xiaoyuzhou/pkg/e"
 )
 
-type Article struct {
+type ArticleInput struct {
 	ID         int
 	CategoryID int
 	State      int
@@ -17,11 +17,11 @@ type Article struct {
 	PageSize   int
 }
 
-func (a *Article) GetArticleKey() string {
+func (a *ArticleInput) GetArticleKey() string {
 	return e.CACHE_ARTICLE + "_" + strconv.Itoa(a.ID)
 }
 
-func (a *Article) GetArticlesKey() string {
+func (a *ArticleInput) GetArticlesKey() string {
 	keys := []string{
 		e.CACHE_ARTICLE,
 		"LIST",

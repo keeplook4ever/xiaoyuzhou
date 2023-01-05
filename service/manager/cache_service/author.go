@@ -6,7 +6,7 @@ import (
 	"xiaoyuzhou/pkg/e"
 )
 
-func (t *Category) GetAuthorsKey() string {
+func (t *CategoryInput) GetAuthorsKey() string {
 	keys := []string{
 		e.CACHE_CATEGORY,
 		"LIST",

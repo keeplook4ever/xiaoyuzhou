@@ -2,40 +2,45 @@ package manager
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type Author struct {
 	gorm.Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
 
-	Name       string `gorm:"column:name;not null;unique" json:"name"`
-	Gender     int    `gorm:"column:gender;not null" json:"gender"`
-	Age        int    `gorm:"column:age;not null" json:"age"`
-	Desc       string `gorm:"column:desc;not null" json:"desc"` // 简介
-	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`
-	ModifiedBy string `gorm:"column:modified_by;not null" json:"modified_by"`
+	Name      string `gorm:"column:name;not null;unique" json:"name"`
+	Gender    int    `gorm:"column:gender;not null" json:"gender"`
+	Age       int    `gorm:"column:age;not null" json:"age"`
+	Desc      string `gorm:"column:desc;not null" json:"desc"` // 简介
+	CreatedBy string `gorm:"column:created_by;not null" json:"created_by"`
+	UpdatedBy string `gorm:"column:updated_by;not null" json:"updated_by"`
 
 	Articles []Article `json:"articles,omitempty"`
 }
 
 type AuthorDto struct {
-	ID         uint   `json:"id"`
-	Name       string `json:"name"`
-	Gender     int    `json:"gender"`
-	Age        int    `json:"age"`
-	Desc       string `json:"desc"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
+	ID        uint      `json:"id"`
+	Name      string    `json:"name"`
+	Gender    int       `json:"gender"`
+	Age       int       `json:"age"`
+	Desc      string    `json:"desc"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (a *Author) ToAuthorDto() AuthorDto {
 	return AuthorDto{
-		ID:         a.ID,
-		Name:       a.Name,
-		Gender:     a.Gender,
-		Age:        a.Age,
-		Desc:       a.Desc,
-		CreatedBy:  a.CreatedBy,
-		ModifiedBy: a.ModifiedBy,
+		ID:        a.ID,
+		Name:      a.Name,
+		Gender:    a.Gender,
+		Age:       a.Age,
+		Desc:      a.Desc,
+		CreatedBy: a.CreatedBy,
+		UpdatedBy: a.UpdatedBy,
+		CreatedAt: a.CreatedAt,
+		UpdatedAt: a.UpdatedAt,
 	}
 }
 
@@ -66,13 +71,14 @@ func ExistAuthorByName(name string) (bool, error) {
 	return false, nil
 }
 
-func AddAuthor(name string, gender int, age int, desc string, createdBy string) error {
+func AddAuthor(name string, gender int, age int, desc string, createdBy string, updatedBy string) error {
 	author := Author{
 		Name:      name,
 		Gender:    gender,
 		Age:       age,
 		Desc:      desc,
 		CreatedBy: createdBy,
+		UpdatedBy: updatedBy,
 	}
 	if err := db.Create(&author).Error; err != nil {
 		return err
@@ -99,7 +105,7 @@ func GetAuthorTotal(maps interface{}) (int64, error) {
 
 func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]AuthorDto, error) {
 	var (
-		authors []AuthorDto
+		authors []Author
 		err     error
 	)
 
@@ -114,7 +120,7 @@ func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]AuthorDto, error
 	}
 	resp := make([]AuthorDto, 0)
 	for _, a := range authors {
-		resp = append(resp, a)
+		resp = append(resp, a.ToAuthorDto())
 	}
 	return resp, nil
 }
