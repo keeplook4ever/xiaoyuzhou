@@ -1,12 +1,8 @@
 package author_service
 
 import (
-	"encoding/json"
 	"time"
 	"xiaoyuzhou/models/manager"
-	"xiaoyuzhou/pkg/gredis"
-	"xiaoyuzhou/pkg/logging"
-	"xiaoyuzhou/service/manager/cache_service"
 )
 
 type AuthorInput struct {
@@ -56,30 +52,12 @@ func (a *AuthorInput) Edit() error {
 
 func (a *AuthorInput) GetAll() ([]manager.AuthorDto, error) {
 	var (
-		authors, cacheTags []manager.AuthorDto
+		authors []manager.AuthorDto
 	)
-
-	cache := cache_service.CategoryInput{
-		PageNum:  a.PageNum,
-		PageSize: a.PageSize,
-	}
-	key := cache.GetAuthorsKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logging.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheTags)
-			return cacheTags, nil
-		}
-	}
-
 	authors, err := manager.GetAuthors(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
-
-	gredis.Set(key, authors, 3600)
 	return authors, nil
 }
 
