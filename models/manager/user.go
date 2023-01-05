@@ -2,24 +2,23 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {
-	gorm.Model        // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	Name       string `gorm:"column:name;unique;not null" json:"name" ` // 用户名唯一
-	Passwd     string `gorm:"column:passwd;not null" json:"passwd"`
-	CreatedBy  string `gorm:"column:created_by;not null" json:"created_by"`
-	UpdatedBy  string `gorm:"column:updated_by;not null" json:"updated_by"`
+	Model            // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
+	Name      string `gorm:"column:name;unique;not null" json:"name" ` // 用户名唯一
+	Passwd    string `gorm:"column:passwd;not null" json:"passwd"`
+	CreatedBy string `gorm:"column:created_by;not null" json:"created_by"`
+	UpdatedBy string `gorm:"column:updated_by;not null" json:"updated_by"`
 }
 
 type UserDto struct {
-	ID        uint      `json:"id"`
-	Name      string    `json:"name"`
-	CreatedBy string    `json:"created_by"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedBy string    `json:"updated_by"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	CreatedBy string `json:"created_by"`
+	CreatedAt int    `json:"created_at"`
+	UpdatedBy string `json:"updated_by"`
+	UpdatedAt int    `json:"updated_at"`
 }
 
 func (u *User) ToUserDto() UserDto {

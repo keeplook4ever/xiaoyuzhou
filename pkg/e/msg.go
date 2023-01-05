@@ -30,6 +30,7 @@ var MsgFlags = map[int]string{
 	ERROR_UPLOAD_SAVE_IMAGE_FAIL:    "保存图片失败",
 	ERROR_UPLOAD_CHECK_IMAGE_FAIL:   "检查图片失败",
 	ERROR_UPLOAD_CHECK_IMAGE_FORMAT: "校验图片错误，图片格式或大小有问题",
+	ERROR_PUT_FILE_TO_QINIU:         "上传图片到七牛云失败",
 	ERROR_EXIST_AUTHOR_FAIL:         "获取作者失败",
 	ERROR_NOT_EXIST_AUTHOR:          "该作者不存在",
 	ERROR_EXIST_AUTHOR:              "该作者已存在",

@@ -101,6 +101,10 @@ definitions:
         type: string
       cover_image_url:
         type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
       id:
         type: integer
       language:
@@ -117,11 +121,17 @@ definitions:
         type: string
       state:
         type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
     type: object
   manager.AuthorDto:
     properties:
       age:
         type: integer
+      created_at:
+        type: string
       created_by:
         type: string
       desc:
@@ -130,23 +140,29 @@ definitions:
         type: integer
       id:
         type: integer
-      modified_by:
-        type: string
       name:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
         type: string
     type: object
   manager.CategoryDto:
     properties:
+      created_at:
+        type: string
       created_by:
         type: string
       id:
         type: integer
-      modified_by:
-        type: string
       name:
         type: string
       state:
         type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
     type: object
   manager.GetArticlesResponse:
     properties:
@@ -177,9 +193,26 @@ definitions:
     type: object
   manager.GetUserResponse:
     properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/manager.UserDto'
+        type: array
+    type: object
+  manager.UserDto:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: string
       id:
         type: integer
       name:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
         type: string
     type: object
   manager.auth:
@@ -340,6 +373,30 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改文章
+      tags:
+      - Manager
+  /manager/articles/img:
+    post:
+      parameters:
+      - description: Image File
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传图片
       tags:
       - Manager
   /manager/author:

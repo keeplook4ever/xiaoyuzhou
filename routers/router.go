@@ -91,6 +91,8 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.DELETE("/articles/:id", manager.DeleteArticle)
 		//生成文章海报
 		apiManagerV1.POST("/articles/poster/generate", manager.GenerateArticlePoster)
+		//上传文章图片
+		apiManagerV1.POST("/articles/img", manager.UploadImage)
 
 		//添加作者接口
 		apiManagerV1.POST("/author", manager.AddAuthor)
@@ -105,6 +107,7 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.GET("/user", manager.GetUser)
 		//获取当前登录用户信息
 		apiManagerV1.GET("/user/info", manager.GetCurrentLoginUserInfo)
+
 	}
 
 	return r

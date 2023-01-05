@@ -2,12 +2,11 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Article struct {
-	gorm.Model          // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	CategoryID int      `gorm:"column:category_id" json:"category_id"`           // 默认外键
+	Model               // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
+	CategoryID int      `gorm:"column:category_id" json:"category_id"` // 默认外键
 	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
 	SeoTitle        string `gorm:"column:seo_title;not null;unique" json:"seo_title"`
@@ -26,24 +25,24 @@ type Article struct {
 }
 
 type ArticleDto struct {
-	ID              uint      `json:"id"`
-	CategoryID      uint      `json:"category_id"`
-	CategoryName    string    `json:"category_name"`
-	SeoTitle        string    `json:"seo_title"`
-	SeoUrl          string    `json:"seo_url"`
-	PageTitle       string    `json:"page_title"`
-	MetaDesc        string    `json:"meta_desc"`
-	RelatedArticles string    `json:"related_articles"`
-	Content         string    `json:"content"`
-	AuthorID        uint      `json:"author_id"`
-	AuthorName      string    `json:"author_name"`
-	CoverImageUrl   string    `json:"cover_image_url"`
-	State           int       `json:"state"`
-	Language        string    `json:"language"`
-	CreatedAt       time.Time `json:"created_at"`
-	CreatedBy       string    `json:"created_by"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	UpdatedBy       string    `json:"updated_by"`
+	ID              uint   `json:"id"`
+	CategoryID      uint   `json:"category_id"`
+	CategoryName    string `json:"category_name"`
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles string `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorID        uint   `json:"author_id"`
+	AuthorName      string `json:"author_name"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state"`
+	Language        string `json:"language"`
+	CreatedAt       int    `json:"created_at"`
+	CreatedBy       string `json:"created_by"`
+	UpdatedAt       int    `json:"updated_at"`
+	UpdatedBy       string `json:"updated_by"`
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回

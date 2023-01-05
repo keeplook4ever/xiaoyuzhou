@@ -10,6 +10,7 @@ require (
 	github.com/go-ini/ini v1.67.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gomodule/redigo v2.0.1-0.20180401191855-9352ab68be13+incompatible
+	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.8.8
@@ -48,6 +49,7 @@ require (
 	golang.org/x/crypto v0.3.0 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
 	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/tools v0.1.12 // indirect

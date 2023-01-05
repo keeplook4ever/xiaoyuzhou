@@ -2,12 +2,10 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Category struct {
-	gorm.Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-
+	Model
 	Name      string    `gorm:"column:name;not null;unique" json:"name"`
 	CreatedBy string    `gorm:"column:created_by;not null" json:"created_by"`
 	UpdatedBy string    `gorm:"column:updated_by;not null" json:"updated_by"`
@@ -16,13 +14,13 @@ type Category struct {
 }
 
 type CategoryDto struct {
-	ID        uint      `json:"id"`
-	Name      string    `json:"name"`
-	CreatedBy string    `json:"created_by"`
-	UpdatedBy string    `json:"updated_by"`
-	State     int       `json:"state"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	CreatedBy string `json:"created_by"`
+	UpdatedBy string `json:"updated_by"`
+	State     int    `json:"state"`
+	CreatedAt int    `json:"created_at"`
+	UpdatedAt int    `json:"updated_at"`
 }
 
 func (c *Category) ToCategoryDto() CategoryDto {

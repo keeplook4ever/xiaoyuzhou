@@ -2,11 +2,10 @@ package manager
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Author struct {
-	gorm.Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
+	Model // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
 
 	Name      string `gorm:"column:name;not null;unique" json:"name"`
 	Gender    int    `gorm:"column:gender;not null" json:"gender"`
@@ -19,15 +18,15 @@ type Author struct {
 }
 
 type AuthorDto struct {
-	ID        uint      `json:"id"`
-	Name      string    `json:"name"`
-	Gender    int       `json:"gender"`
-	Age       int       `json:"age"`
-	Desc      string    `json:"desc"`
-	CreatedBy string    `json:"created_by"`
-	UpdatedBy string    `json:"updated_by"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	Gender    int    `json:"gender"`
+	Age       int    `json:"age"`
+	Desc      string `json:"desc"`
+	CreatedBy string `json:"created_by"`
+	UpdatedBy string `json:"updated_by"`
+	CreatedAt int    `json:"created_at"`
+	UpdatedAt int    `json:"updated_at"`
 }
 
 func (a *Author) ToAuthorDto() AuthorDto {

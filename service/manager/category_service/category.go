@@ -1,12 +1,7 @@
 package category_service
 
 import (
-	"encoding/json"
 	"xiaoyuzhou/models/manager"
-	"xiaoyuzhou/service/manager/cache_service"
-
-	"xiaoyuzhou/pkg/gredis"
-	"xiaoyuzhou/pkg/logging"
 )
 
 type CategoryInput struct {
@@ -59,31 +54,14 @@ func (t *CategoryInput) Count() (int64, error) {
 
 func (t *CategoryInput) GetAll() ([]manager.CategoryDto, error) {
 	var (
-		categories, cacheTags []manager.CategoryDto
+		categories []manager.CategoryDto
 	)
-
-	cache := cache_service.CategoryInput{
-		State:    t.State,
-		PageNum:  t.PageNum,
-		PageSize: t.PageSize,
-	}
-	key := cache.GetCategoryKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logging.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheTags)
-			return cacheTags, nil
-		}
-	}
 
 	categories, err := manager.GetCategory(t.PageNum, t.PageSize, t.getMaps())
 	if err != nil {
 		return nil, err
 	}
 
-	gredis.Set(key, categories, 3600)
 	return categories, nil
 }
 

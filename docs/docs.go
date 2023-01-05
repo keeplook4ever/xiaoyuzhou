@@ -120,6 +120,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/articles/img": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "上传图片",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image File",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/articles/{id}": {
             "put": {
                 "security": [
@@ -1011,6 +1050,12 @@ const docTemplate = `{
                 "cover_image_url": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1034,6 +1079,12 @@ const docTemplate = `{
                 },
                 "state": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
+                    "type": "string"
                 }
             }
         },
@@ -1042,6 +1093,9 @@ const docTemplate = `{
             "properties": {
                 "age": {
                     "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "created_by": {
                     "type": "string"
@@ -1055,10 +1109,13 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "modified_by": {
+                "name": {
                     "type": "string"
                 },
-                "name": {
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
                     "type": "string"
                 }
             }
@@ -1066,20 +1123,26 @@ const docTemplate = `{
         "manager.CategoryDto": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "created_by": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "modified_by": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "state": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
+                    "type": "string"
                 }
             }
         },
@@ -1128,10 +1191,36 @@ const docTemplate = `{
         "manager.GetUserResponse": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/manager.UserDto"
+                    }
+                }
+            }
+        },
+        "manager.UserDto": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
                     "type": "string"
                 }
             }
