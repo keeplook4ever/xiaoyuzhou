@@ -1,12 +1,8 @@
 package article_service
 
 import (
-	"encoding/json"
 	"time"
 	"xiaoyuzhou/models/manager"
-	"xiaoyuzhou/pkg/gredis"
-	"xiaoyuzhou/pkg/logging"
-	"xiaoyuzhou/service/manager/cache_service"
 )
 
 type ArticleInput struct {
@@ -84,36 +80,36 @@ type ArticleReturn struct {
 
 func (a *ArticleInput) Get() ([]manager.ArticleDto, error) {
 	var (
-		articles      []manager.ArticleDto
-		cacheArticles []manager.ArticleDto
+		articles []manager.ArticleDto
+		//cacheArticles []manager.ArticleDto
 	)
 
-	cache := cache_service.ArticleInput{
-		ID:         a.ID,
-		CreatedBy:  a.CreatedBy,
-		CategoryID: a.CategoryID,
-		State:      a.State,
-		AuthorId:   a.AuthorId,
-		PageNum:    a.PageNum,
-		PageSize:   a.PageSize,
-	}
-	key := cache.GetArticlesKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logging.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheArticles)
-			return cacheArticles, nil
-		}
-	}
+	//cache := cache_service.ArticleInput{
+	//	ID:         a.ID,
+	//	CreatedBy:  a.CreatedBy,
+	//	CategoryID: a.CategoryID,
+	//	State:      a.State,
+	//	AuthorId:   a.AuthorId,
+	//	PageNum:    a.PageNum,
+	//	PageSize:   a.PageSize,
+	//}
+	//key := cache.GetArticlesKey()
+	//if gredis.Exists(key) {
+	//	data, err := gredis.Get(key)
+	//	if err != nil {
+	//		logging.Info(err)
+	//	} else {
+	//		json.Unmarshal(data, &cacheArticles)
+	//		return cacheArticles, nil
+	//	}
+	//}
 
 	articles, err := manager.GetArticles(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
 
-	gredis.Set(key, articles, 3600)
+	//gredis.Set(key, articles, 3600)
 	return articles, nil
 }
 
