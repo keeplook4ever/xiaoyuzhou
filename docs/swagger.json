@@ -193,6 +193,18 @@
                     },
                     {
                         "type": "string",
+                        "description": "SEO URL",
+                        "name": "seo_url",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Related Articles",
+                        "name": "related_articles",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "description": "Desc",
                         "name": "meta_desc",
                         "in": "formData"
@@ -217,6 +229,7 @@
                     },
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "State",
                         "name": "state",
                         "in": "formData"
@@ -1043,7 +1056,7 @@
                     "type": "string"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1073,7 +1086,7 @@
                     "type": "integer"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1087,7 +1100,7 @@
                     "type": "integer"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1105,7 +1118,7 @@
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1116,7 +1129,7 @@
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1131,7 +1144,7 @@
                     "type": "integer"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1198,7 +1211,7 @@
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1210,7 +1223,7 @@
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"

@@ -101,30 +101,34 @@ func AddArticle(c *gin.Context) {
 }
 
 type EditArticleForm struct {
-	ID            int    `form:"id" binding:"Required"`
-	CategoryID    int    `form:"category_id"`
-	SeoTitle      string `form:"seo_title"`
-	PageTitle     string `form:"page_title"`
-	MetaDesc      string `form:"meta_desc"`
-	AuthorId      int    `form:"author_id"`
-	Content       string `form:"content"`
-	ModifiedBy    string `form:"modified_by" binding:"Required"`
-	CoverImageUrl string `form:"cover_image_url"`
-	State         int    `form:"state" enums:"0,1"`
+	ID              int    `form:"id" binding:"required"`
+	CategoryID      int    `form:"category_id"`
+	SeoTitle        string `form:"seo_title"`
+	SeoUrl          string `form:"seo_url"`
+	PageTitle       string `form:"page_title"`
+	MetaDesc        string `form:"meta_desc"`
+	AuthorId        int    `form:"author_id"`
+	Content         string `form:"content"`
+	UpdatedBy       string `form:"updated_by" binding:"required"`
+	CoverImageUrl   string `form:"cover_image_url"`
+	State           int    `form:"state" enums:"0,1"`
+	RelatedArticles string `form:"related_articles"`
 }
 
 // EditArticle
 // @Summary 修改文章
 // @Produce  json
 // @Param id path int true "ID"
-// @Param category_id formData int false "Category ID" mininum(1) maxinum(10)
+// @Param category_id formData int false "Category ID"
 // @Param page_title formData string false "Page Title"
 // @Param seo_title formData string false "SEO Title"
+// @Param seo_url formData string false "SEO URL"
+// @Param related_articles formData string false "Related Articles"
 // @Param meta_desc formData string false "Desc"
 // @Param author_id formData int false "Author ID"
 // @Param content formData string false "Content"
 // @Param cover_image_url formData string false "Cover img URL"
-// @Param state formData int false "State"
+// @Param state formData int false "State" default(1)
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 //@Security ApiKeyAuth
@@ -133,7 +137,8 @@ type EditArticleForm struct {
 func EditArticle(c *gin.Context) {
 	var (
 		appG    = app.Gin{C: c}
-		article = EditArticleForm{ID: com.StrTo(c.Param("id")).MustInt()}
+		article = EditArticleForm{ID: com.StrTo(c.Param("id")).MustInt(),
+			UpdatedBy: c.GetString("username")}
 	)
 
 	if err := c.ShouldBind(&article); err != nil {
@@ -142,16 +147,18 @@ func EditArticle(c *gin.Context) {
 	}
 
 	articleService := article_service.ArticleInput{
-		ID:            article.ID,
-		CategoryID:    article.CategoryID,
-		PageTitle:     article.PageTitle,
-		SeoTitle:      article.SeoTitle,
-		MetaDesc:      article.MetaDesc,
-		Content:       article.Content,
-		CoverImageUrl: article.CoverImageUrl,
-		UpdatedBy:     c.GetString("username"), // 后端获取，通过登录态
-		AuthorId:      article.AuthorId,
-		State:         article.State,
+		ID:              article.ID,
+		CategoryID:      article.CategoryID,
+		PageTitle:       article.PageTitle,
+		SeoTitle:        article.SeoTitle,
+		SeoUrl:          article.SeoUrl,
+		MetaDesc:        article.MetaDesc,
+		Content:         article.Content,
+		CoverImageUrl:   article.CoverImageUrl,
+		RelatedArticles: article.RelatedArticles,
+		UpdatedBy:       c.GetString("username"), // 后端获取，通过登录态
+		AuthorId:        article.AuthorId,
+		State:           article.State,
 	}
 	exists, err := articleService.ExistByID()
 	if err != nil {
@@ -163,29 +170,33 @@ func EditArticle(c *gin.Context) {
 		return
 	}
 
-	// 判断类型是否存在
-	tagService := category_service.CategoryInput{ID: article.CategoryID}
-	exists, err = tagService.ExistByID()
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
-		return
+	if article.CategoryID > 0 {
+		// 判断类型是否存在
+		tagService := category_service.CategoryInput{ID: article.CategoryID}
+		exists, err = tagService.ExistByID()
+		if err != nil {
+			appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
+			return
+		}
+
+		if !exists {
+			appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_CATEGORY, nil)
+			return
+		}
 	}
 
-	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_CATEGORY, nil)
-		return
-	}
-
-	// 判断是否作者存在
-	authorService := author_service.AuthorInput{ID: article.AuthorId}
-	exists, err = authorService.ExistByID()
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
-		return
-	}
-	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_AUTHOR, nil)
-		return
+	if article.AuthorId > 0 {
+		// 判断是否作者存在
+		authorService := author_service.AuthorInput{ID: article.AuthorId}
+		exists, err = authorService.ExistByID()
+		if err != nil {
+			appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
+			return
+		}
+		if !exists {
+			appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_AUTHOR, nil)
+			return
+		}
 	}
 
 	err = articleService.Edit()

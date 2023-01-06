@@ -201,6 +201,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "SEO URL",
+                        "name": "seo_url",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Related Articles",
+                        "name": "related_articles",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "description": "Desc",
                         "name": "meta_desc",
                         "in": "formData"
@@ -225,6 +237,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "State",
                         "name": "state",
                         "in": "formData"
@@ -1051,7 +1064,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1081,7 +1094,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1095,7 +1108,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1113,7 +1126,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1124,7 +1137,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1139,7 +1152,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"
@@ -1206,7 +1219,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_by": {
                     "type": "string"
@@ -1218,7 +1231,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_by": {
                     "type": "string"

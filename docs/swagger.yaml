@@ -102,7 +102,7 @@ definitions:
       cover_image_url:
         type: string
       created_at:
-        type: string
+        type: integer
       created_by:
         type: string
       id:
@@ -122,7 +122,7 @@ definitions:
       state:
         type: integer
       updated_at:
-        type: string
+        type: integer
       updated_by:
         type: string
     type: object
@@ -131,7 +131,7 @@ definitions:
       age:
         type: integer
       created_at:
-        type: string
+        type: integer
       created_by:
         type: string
       desc:
@@ -143,14 +143,14 @@ definitions:
       name:
         type: string
       updated_at:
-        type: string
+        type: integer
       updated_by:
         type: string
     type: object
   manager.CategoryDto:
     properties:
       created_at:
-        type: string
+        type: integer
       created_by:
         type: string
       id:
@@ -160,7 +160,7 @@ definitions:
       state:
         type: integer
       updated_at:
-        type: string
+        type: integer
       updated_by:
         type: string
     type: object
@@ -203,7 +203,7 @@ definitions:
   manager.UserDto:
     properties:
       created_at:
-        type: string
+        type: integer
       created_by:
         type: string
       id:
@@ -211,7 +211,7 @@ definitions:
       name:
         type: string
       updated_at:
-        type: string
+        type: integer
       updated_by:
         type: string
     type: object
@@ -339,6 +339,14 @@ paths:
         in: formData
         name: seo_title
         type: string
+      - description: SEO URL
+        in: formData
+        name: seo_url
+        type: string
+      - description: Related Articles
+        in: formData
+        name: related_articles
+        type: string
       - description: Desc
         in: formData
         name: meta_desc
@@ -355,7 +363,8 @@ paths:
         in: formData
         name: cover_image_url
         type: string
-      - description: State
+      - default: 1
+        description: State
         in: formData
         name: state
         type: integer

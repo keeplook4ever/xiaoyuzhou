@@ -1,7 +1,6 @@
 package article_service
 
 import (
-	"time"
 	"xiaoyuzhou/models/manager"
 )
 
@@ -19,9 +18,9 @@ type ArticleInput struct {
 	State           int
 	Language        string
 	UpdatedBy       string
-	UpdatedAt       time.Time
+	UpdatedAt       int
 	CreatedBy       string
-	CreatedAt       time.Time
+	CreatedAt       int
 	PageNum         int
 	PageSize        int
 }
@@ -47,18 +46,37 @@ func (a *ArticleInput) Add() error {
 }
 
 func (a *ArticleInput) Edit() error {
-	return manager.EditArticle(a.ID, map[string]interface{}{
-		"category_id":     a.CategoryID,
-		"seo_title":       a.SeoTitle,
-		"page_title":      a.PageTitle,
-		"meta_desc":       a.MetaDesc,
-		"content":         a.Content,
-		"cover_image_url": a.CoverImageUrl,
-		"state":           a.State,
-		"updated_by":      a.UpdatedBy,
-		"updated_at":      a.UpdatedAt,
-		"author_id":       a.AuthorId,
-	})
+	data := make(map[string]interface{})
+	data["updated_by"] = a.UpdatedBy
+	data["state"] = a.State
+	if a.CategoryID > 0 {
+		data["category_id"] = a.CategoryID
+	}
+	if a.AuthorId > 0 {
+		data["author_id"] = a.AuthorId
+	}
+	if a.SeoTitle != "" {
+		data["seo_title"] = a.SeoTitle
+	}
+	if a.SeoUrl != "" {
+		data["seo_url"] = a.SeoUrl
+	}
+	if a.PageTitle != "" {
+		data["page_title"] = a.PageTitle
+	}
+	if a.MetaDesc != "" {
+		data["meta_desc"] = a.MetaDesc
+	}
+	if a.Content != "" {
+		data["content"] = a.Content
+	}
+	if a.CoverImageUrl != "" {
+		data["cover_image_url"] = a.CoverImageUrl
+	}
+	if a.RelatedArticles != "" {
+		data["related_articles"] = a.RelatedArticles
+	}
+	return manager.EditArticle(a.ID, data)
 }
 
 type ArticleReturn struct {
