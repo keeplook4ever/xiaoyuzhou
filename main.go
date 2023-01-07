@@ -2,25 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"xiaoyuzhou/models/manager"
+	"xiaoyuzhou/pkg/aws"
 
-	"github.com/gin-gonic/gin"
-
-	"xiaoyuzhou/pkg/gredis"
-	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/setting"
-	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/routers"
 )
 
 func init() {
-	setting.Setup()
-	manager.Setup()
-	logging.Setup()
-	gredis.Setup()
-	util.Setup()
+	//setting.Setup()
+	//manager.Setup()
+	//logging.Setup()
+	//gredis.Setup()
+	//util.Setup()
+	aws.Test()
 }
 
 // @title 小小の宇宙API文档
