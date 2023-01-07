@@ -629,6 +629,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/s3/token": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取S3上传Token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/aws.TmpTokenStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/user": {
             "get": {
                 "security": [
@@ -930,6 +960,23 @@ const docTemplate = `{
                 },
                 "data": {},
                 "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "aws.TmpTokenStruct": {
+            "type": "object",
+            "properties": {
+                "access_key_id": {
+                    "type": "string"
+                },
+                "expiration": {
+                    "type": "integer"
+                },
+                "secret_access_key": {
+                    "type": "string"
+                },
+                "session_token": {
                     "type": "string"
                 }
             }

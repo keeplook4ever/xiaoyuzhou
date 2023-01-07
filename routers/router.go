@@ -72,6 +72,9 @@ func InitRouter() *gin.Engine {
 	apiManagerV1 := r.Group("/api/v1/manager/")
 	apiManagerV1.Use(jwt.JWT())
 	{
+		// 获取S3上传权限token
+		apiManagerV1.POST("/s3/token", manager.GetS3Token)
+
 		//获取类型列表
 		apiManagerV1.GET("/category", manager.GetCategory)
 		//新建类型

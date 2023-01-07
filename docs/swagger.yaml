@@ -8,6 +8,17 @@ definitions:
       msg:
         type: string
     type: object
+  aws.TmpTokenStruct:
+    properties:
+      access_key_id:
+        type: string
+      expiration:
+        type: integer
+      secret_access_key:
+        type: string
+      session_token:
+        type: string
+    type: object
   manager.AddArticleForm:
     properties:
       author_id:
@@ -615,6 +626,24 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改文章类型
+      tags:
+      - Manager
+  /manager/s3/token:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/aws.TmpTokenStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取S3上传Token
       tags:
       - Manager
   /manager/user:
