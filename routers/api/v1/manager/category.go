@@ -50,13 +50,13 @@ func GetCategory(c *gin.Context) {
 	}
 	categories, err := categoryService.GetAll()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_GET_CATEGORYS_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_GET_CATEGORYS_FAIL, nil)
 		return
 	}
 
 	count, err := categoryService.Count()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_COUNT_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -99,7 +99,7 @@ func AddCategory(c *gin.Context) {
 	}
 	exists, err := categoryService.ExistByName()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
 	}
 	if exists {
@@ -109,7 +109,7 @@ func AddCategory(c *gin.Context) {
 
 	err = categoryService.Add()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_ADD_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -152,7 +152,7 @@ func EditCategory(c *gin.Context) {
 
 	exists, err := categoryService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -163,7 +163,7 @@ func EditCategory(c *gin.Context) {
 
 	err = categoryService.Edit()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EDIT_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -193,7 +193,7 @@ func DeleteCategory(c *gin.Context) {
 	categoryService := category_service.CategoryInput{ID: id}
 	exists, err := categoryService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -203,7 +203,7 @@ func DeleteCategory(c *gin.Context) {
 	}
 
 	if err = categoryService.Delete(); err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_DELETE_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_DELETE_CATEGORY_FAIL, nil)
 		return
 	}
 

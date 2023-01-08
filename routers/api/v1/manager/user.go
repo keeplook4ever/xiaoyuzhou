@@ -84,7 +84,7 @@ func GetUser(c *gin.Context) {
 	userService := user_service.UserInput{}
 	users, err := userService.GetUser()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR_GET_USER_FAIL, nil)
 		return
 	}
 	count := len(users)
@@ -92,14 +92,14 @@ func GetUser(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, GetUserResponse{Lists: users, Count: count})
 }
 
-type GetUserForm struct {
-	Name string `json:"name"`
-	Id   string `json:"id"`
-}
-
 type GetUserResponse struct {
 	Lists []manager.UserDto `json:"lists"`
 	Count int               `json:"count"`
+}
+
+type GetUserForm struct {
+	Name string `json:"name"`
+	Id   string `json:"id"`
 }
 
 // GetCurrentLoginUserInfo
@@ -107,7 +107,7 @@ type GetUserResponse struct {
 // @Router /manager/user/info [get]
 // @Security ApiKeyAuth
 // @Tags Manager
-// @Success 200 {object} GetUserResponse
+// @Success 200 {object} manager.UserDto
 // @Failure 500 {object} app.Response
 func GetCurrentLoginUserInfo(c *gin.Context) {
 	var (
@@ -120,14 +120,11 @@ func GetCurrentLoginUserInfo(c *gin.Context) {
 	}
 	user, err := userService.GetUser()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR_GET_USER_INFO_FAIL, nil)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, GetUserResponse{
-		Lists: user,
-		Count: 1,
-	})
+	appG.Response(http.StatusOK, e.SUCCESS, user[0])
 }
 
 type auth struct {
@@ -155,7 +152,7 @@ func GetAuth(c *gin.Context) {
 	userService := user_service.UserInput{Name: auth_.Username, Passwd: auth_.Password}
 	isExist, err := userService.Check()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
 		return
 	}
 
@@ -166,7 +163,7 @@ func GetAuth(c *gin.Context) {
 
 	token, err := util.GenerateToken(auth_.Username, auth_.Password)
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_TOKEN, nil)
+		appG.Response(http.StatusOK, e.ERROR_AUTH_TOKEN, nil)
 		return
 	}
 

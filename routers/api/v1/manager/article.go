@@ -56,7 +56,7 @@ func AddArticle(c *gin.Context) {
 	categoryService := category_service.CategoryInput{ID: article.CategoryID}
 	exists, err := categoryService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_CATEGORY_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EXIST_CATEGORY_FAIL, nil)
 		return
 	}
 
@@ -93,7 +93,7 @@ func AddArticle(c *gin.Context) {
 		UpdatedBy:       c.GetString("username"),
 	}
 	if err = articleService.Add(); err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_ADD_ARTICLE_FAIL, err.Error())
 		return
 	}
 

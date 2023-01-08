@@ -21,7 +21,7 @@ func GetS3Token(c *gin.Context) {
 	var token *aws.TmpTokenStruct
 	token, err := aws.GetToken()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, http.StatusInternalServerError, nil)
+		appG.Response(http.StatusOK, http.StatusInternalServerError, err.Error())
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, *token)

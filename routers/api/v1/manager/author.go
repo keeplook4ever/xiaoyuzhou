@@ -109,7 +109,7 @@ func EditAuthor(c *gin.Context) {
 
 	exists, err := authorService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_AUTHOR_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EXIST_AUTHOR_FAIL, nil)
 		return
 	}
 	if !exists {
@@ -119,7 +119,7 @@ func EditAuthor(c *gin.Context) {
 
 	err = authorService.Edit()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_AUTHOR_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_EDIT_AUTHOR_FAIL, nil)
 		return
 	}
 
@@ -153,13 +153,13 @@ func GetAuthors(c *gin.Context) {
 	}
 	authors, err := authorService.GetAll()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_GET_AUTHOR_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_GET_AUTHOR_FAIL, nil)
 		return
 	}
 
 	count, err := authorService.Count()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_AUTHOR_FAIL, nil)
+		appG.Response(http.StatusOK, e.ERROR_COUNT_AUTHOR_FAIL, nil)
 		return
 	}
 

@@ -41,6 +41,8 @@ var MsgFlags = map[int]string{
 	ERROR_CHECK_EXIST_USER:          "检查用户失败",
 	ERROR_USER_HAS_EXIST:            "用户已经存在",
 	ERROR_CREAT_USER:                "创建用户失败",
+	ERROR_GET_USER_INFO_FAIL:        "获取当前登录用户信息失败",
+	ERROR_GET_USER_FAIL:             "获取用户列表失败",
 }
 
 // GetMsg get error information based on Code
