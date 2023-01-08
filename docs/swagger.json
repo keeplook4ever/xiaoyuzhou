@@ -198,7 +198,10 @@
                         "in": "formData"
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
                         "description": "Related Articles",
                         "name": "related_articles",
                         "in": "formData"
@@ -793,7 +796,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetUserResponse"
+                            "$ref": "#/definitions/manager.UserDto"
                         }
                     },
                     "500": {
@@ -1017,7 +1020,10 @@
                     "type": "string"
                 },
                 "related_articles": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "seo_title": {
                     "type": "string"
@@ -1121,7 +1127,10 @@
                     "type": "string"
                 },
                 "related_articles": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "seo_title": {
                     "type": "string"

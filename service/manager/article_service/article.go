@@ -1,6 +1,7 @@
 package article_service
 
 import (
+	"strings"
 	"xiaoyuzhou/models/manager"
 )
 
@@ -11,7 +12,7 @@ type ArticleInput struct {
 	SeoUrl          string
 	PageTitle       string
 	MetaDesc        string
-	RelatedArticles string
+	RelatedArticles []string
 	Content         string
 	AuthorId        int
 	CoverImageUrl   string
@@ -32,7 +33,7 @@ func (a *ArticleInput) Add() error {
 		"seo_url":          a.SeoUrl,
 		"page_title":       a.PageTitle,
 		"meta_desc":        a.MetaDesc,
-		"related_articles": a.RelatedArticles,
+		"related_articles": strings.Join(a.RelatedArticles, ","),
 		"content":          a.Content,
 		"author_id":        a.AuthorId,
 		"cover_image_url":  a.CoverImageUrl,
@@ -73,8 +74,8 @@ func (a *ArticleInput) Edit() error {
 	if a.CoverImageUrl != "" {
 		data["cover_image_url"] = a.CoverImageUrl
 	}
-	if a.RelatedArticles != "" {
-		data["related_articles"] = a.RelatedArticles
+	if len(a.RelatedArticles) > 0 {
+		data["related_articles"] = strings.Join(a.RelatedArticles, ",")
 	}
 	return manager.EditArticle(a.ID, data)
 }

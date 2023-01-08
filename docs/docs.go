@@ -206,7 +206,10 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
                         "description": "Related Articles",
                         "name": "related_articles",
                         "in": "formData"
@@ -801,7 +804,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetUserResponse"
+                            "$ref": "#/definitions/manager.UserDto"
                         }
                     },
                     "500": {
@@ -1025,7 +1028,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "related_articles": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "seo_title": {
                     "type": "string"
@@ -1129,7 +1135,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "related_articles": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "seo_title": {
                     "type": "string"

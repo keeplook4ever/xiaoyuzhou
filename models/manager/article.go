@@ -6,13 +6,13 @@ import (
 
 type Article struct {
 	Model               // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	CategoryID int      `gorm:"column:category_id" json:"category_id"` // 默认外键
+	CategoryID int      `gorm:"column:category_id" json:"category_id"`           // 默认外键
 	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
 	SeoTitle        string `gorm:"column:seo_title;not null;unique" json:"seo_title"`
 	SeoUrl          string `gorm:"column:seo_url;not null;unique" json:"seo_url"`
 	PageTitle       string `gorm:"column:page_title;not null;unique" json:"page_title"`
-	MetaDesc        string `gorm:"column:meta_desc;not null;unique" json:"meta_desc"`
+	MetaDesc        string `gorm:"column:meta_desc;not null" json:"meta_desc"`
 	RelatedArticles string `gorm:"column:related_articles" json:"related_articles"`
 	Content         string `gorm:"column:content;not null" json:"content"`
 	AuthorId        int    `gorm:"column:author_id;not null" json:"author_id"`
@@ -25,24 +25,24 @@ type Article struct {
 }
 
 type ArticleDto struct {
-	ID              uint   `json:"id"`
-	CategoryID      uint   `json:"category_id"`
-	CategoryName    string `json:"category_name"`
-	SeoTitle        string `json:"seo_title"`
-	SeoUrl          string `json:"seo_url"`
-	PageTitle       string `json:"page_title"`
-	MetaDesc        string `json:"meta_desc"`
-	RelatedArticles string `json:"related_articles"`
-	Content         string `json:"content"`
-	AuthorID        uint   `json:"author_id"`
-	AuthorName      string `json:"author_name"`
-	CoverImageUrl   string `json:"cover_image_url"`
-	State           int    `json:"state"`
-	Language        string `json:"language"`
-	CreatedAt       int    `json:"created_at"`
-	CreatedBy       string `json:"created_by"`
-	UpdatedAt       int    `json:"updated_at"`
-	UpdatedBy       string `json:"updated_by"`
+	ID              uint     `json:"id"`
+	CategoryID      uint     `json:"category_id"`
+	CategoryName    string   `json:"category_name"`
+	SeoTitle        string   `json:"seo_title"`
+	SeoUrl          string   `json:"seo_url"`
+	PageTitle       string   `json:"page_title"`
+	MetaDesc        string   `json:"meta_desc"`
+	RelatedArticles []string `json:"related_articles"`
+	Content         string   `json:"content"`
+	AuthorID        uint     `json:"author_id"`
+	AuthorName      string   `json:"author_name"`
+	CoverImageUrl   string   `json:"cover_image_url"`
+	State           int      `json:"state"`
+	Language        string   `json:"language"`
+	CreatedAt       int      `json:"created_at"`
+	CreatedBy       string   `json:"created_by"`
+	UpdatedAt       int      `json:"updated_at"`
+	UpdatedBy       string   `json:"updated_by"`
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
@@ -55,7 +55,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		SeoTitle:        itself.SeoTitle,
 		PageTitle:       itself.PageTitle,
 		MetaDesc:        itself.MetaDesc,
-		RelatedArticles: itself.MetaDesc,
+		RelatedArticles: []string{itself.RelatedArticles},
 		Content:         itself.Content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,

@@ -41,7 +41,9 @@ definitions:
       page_title:
         type: string
       related_articles:
-        type: string
+        items:
+          type: string
+        type: array
       seo_title:
         type: string
       seo_url:
@@ -125,7 +127,9 @@ definitions:
       page_title:
         type: string
       related_articles:
-        type: string
+        items:
+          type: string
+        type: array
       seo_title:
         type: string
       seo_url:
@@ -356,8 +360,10 @@ paths:
         type: string
       - description: Related Articles
         in: formData
+        items:
+          type: string
         name: related_articles
-        type: string
+        type: array
       - description: Desc
         in: formData
         name: meta_desc
@@ -732,7 +738,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetUserResponse'
+            $ref: '#/definitions/manager.UserDto'
         "500":
           description: Internal Server Error
           schema:
