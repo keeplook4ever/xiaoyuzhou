@@ -2,6 +2,7 @@ package manager
 
 import (
 	"gorm.io/gorm"
+	"strings"
 )
 
 type Article struct {
@@ -55,7 +56,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		SeoTitle:        itself.SeoTitle,
 		PageTitle:       itself.PageTitle,
 		MetaDesc:        itself.MetaDesc,
-		RelatedArticles: []string{itself.RelatedArticles},
+		RelatedArticles: strings.Split(itself.RelatedArticles, ","),
 		Content:         itself.Content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,
