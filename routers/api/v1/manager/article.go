@@ -93,7 +93,7 @@ func AddArticle(c *gin.Context) {
 		UpdatedBy:       c.GetString("username"),
 	}
 	if err = articleService.Add(); err != nil {
-		appG.Response(http.StatusOK, e.ERROR_ADD_ARTICLE_FAIL, err.Error())
+		appG.Response(http.StatusOK, err.Error(), nil)
 		return
 	}
 
