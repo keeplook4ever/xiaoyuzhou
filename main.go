@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"xiaoyuzhou/models/manager"
+	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/gredis"
 	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
@@ -16,7 +16,7 @@ import (
 
 func init() {
 	setting.Setup()
-	manager.Setup()
+	models.Setup()
 	logging.Setup()
 	gredis.Setup()
 	util.Setup()

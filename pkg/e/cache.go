@@ -1,6 +1,6 @@
 package e
 
 const (
-	CACHE_ARTICLE  = "ARTICLE"
-	CACHE_CATEGORY = "CATEGORY"
+	CacheArticle  = "ARTICLE"
+	CacheCategory = "CATEGORY"
 )
