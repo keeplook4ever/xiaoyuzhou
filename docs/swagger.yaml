@@ -19,7 +19,117 @@ definitions:
       session_token:
         type: string
     type: object
-  manager.AddArticleForm:
+  models.ArticleDto:
+    properties:
+      author_id:
+        type: integer
+      author_name:
+        type: string
+      category_id:
+        type: integer
+      category_name:
+        type: string
+      content:
+        type: string
+      cover_image_url:
+        type: string
+      created_at:
+        type: integer
+      created_by:
+        type: string
+      id:
+        type: integer
+      language:
+        type: string
+      meta_desc:
+        type: string
+      page_title:
+        type: string
+      related_articles:
+        type: string
+      seo_title:
+        type: string
+      seo_url:
+        type: string
+      state:
+        type: integer
+      updated_at:
+        type: integer
+      updated_by:
+        type: string
+    type: object
+  models.AuthorDto:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: integer
+      created_by:
+        type: string
+      desc:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: integer
+      updated_by:
+        type: string
+    type: object
+  models.CategoryDto:
+    properties:
+      created_at:
+        type: integer
+      created_by:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      state:
+        type: integer
+      updated_at:
+        type: integer
+      updated_by:
+        type: string
+    type: object
+  models.LotteryDto:
+    properties:
+      content:
+        type: string
+      keyword:
+        type: string
+      score:
+        type: integer
+    type: object
+  models.LuckyTodayDto:
+    properties:
+      song:
+        type: string
+      spell:
+        type: string
+      todo:
+        type: string
+    type: object
+  models.UserDto:
+    properties:
+      created_at:
+        type: integer
+      created_by:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: integer
+      updated_by:
+        type: string
+    type: object
+  v1.AddArticleForm:
     properties:
       author_id:
         type: integer
@@ -66,7 +176,7 @@ definitions:
     - seo_url
     - state
     type: object
-  manager.AddAuthorForm:
+  v1.AddAuthorForm:
     properties:
       age:
         type: integer
@@ -87,7 +197,7 @@ definitions:
     - gender
     - name
     type: object
-  manager.AddCategoryForm:
+  v1.AddCategoryForm:
     properties:
       name:
         type: string
@@ -98,135 +208,50 @@ definitions:
     - name
     - state
     type: object
-  manager.ArticleDto:
-    properties:
-      author_id:
-        type: integer
-      author_name:
-        type: string
-      category_id:
-        type: integer
-      category_name:
-        type: string
-      content:
-        type: string
-      cover_image_url:
-        type: string
-      created_at:
-        type: integer
-      created_by:
-        type: string
-      id:
-        type: integer
-      language:
-        type: string
-      meta_desc:
-        type: string
-      page_title:
-        type: string
-      related_articles:
-        type: string
-      seo_title:
-        type: string
-      seo_url:
-        type: string
-      state:
-        type: integer
-      updated_at:
-        type: integer
-      updated_by:
-        type: string
-    type: object
-  manager.AuthorDto:
-    properties:
-      age:
-        type: integer
-      created_at:
-        type: integer
-      created_by:
-        type: string
-      desc:
-        type: string
-      gender:
-        type: integer
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        type: integer
-      updated_by:
-        type: string
-    type: object
-  manager.CategoryDto:
-    properties:
-      created_at:
-        type: integer
-      created_by:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      state:
-        type: integer
-      updated_at:
-        type: integer
-      updated_by:
-        type: string
-    type: object
-  manager.GetArticlesResponse:
+  v1.GetArticlesResponse:
     properties:
       count:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.ArticleDto'
+          $ref: '#/definitions/models.ArticleDto'
         type: array
     type: object
-  manager.GetAuthorsResponse:
+  v1.GetAuthorsResponse:
     properties:
       count:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.AuthorDto'
+          $ref: '#/definitions/models.AuthorDto'
         type: array
     type: object
-  manager.GetCategoryResponse:
+  v1.GetCategoryResponse:
     properties:
       count:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.CategoryDto'
+          $ref: '#/definitions/models.CategoryDto'
         type: array
     type: object
-  manager.GetUserResponse:
+  v1.GetLotteryResponse:
+    properties:
+      lotteryContent:
+        $ref: '#/definitions/models.LotteryDto'
+      luckyContent:
+        $ref: '#/definitions/models.LuckyTodayDto'
+    type: object
+  v1.GetUserResponse:
     properties:
       count:
         type: integer
       lists:
         items:
-          $ref: '#/definitions/manager.UserDto'
+          $ref: '#/definitions/models.UserDto'
         type: array
     type: object
-  manager.UserDto:
-    properties:
-      created_at:
-        type: integer
-      created_by:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        type: integer
-      updated_by:
-        type: string
-    type: object
-  manager.auth:
+  v1.auth:
     properties:
       password:
         type: string
@@ -273,7 +298,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetArticlesResponse'
+            $ref: '#/definitions/v1.GetArticlesResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -290,7 +315,7 @@ paths:
         name: _
         required: true
         schema:
-          $ref: '#/definitions/manager.AddArticleForm'
+          $ref: '#/definitions/v1.AddArticleForm'
       produces:
       - application/json
       responses:
@@ -395,30 +420,6 @@ paths:
       summary: 修改文章
       tags:
       - Manager
-  /manager/articles/img:
-    post:
-      parameters:
-      - description: Image File
-        in: formData
-        name: image
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: 上传图片
-      tags:
-      - Manager
   /manager/author:
     get:
       parameters:
@@ -436,7 +437,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetAuthorsResponse'
+            $ref: '#/definitions/v1.GetAuthorsResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -453,7 +454,7 @@ paths:
         name: _
         required: true
         schema:
-          $ref: '#/definitions/manager.AddAuthorForm'
+          $ref: '#/definitions/v1.AddAuthorForm'
       produces:
       - application/json
       responses:
@@ -538,7 +539,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetCategoryResponse'
+            $ref: '#/definitions/v1.GetCategoryResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -555,7 +556,7 @@ paths:
         name: _
         required: true
         schema:
-          $ref: '#/definitions/manager.AddCategoryForm'
+          $ref: '#/definitions/v1.AddCategoryForm'
       produces:
       - application/json
       responses:
@@ -661,7 +662,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetUserResponse'
+            $ref: '#/definitions/v1.GetUserResponse'
         "400":
           description: Bad Request
           schema:
@@ -711,7 +712,7 @@ paths:
         name: _
         required: true
         schema:
-          $ref: '#/definitions/manager.auth'
+          $ref: '#/definitions/v1.auth'
       produces:
       - application/json
       responses:
@@ -732,7 +733,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/manager.GetUserResponse'
+            $ref: '#/definitions/v1.GetUserResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -742,34 +743,10 @@ paths:
       summary: 通过登录态获取当前登录用户信息
       tags:
       - Manager
-  /player/article:
+  /player/lottery:
     get:
       parameters:
-      - description: 用户id
-        in: query
-        name: uid
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: '"为玩家展示文章"'
-      tags:
-      - Player
-  /player/tarot:
-    get:
-      parameters:
-      - description: 用户id
+      - description: 用户uid
         in: query
         name: uid
         required: true
@@ -780,7 +757,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/app.Response'
+            $ref: '#/definitions/v1.GetLotteryResponse'
         "400":
           description: Bad Request
           schema:
@@ -789,46 +766,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      summary: 免费获取塔罗牌
-      tags:
-      - Player
-  /player/tarot/read:
-    post:
-      parameters:
-      - description: 用户id
-        in: body
-        name: uid
-        required: true
-        schema:
-          type: integer
-      - description: 塔罗牌id
-        in: body
-        name: tarotId
-        required: true
-        schema:
-          type: string
-      - description: 付费id
-        in: body
-        name: paidOrderId
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: 获取塔罗牌付费内容
+      summary: 获取日签
       tags:
       - Player
 securityDefinitions:

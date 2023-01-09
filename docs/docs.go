@@ -69,7 +69,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetArticlesResponse"
+                            "$ref": "#/definitions/v1.GetArticlesResponse"
                         }
                     },
                     "500": {
@@ -100,47 +100,8 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/manager.AddArticleForm"
+                            "$ref": "#/definitions/v1.AddArticleForm"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/manager/articles/img": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "上传图片",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Image File",
-                        "name": "image",
-                        "in": "formData",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -328,7 +289,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetAuthorsResponse"
+                            "$ref": "#/definitions/v1.GetAuthorsResponse"
                         }
                     },
                     "500": {
@@ -359,7 +320,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/manager.AddAuthorForm"
+                            "$ref": "#/definitions/v1.AddAuthorForm"
                         }
                     }
                 ],
@@ -489,7 +450,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetCategoryResponse"
+                            "$ref": "#/definitions/v1.GetCategoryResponse"
                         }
                     },
                     "500": {
@@ -520,7 +481,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/manager.AddCategoryForm"
+                            "$ref": "#/definitions/v1.AddCategoryForm"
                         }
                     }
                 ],
@@ -688,7 +649,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetUserResponse"
+                            "$ref": "#/definitions/v1.GetUserResponse"
                         }
                     },
                     "400": {
@@ -766,7 +727,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/manager.auth"
+                            "$ref": "#/definitions/v1.auth"
                         }
                     }
                 ],
@@ -801,7 +762,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/manager.GetUserResponse"
+                            "$ref": "#/definitions/v1.GetUserResponse"
                         }
                     },
                     "500": {
@@ -813,16 +774,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/article": {
+        "/player/lottery": {
             "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Player"
                 ],
-                "summary": "\"为玩家展示文章\"",
+                "summary": "获取日签",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "用户id",
+                        "description": "用户uid",
                         "name": "uid",
                         "in": "query",
                         "required": true
@@ -832,107 +796,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/player/tarot": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Player"
-                ],
-                "summary": "免费获取塔罗牌",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/player/tarot/read": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Player"
-                ],
-                "summary": "获取塔罗牌付费内容",
-                "parameters": [
-                    {
-                        "description": "用户id",
-                        "name": "uid",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "塔罗牌id",
-                        "name": "tarotId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "付费id",
-                        "name": "paidOrderId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
+                            "$ref": "#/definitions/v1.GetLotteryResponse"
                         }
                     },
                     "400": {
@@ -981,7 +845,175 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.AddArticleForm": {
+        "models.ArticleDto": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "integer"
+                },
+                "author_name": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "category_name": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "cover_image_url": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "meta_desc": {
+                    "type": "string"
+                },
+                "page_title": {
+                    "type": "string"
+                },
+                "related_articles": {
+                    "type": "string"
+                },
+                "seo_title": {
+                    "type": "string"
+                },
+                "seo_url": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AuthorDto": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CategoryDto": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LotteryDto": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "keyword": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LuckyTodayDto": {
+            "type": "object",
+            "properties": {
+                "song": {
+                    "type": "string"
+                },
+                "spell": {
+                    "type": "string"
+                },
+                "todo": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserDto": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.AddArticleForm": {
             "type": "object",
             "required": [
                 "author_id",
@@ -1044,7 +1076,7 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.AddAuthorForm": {
+        "v1.AddAuthorForm": {
             "type": "object",
             "required": [
                 "age",
@@ -1073,7 +1105,7 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.AddCategoryForm": {
+        "v1.AddCategoryForm": {
             "type": "object",
             "required": [
                 "name",
@@ -1089,124 +1121,7 @@ const docTemplate = `{
                 }
             }
         },
-        "manager.ArticleDto": {
-            "type": "object",
-            "properties": {
-                "author_id": {
-                    "type": "integer"
-                },
-                "author_name": {
-                    "type": "string"
-                },
-                "category_id": {
-                    "type": "integer"
-                },
-                "category_name": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "cover_image_url": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "integer"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "meta_desc": {
-                    "type": "string"
-                },
-                "page_title": {
-                    "type": "string"
-                },
-                "related_articles": {
-                    "type": "string"
-                },
-                "seo_title": {
-                    "type": "string"
-                },
-                "seo_url": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "integer"
-                },
-                "updated_by": {
-                    "type": "string"
-                }
-            }
-        },
-        "manager.AuthorDto": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "integer"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "gender": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
-                },
-                "updated_by": {
-                    "type": "string"
-                }
-            }
-        },
-        "manager.CategoryDto": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "integer"
-                },
-                "updated_by": {
-                    "type": "string"
-                }
-            }
-        },
-        "manager.GetArticlesResponse": {
+        "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -1215,12 +1130,12 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.ArticleDto"
+                        "$ref": "#/definitions/models.ArticleDto"
                     }
                 }
             }
         },
-        "manager.GetAuthorsResponse": {
+        "v1.GetAuthorsResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -1229,12 +1144,12 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.AuthorDto"
+                        "$ref": "#/definitions/models.AuthorDto"
                     }
                 }
             }
         },
-        "manager.GetCategoryResponse": {
+        "v1.GetCategoryResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -1243,12 +1158,23 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.CategoryDto"
+                        "$ref": "#/definitions/models.CategoryDto"
                     }
                 }
             }
         },
-        "manager.GetUserResponse": {
+        "v1.GetLotteryResponse": {
+            "type": "object",
+            "properties": {
+                "lotteryContent": {
+                    "$ref": "#/definitions/models.LotteryDto"
+                },
+                "luckyContent": {
+                    "$ref": "#/definitions/models.LuckyTodayDto"
+                }
+            }
+        },
+        "v1.GetUserResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -1257,35 +1183,12 @@ const docTemplate = `{
                 "lists": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/manager.UserDto"
+                        "$ref": "#/definitions/models.UserDto"
                     }
                 }
             }
         },
-        "manager.UserDto": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
-                },
-                "updated_by": {
-                    "type": "string"
-                }
-            }
-        },
-        "manager.auth": {
+        "v1.auth": {
             "type": "object",
             "required": [
                 "password",

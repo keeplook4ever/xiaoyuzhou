@@ -1,50 +1,53 @@
 package e
 
 const (
-	SUCCESS        = 200
-	ERROR          = 500
-	INVALID_PARAMS = 400
+	SUCCESS       = 200
+	ERROR         = 500
+	InvalidParams = 400
 
-	ERROR_EXIST_CATEGORY       = 10001
-	ERROR_EXIST_CATEGORY_FAIL  = 10002
-	ERROR_NOT_EXIST_CATEGORY   = 10003
-	ERROR_GET_CATEGORYS_FAIL   = 10004
-	ERROR_COUNT_CATEGORY_FAIL  = 10005
-	ERROR_ADD_CATEGORY_FAIL    = 10006
-	ERROR_EDIT_CATEGORY_FAIL   = 10007
-	ERROR_DELETE_CATEGORY_FAIL = 10008
-	ERROR_EXPORT_CATEGORY_FAIL = 10009
-	ERROR_IMPORT_CATEGORY_FAIL = 10010
+	ErrorExistCategory      = 10001
+	ErrorExistCategoryFail  = 10002
+	ErrorNotExistCategory   = 10003
+	ErrorGetCategoriesFail  = 10004
+	ErrorCountCategoryFail  = 10005
+	ErrorAddCategoryFail    = 10006
+	ErrorEditCategoryFail   = 10007
+	ErrorDeleteCategoryFail = 10008
+	ErrorExportCategoryFail = 10009
+	ErrorImportCategoryFail = 10010
 
-	ERROR_NOT_EXIST_ARTICLE        = 10011
-	ERROR_CHECK_EXIST_ARTICLE_FAIL = 10012
-	ERROR_ADD_ARTICLE_FAIL         = 10013
-	ERROR_DELETE_ARTICLE_FAIL      = 10014
-	ERROR_EDIT_ARTICLE_FAIL        = 10015
-	ERROR_COUNT_ARTICLE_FAIL       = 10016
-	ERROR_GET_ARTICLES_FAIL        = 10017
-	ERROR_GET_ARTICLE_FAIL         = 10018
-	ERROR_GEN_ARTICLE_POSTER_FAIL  = 10019
+	ErrorNotExistArticle       = 10011
+	ErrorCheckExistArticleFail = 10012
+	ErrorAddArticleFail        = 10013
+	ErrorDeleteArticleFail     = 10014
+	ErrorEditArticleFail       = 10015
+	ErrorCountArticleFail      = 10016
+	ErrorGetArticlesFail       = 10017
+	ErrorGetArticleFail        = 10018
+	ErrorGenArticlePosterFail  = 10019
 
-	ERROR_AUTH_CHECK_TOKEN_FAIL    = 20001
-	ERROR_AUTH_CHECK_TOKEN_TIMEOUT = 20002
-	ERROR_AUTH_TOKEN               = 20003
-	ERROR_AUTH                     = 20004
+	ErrorAuthCheckTokenFail    = 20001
+	ErrorAuthCheckTokenTimeout = 20002
+	ErrorAuthToken             = 20003
+	ErrorAuth                  = 20004
 
-	ERROR_UPLOAD_SAVE_IMAGE_FAIL    = 30001
-	ERROR_UPLOAD_CHECK_IMAGE_FAIL   = 30002
-	ERROR_UPLOAD_CHECK_IMAGE_FORMAT = 30003
-	ERROR_PUT_FILE_TO_QINIU         = 30004
+	ErrorUploadSaveImageFail    = 30001
+	ErrorUploadCheckImageFail   = 30002
+	ErrorUploadCheckImageFormat = 30003
+	ErrorPutFileToQiniu         = 30004
 
-	ERROR_EXIST_AUTHOR_FAIL = 40001
-	ERROR_NOT_EXIST_AUTHOR  = 40002
-	ERROR_EXIST_AUTHOR      = 40003
-	ERROR_ADD_AUTHOR_FAIL   = 40004
-	ERROR_EDIT_AUTHOR_FAIL  = 40005
-	ERROR_GET_AUTHOR_FAIL   = 40006
-	ERROR_COUNT_AUTHOR_FAIL = 40007
+	ErrorExistAuthorFail = 40001
+	ErrorNotExistAuthor  = 40002
+	ErrorExistAuthor     = 40003
+	ErrorAddAuthorFail   = 40004
+	ErrorEditAuthorFail  = 40005
+	ErrorGetAuthorFail   = 40006
+	ErrorCountAuthorFail = 40007
 
-	ERROR_CHECK_EXIST_USER = 50001
-	ERROR_USER_HAS_EXIST   = 50002
-	ERROR_CREAT_USER       = 50003
+	ErrorCheckExistUser = 50001
+	ErrorUserHasExist   = 50002
+	ErrorCreatUser      = 50003
+
+	ErrorGetLotteryFail   = 60001
+	ErrorGetLuckytodyFail = 60002
 )
