@@ -107,7 +107,7 @@ type GetUserForm struct {
 // @Router /manager/user/info [get]
 // @Security ApiKeyAuth
 // @Tags Manager
-// @Success 200 {object} manager.UserDto
+// @Success 200 {object} models.UserDto
 // @Failure 500 {object} app.Response
 func GetCurrentLoginUserInfo(c *gin.Context) {
 	var (
