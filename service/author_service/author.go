@@ -3,6 +3,7 @@ package author_service
 import (
 	"time"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/util"
 )
 
 type AuthorInput struct {
@@ -54,26 +55,34 @@ func (a *AuthorInput) GetAll() ([]models.AuthorDto, error) {
 	var (
 		authors []models.AuthorDto
 	)
-	authors, err := models.GetAuthors(a.PageNum, a.PageSize, a.getMaps())
+
+	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
 	if err != nil {
 		return nil, err
 	}
+	authors, err = models.GetAuthors(a.PageNum, a.PageSize, cond, vals)
+
 	return authors, nil
 }
 
 func (a *AuthorInput) Count() (int64, error) {
-	return models.GetAuthorTotal(a.getMaps())
+	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
+	if err != nil {
+		return 0, err
+	}
+
+	return models.GetAuthorTotal(cond, vals)
 }
 
 func (a *AuthorInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 
 	if a.Name != "" {
-		maps["name"] = a.Name
+		maps["name like"] = "%" + a.Name + "%"
 	}
 
 	if a.ID != 0 {
-		maps["id"] = a.ID
+		maps["id ="] = a.ID
 	}
 	return maps
 }

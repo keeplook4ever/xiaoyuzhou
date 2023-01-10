@@ -2,6 +2,7 @@ package category_service
 
 import (
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/util"
 )
 
 type CategoryInput struct {
@@ -56,8 +57,11 @@ func (t *CategoryInput) GetAll() ([]models.CategoryDto, error) {
 	var (
 		categories []models.CategoryDto
 	)
-
-	categories, err := models.GetCategory(t.PageNum, t.PageSize, t.getMaps())
+	cond, vals, err := util.SqlWhereBuild(t.getMaps(), "and")
+	if err != nil {
+		return nil, err
+	}
+	categories, err = models.GetCategory(t.PageNum, t.PageSize, cond, vals)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +129,7 @@ func (t *CategoryInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 
 	if t.Name != "" {
-		maps["name"] = t.Name
+		maps["name like"] = "%" + t.Name + "%"
 	}
 	if t.State >= 0 {
 		maps["state"] = t.State

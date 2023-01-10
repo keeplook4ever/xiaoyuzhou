@@ -63,6 +63,36 @@ const docTemplate = `{
                         "description": "ID",
                         "name": "id",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SEO Title",
+                        "name": "seo_title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SEO Url",
+                        "name": "seo_url",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page Title",
+                        "name": "page_title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Meta Desc",
+                        "name": "meta_desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cover Img URL",
+                        "name": "cover_image_url",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1133,14 +1163,14 @@ const docTemplate = `{
         "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "lists": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ArticleDto"
                     }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

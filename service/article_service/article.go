@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/util"
 )
 
 type ArticleInput struct {
@@ -113,8 +114,11 @@ func (a *ArticleInput) Get() ([]models.ArticleDto, error) {
 	//		return cacheArticles, nil
 	//	}
 	//}
-
-	articles, err := models.GetArticles(a.PageNum, a.PageSize, a.getMaps())
+	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
+	if err != nil {
+		return nil, err
+	}
+	articles, err = models.GetArticles(a.PageNum, a.PageSize, cond, vals)
 	if err != nil {
 		return nil, err
 	}
@@ -132,11 +136,17 @@ func (a *ArticleInput) ExistByID() (bool, error) {
 }
 
 func (a *ArticleInput) Count() (int64, error) {
-	return models.GetArticleTotal(a.getMaps())
+	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
+	if err != nil {
+		return 0, err
+	}
+	return models.GetArticleTotal(cond, vals)
 }
 
 func (a *ArticleInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
+	marshalData, _ := json.Marshal(a.RelatedArticles)
+	relatedA := strings.Trim(string(marshalData), "[]")
 	if a.State != -1 {
 		maps["state"] = a.State
 	}
@@ -147,11 +157,28 @@ func (a *ArticleInput) getMaps() map[string]interface{} {
 		maps["id"] = a.ID
 	}
 	if a.CreatedBy != "" {
-		maps["created_by"] = a.CreatedBy
+		maps["created_by like"] = "%" + a.CreatedBy + "%"
 	}
 	if a.AuthorId > 0 {
 		maps["author_id"] = a.AuthorId
 	}
-
+	if a.SeoTitle != "" {
+		maps["seo_title like"] = "%" + a.SeoTitle + "%"
+	}
+	if a.SeoUrl != "" {
+		maps["seo_url"] = a.SeoUrl
+	}
+	if a.PageTitle != "" {
+		maps["page_title like"] = "%" + a.PageTitle + "%"
+	}
+	if a.MetaDesc != "" {
+		maps["meta_desc like"] = "%" + a.MetaDesc + "%"
+	}
+	if a.CoverImageUrl != "" {
+		maps["cover_image_url"] = a.CoverImageUrl
+	}
+	if len(a.RelatedArticles) > 0 {
+		maps["related_articles"] = relatedA
+	}
 	return maps
 }

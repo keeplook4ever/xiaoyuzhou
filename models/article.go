@@ -87,9 +87,9 @@ func ExistArticleByID(id int) (bool, error) {
 }
 
 // GetArticleTotal gets the total number of articles based on the constraints
-func GetArticleTotal(maps interface{}) (int64, error) {
+func GetArticleTotal(cond string, vals []interface{}) (int64, error) {
 	var count int64
-	if err := Db.Model(&Article{}).Where(maps).Count(&count).Error; err != nil {
+	if err := Db.Model(&Article{}).Where(cond, vals...).Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -97,10 +97,10 @@ func GetArticleTotal(maps interface{}) (int64, error) {
 }
 
 // GetArticles gets a list of articles based on paging constraints
-func GetArticles(pageNum int, pageSize int, maps interface{}) ([]ArticleDto, error) {
+func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]ArticleDto, error) {
 	var articles []Article
 
-	err := Db.Preload("Category").Preload("Author").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+	err := Db.Preload("Category").Preload("Author").Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

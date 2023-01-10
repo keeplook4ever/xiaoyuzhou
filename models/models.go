@@ -42,10 +42,19 @@ func Setup() {
 	//db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 
 	// 用新函数替换GORM Create、Update流程自带的回调函数
-	Db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
-	Db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
+	err = Db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
+	if err != nil {
+		log.Fatalf("models.Replace err: %v", err)
+	}
+	err = Db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
+	if err != nil {
+		log.Fatalf("models.Replace err: %v", err)
+	}
 
-	Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
+	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
+	if err != nil {
+		log.Fatalf("models.AutoMigrate err: %v", err)
+	}
 }
 
 func updateTimeStampForBeforeCreateCallback(db *gorm.DB) {

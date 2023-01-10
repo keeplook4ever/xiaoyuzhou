@@ -128,7 +128,7 @@ func EditAuthor(c *gin.Context) {
 
 type GetAuthorsResponse struct {
 	Lists []models.AuthorDto `json:"lists"`
-	Count int64              `json:"count"`
+	Count int                `json:"count"`
 }
 
 // GetAuthors
@@ -157,15 +157,9 @@ func GetAuthors(c *gin.Context) {
 		return
 	}
 
-	count, err := authorService.Count()
-	if err != nil {
-		appG.Response(http.StatusOK, e.ErrorCountAuthorFail, nil)
-		return
-	}
-
 	var res GetAuthorsResponse
 	res.Lists = authors
-	res.Count = count
+	res.Count = len(authors)
 
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }

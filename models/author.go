@@ -93,25 +93,25 @@ func EditAuthor(id int, data interface{}) error {
 	return nil
 }
 
-func GetAuthorTotal(maps interface{}) (int64, error) {
+func GetAuthorTotal(cond string, vals []interface{}) (int64, error) {
 	var count int64
-	if err := Db.Model(&Author{}).Where(maps).Count(&count).Error; err != nil {
+	if err := Db.Model(&Author{}).Where(cond, vals...).Count(&count).Error; err != nil {
 		return 0, err
 	}
 
 	return count, nil
 }
 
-func GetAuthors(pageNum int, pageSize int, maps interface{}) ([]AuthorDto, error) {
+func GetAuthors(pageNum int, pageSize int, cond string, vals []interface{}) ([]AuthorDto, error) {
 	var (
 		authors []Author
 		err     error
 	)
 
 	if pageSize > 0 && pageNum > 0 {
-		err = Db.Where(maps).Find(&authors).Offset(pageNum).Limit(pageSize).Error
+		err = Db.Where(cond, vals...).Find(&authors).Offset(pageNum).Limit(pageSize).Error
 	} else {
-		err = Db.Where(maps).Find(&authors).Error
+		err = Db.Where(cond, vals...).Find(&authors).Error
 	}
 
 	if err != nil && err != gorm.ErrRecordNotFound {

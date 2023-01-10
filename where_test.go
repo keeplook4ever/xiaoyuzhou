@@ -15,7 +15,8 @@ func TestWhereBuild(t *testing.T) {
 	cond, vals, err := util.SqlWhereBuild(map[string]interface{}{
 		"name like": "%q%",
 		"age in":    []int{12, 19, 18},
-	}, "and")
+		"id =":      1,
+	}, "or")
 	if err != nil {
 		t.Fatal(err)
 	}

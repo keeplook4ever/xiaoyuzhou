@@ -251,7 +251,7 @@ func DeleteArticle(c *gin.Context) {
 
 type GetArticlesResponse struct {
 	Lists []models.ArticleDto `json:"lists"`
-	Count int                 `json:"count"`
+	Count int                 `json:"total"`
 }
 
 // GetArticles
@@ -262,6 +262,11 @@ type GetArticlesResponse struct {
 // @Param state query int false "State"
 // @Param created_by query int false "CreatedBy"
 // @Param id query int false "ID"
+// @Param seo_title query string false "SEO Title"
+// @Param seo_url query string false "SEO Url"
+// @Param page_title query string false "Page Title"
+// @Param meta_desc query string false "Meta Desc"
+// @Param cover_image_url query string false "Cover Img URL"
 // @Success 200 {object} GetArticlesResponse
 // @Failure 500 {object} app.Response
 // @Security ApiKeyAuth
@@ -293,6 +298,12 @@ func GetArticles(c *gin.Context) {
 
 	id := com.StrTo(c.Query("id")).MustInt()
 
+	seoTitle := c.Query("seo_title")
+	seoUrl := c.Query("seo_url")
+	pageTitle := c.Query("page_title")
+	metaDesc := c.Query("meta_desc")
+	coverImageUrl := c.Query("cover_image_url")
+
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
@@ -300,32 +311,30 @@ func GetArticles(c *gin.Context) {
 	}
 
 	articleService := article_service.ArticleInput{
-		ID:         id,
-		CreatedBy:  createdBy,
-		CategoryID: tagId,
-		AuthorId:   authorId,
-		State:      state,
-		PageNum:    util.GetPage(c),
-		PageSize:   setting.AppSetting.PageSize,
-	}
-
-	total, err := articleService.Count()
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ErrorCountArticleFail, nil)
-		return
+		SeoTitle:      seoTitle,
+		SeoUrl:        seoUrl,
+		PageTitle:     pageTitle,
+		MetaDesc:      metaDesc,
+		CoverImageUrl: coverImageUrl,
+		ID:            id,
+		CreatedBy:     createdBy,
+		CategoryID:    tagId,
+		AuthorId:      authorId,
+		State:         state,
+		PageNum:       util.GetPage(c),
+		PageSize:      setting.AppSetting.PageSize,
 	}
 
 	articles, err := articleService.Get()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ErrorGetArticlesFail, nil)
+		appG.Response(http.StatusOK, e.ErrorGetArticlesFail, nil)
 		return
 	}
+	var res GetArticlesResponse
+	res.Lists = articles
+	res.Count = len(articles)
 
-	data := make(map[string]interface{})
-	data["lists"] = articles
-	data["total"] = total
-
-	appG.Response(http.StatusOK, e.SUCCESS, data)
+	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
 const (

@@ -214,12 +214,12 @@ definitions:
     type: object
   v1.GetArticlesResponse:
     properties:
-      count:
-        type: integer
       lists:
         items:
           $ref: '#/definitions/models.ArticleDto'
         type: array
+      total:
+        type: integer
     type: object
   v1.GetAuthorsResponse:
     properties:
@@ -296,6 +296,26 @@ paths:
         in: query
         name: id
         type: integer
+      - description: SEO Title
+        in: query
+        name: seo_title
+        type: string
+      - description: SEO Url
+        in: query
+        name: seo_url
+        type: string
+      - description: Page Title
+        in: query
+        name: page_title
+        type: string
+      - description: Meta Desc
+        in: query
+        name: meta_desc
+        type: string
+      - description: Cover Img URL
+        in: query
+        name: cover_image_url
+        type: string
       produces:
       - application/json
       responses:
