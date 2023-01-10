@@ -29,7 +29,6 @@ func InitRouter() *gin.Engine {
 
 	r.POST("/api/v1/manager/user/auth", v1.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.POST("/api/v1/upload", v1.UploadImage)
 
 	// 用户使用接口
 	apiPlayerV1 := r.Group("/api/v1/player/")
@@ -91,8 +90,6 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.DELETE("/articles/:id", v1.DeleteArticle)
 		//生成文章海报
 		apiManagerV1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
-		//上传文章图片
-		apiManagerV1.POST("/articles/img", v1.UploadImage)
 
 		//添加作者接口
 		apiManagerV1.POST("/author", v1.AddAuthor)

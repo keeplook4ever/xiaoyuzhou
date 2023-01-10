@@ -22,6 +22,7 @@ import (
 // @Router /manager/articles/img [post]
 // @Tags Manager
 // @Security ApiKeyAuth
+
 func UploadImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	file, image, err := c.Request.FormFile("image")
