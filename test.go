@@ -1,21 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"xiaoyuzhou/pkg/logging"
-	"xiaoyuzhou/pkg/qiniu"
+	"reflect"
+	"strings"
+	"xiaoyuzhou/pkg/util"
 )
 
-func main11() {
-	filepath := "D:\\Users\\liu.ning\\Pictures\\5b38e720e0624f6ca6d6fe51334a0721.jpeg"
-
-	//err := qiniu.UploadLocalImg("D:\\Users\\liu.ning\\Pictures\\5b38e720e0624f6ca6d6fe51334a0721.jpeg")
-	err := qiniu.UploadLocalImg(filepath)
-
+func main() {
+	var s = []int{1, 2, 3}
+	v, err := json.Marshal(s)
 	if err != nil {
-		logging.Fatal(err)
-		return
+		panic(err)
 	}
-	fmt.Println("put success")
+	a := strings.Trim(string(v), "[]")
+	fmt.Println(a, reflect.TypeOf(a))
 
+	mm := []string{a}
+	fmt.Println(mm, reflect.TypeOf(mm))
+	ss := util.String2Int(mm)
+	fmt.Println(ss, reflect.TypeOf(ss))
 }

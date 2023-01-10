@@ -208,7 +208,7 @@ const docTemplate = `{
                     {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "integer"
                         },
                         "description": "Related Articles",
                         "name": "related_articles",
@@ -929,7 +929,7 @@ const docTemplate = `{
                 "related_articles": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
                 "seo_title": {
@@ -1104,7 +1104,7 @@ const docTemplate = `{
                 "related_articles": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
                 "seo_title": {

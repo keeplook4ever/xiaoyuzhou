@@ -20,17 +20,17 @@ import (
 )
 
 type AddArticleForm struct {
-	CategoryID      int      `json:"category_id" binding:"required"`
-	SeoTitle        string   `json:"seo_title" binding:"required"`
-	SeoUrl          string   `json:"seo_url" binding:"required"`
-	PageTitle       string   `json:"page_title" binding:"required"`
-	MetaDesc        string   `json:"meta_desc" binding:"required"`
-	RelatedArticles []string `json:"related_articles" binding:"required"`
-	Content         string   `json:"content" binding:"required"`
-	AuthorId        int      `json:"author_id"  binding:"required"`
-	CoverImageUrl   string   `json:"cover_image_url" binding:"required"`
-	State           int      `json:"state" binding:"required" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
-	Language        string   `json:"language" binding:"required" enums:"jp,zh,en" default:"jp"`
+	CategoryID      int    `json:"category_id" binding:"required"`
+	SeoTitle        string `json:"seo_title" binding:"required"`
+	SeoUrl          string `json:"seo_url" binding:"required"`
+	PageTitle       string `json:"page_title" binding:"required"`
+	MetaDesc        string `json:"meta_desc" binding:"required"`
+	RelatedArticles []int  `json:"related_articles" binding:"required"`
+	Content         string `json:"content" binding:"required"`
+	AuthorId        int    `json:"author_id"  binding:"required"`
+	CoverImageUrl   string `json:"cover_image_url" binding:"required"`
+	State           int    `json:"state" binding:"required" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
+	Language        string `json:"language" binding:"required" enums:"jp,zh,en" default:"jp"`
 }
 
 // AddArticle
@@ -101,18 +101,18 @@ func AddArticle(c *gin.Context) {
 }
 
 type EditArticleForm struct {
-	ID              int      `form:"id" binding:"required"`
-	CategoryID      int      `form:"category_id"`
-	SeoTitle        string   `form:"seo_title"`
-	SeoUrl          string   `form:"seo_url"`
-	PageTitle       string   `form:"page_title"`
-	MetaDesc        string   `form:"meta_desc"`
-	AuthorId        int      `form:"author_id"`
-	Content         string   `form:"content"`
-	UpdatedBy       string   `form:"updated_by" binding:"required"`
-	CoverImageUrl   string   `form:"cover_image_url"`
-	State           int      `form:"state" enums:"0,1"`
-	RelatedArticles []string `form:"related_articles"`
+	ID              int    `form:"id" binding:"required"`
+	CategoryID      int    `form:"category_id"`
+	SeoTitle        string `form:"seo_title"`
+	SeoUrl          string `form:"seo_url"`
+	PageTitle       string `form:"page_title"`
+	MetaDesc        string `form:"meta_desc"`
+	AuthorId        int    `form:"author_id"`
+	Content         string `form:"content"`
+	UpdatedBy       string `form:"updated_by" binding:"required"`
+	CoverImageUrl   string `form:"cover_image_url"`
+	State           int    `form:"state" enums:"0,1"`
+	RelatedArticles []int  `form:"related_articles"`
 }
 
 // EditArticle
@@ -123,7 +123,7 @@ type EditArticleForm struct {
 // @Param page_title formData string false "Page Title"
 // @Param seo_title formData string false "SEO Title"
 // @Param seo_url formData string false "SEO URL"
-// @Param related_articles formData []string false "Related Articles"
+// @Param related_articles formData []int false "Related Articles"
 // @Param meta_desc formData string false "Desc"
 // @Param author_id formData int false "Author ID"
 // @Param content formData string false "Content"

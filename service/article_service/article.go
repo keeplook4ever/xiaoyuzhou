@@ -1,6 +1,7 @@
 package article_service
 
 import (
+	"encoding/json"
 	"strings"
 	"xiaoyuzhou/models"
 )
@@ -12,7 +13,7 @@ type ArticleInput struct {
 	SeoUrl          string
 	PageTitle       string
 	MetaDesc        string
-	RelatedArticles []string
+	RelatedArticles []int
 	Content         string
 	AuthorId        int
 	CoverImageUrl   string
@@ -27,13 +28,16 @@ type ArticleInput struct {
 }
 
 func (a *ArticleInput) Add() error {
+	marshalData, _ := json.Marshal(a.RelatedArticles)
+	relatedA := strings.Trim(string(marshalData), "[]")
+
 	article := map[string]interface{}{
 		"category_id":      a.CategoryID,
 		"seo_title":        a.SeoTitle,
 		"seo_url":          a.SeoUrl,
 		"page_title":       a.PageTitle,
 		"meta_desc":        a.MetaDesc,
-		"related_articles": strings.Join(a.RelatedArticles, ","),
+		"related_articles": relatedA,
 		"content":          a.Content,
 		"author_id":        a.AuthorId,
 		"cover_image_url":  a.CoverImageUrl,
@@ -48,6 +52,10 @@ func (a *ArticleInput) Add() error {
 
 func (a *ArticleInput) Edit() error {
 	data := make(map[string]interface{})
+
+	marshalData, _ := json.Marshal(a.RelatedArticles)
+	relatedA := strings.Trim(string(marshalData), "[]")
+
 	data["updated_by"] = a.UpdatedBy
 	data["state"] = a.State
 	if a.CategoryID > 0 {
@@ -75,26 +83,9 @@ func (a *ArticleInput) Edit() error {
 		data["cover_image_url"] = a.CoverImageUrl
 	}
 	if len(a.RelatedArticles) > 0 {
-		data["related_articles"] = strings.Join(a.RelatedArticles, ",")
+		data["related_articles"] = relatedA
 	}
 	return models.EditArticle(a.ID, data)
-}
-
-type ArticleReturn struct {
-	Id              int    `json:"id"`
-	CategoryID      int    `json:"category_id"`
-	CategoryName    string `json:"category_name"`
-	SeoTitle        string `json:"seo_title"`
-	SeoUrl          string `json:"seo_url"`
-	PageTitle       string `json:"page_title"`
-	MetaDesc        string `json:"meta_desc"`
-	RelatedArticles string `json:"related_articles"`
-	Content         string `json:"content"`
-	AuthorId        int    `json:"author_id"`
-	CoverImageUrl   string `json:"cover_image_url"`
-	State           int    `json:"state"`
-	Language        string `json:"language"`
-	ModifiedBy      string `json:"modified_by"`
 }
 
 func (a *ArticleInput) Get() ([]models.ArticleDto, error) {

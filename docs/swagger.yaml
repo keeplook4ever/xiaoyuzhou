@@ -47,7 +47,7 @@ definitions:
         type: string
       related_articles:
         items:
-          type: string
+          type: integer
         type: array
       seo_title:
         type: string
@@ -154,7 +154,7 @@ definitions:
         type: string
       related_articles:
         items:
-          type: string
+          type: integer
         type: array
       seo_title:
         type: string
@@ -386,7 +386,7 @@ paths:
       - description: Related Articles
         in: formData
         items:
-          type: string
+          type: integer
         name: related_articles
         type: array
       - description: Desc

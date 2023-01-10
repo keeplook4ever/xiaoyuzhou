@@ -3,6 +3,7 @@ package models
 import (
 	"gorm.io/gorm"
 	"strings"
+	"xiaoyuzhou/pkg/util"
 )
 
 type Article struct {
@@ -26,24 +27,24 @@ type Article struct {
 }
 
 type ArticleDto struct {
-	ID              uint     `json:"id"`
-	CategoryID      uint     `json:"category_id"`
-	CategoryName    string   `json:"category_name"`
-	SeoTitle        string   `json:"seo_title"`
-	SeoUrl          string   `json:"seo_url"`
-	PageTitle       string   `json:"page_title"`
-	MetaDesc        string   `json:"meta_desc"`
-	RelatedArticles []string `json:"related_articles"`
-	Content         string   `json:"content"`
-	AuthorID        uint     `json:"author_id"`
-	AuthorName      string   `json:"author_name"`
-	CoverImageUrl   string   `json:"cover_image_url"`
-	State           int      `json:"state"`
-	Language        string   `json:"language"`
-	CreatedAt       int      `json:"created_at"`
-	CreatedBy       string   `json:"created_by"`
-	UpdatedAt       int      `json:"updated_at"`
-	UpdatedBy       string   `json:"updated_by"`
+	ID              uint   `json:"id"`
+	CategoryID      uint   `json:"category_id"`
+	CategoryName    string `json:"category_name"`
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles []int  `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorID        uint   `json:"author_id"`
+	AuthorName      string `json:"author_name"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state"`
+	Language        string `json:"language"`
+	CreatedAt       int    `json:"created_at"`
+	CreatedBy       string `json:"created_by"`
+	UpdatedAt       int    `json:"updated_at"`
+	UpdatedBy       string `json:"updated_by"`
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
@@ -56,7 +57,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		SeoTitle:        itself.SeoTitle,
 		PageTitle:       itself.PageTitle,
 		MetaDesc:        itself.MetaDesc,
-		RelatedArticles: strings.Split(itself.RelatedArticles, ","),
+		RelatedArticles: util.String2Int(strings.Split(itself.RelatedArticles, ",")),
 		Content:         itself.Content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,
