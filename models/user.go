@@ -34,7 +34,7 @@ func (u *User) ToUserDto() UserDto {
 
 func ExistUserByName(name string) (bool, error) {
 	var user User
-	err := db.Model(&User{}).Select("id").Where("name = ? ", name).First(&user).Error
+	err := Db.Model(&User{}).Select("id").Where("name = ? ", name).First(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -53,7 +53,7 @@ func AddUser(name, passwd, createdBy, updatedBy string) error {
 		UpdatedBy: updatedBy,
 	}
 
-	if err := db.Create(&user).Error; err != nil {
+	if err := Db.Create(&user).Error; err != nil {
 		return err
 	}
 	return nil
@@ -62,7 +62,7 @@ func AddUser(name, passwd, createdBy, updatedBy string) error {
 func GetUser(maps map[string]interface{}) ([]User, error) {
 	var user []User
 
-	err := db.Where(maps).Find(&user).Error
+	err := Db.Where(maps).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func GetUser(maps map[string]interface{}) ([]User, error) {
 // CheckUser checks if user exists
 func CheckUser(username, password string) (bool, error) {
 	var user User
-	err := db.Select("id").Where(User{Name: username, Passwd: password}).First(&user).Error
+	err := Db.Select("id").Where(User{Name: username, Passwd: password}).First(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}

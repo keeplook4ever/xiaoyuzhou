@@ -74,7 +74,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 // ExistArticleByID checks if an article exists based on ID
 func ExistArticleByID(id int) (bool, error) {
 	var article Article
-	err := db.Model(&Article{}).Select("id").Where("id = ? ", id).First(&article).Error
+	err := Db.Model(&Article{}).Select("id").Where("id = ? ", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -89,7 +89,7 @@ func ExistArticleByID(id int) (bool, error) {
 // GetArticleTotal gets the total number of articles based on the constraints
 func GetArticleTotal(maps interface{}) (int64, error) {
 	var count int64
-	if err := db.Model(&Article{}).Where(maps).Count(&count).Error; err != nil {
+	if err := Db.Model(&Article{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -100,7 +100,7 @@ func GetArticleTotal(maps interface{}) (int64, error) {
 func GetArticles(pageNum int, pageSize int, maps interface{}) ([]ArticleDto, error) {
 	var articles []Article
 
-	err := db.Preload("Category").Preload("Author").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+	err := Db.Preload("Category").Preload("Author").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func GetArticles(pageNum int, pageSize int, maps interface{}) ([]ArticleDto, err
 // GetArticle Get a single article based on ID
 func GetArticle(id int) (*Article, error) {
 	var article Article
-	err := db.Where("id = ? ", id).First(&article).Error
+	err := Db.Where("id = ? ", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func GetArticle(id int) (*Article, error) {
 
 // EditArticle modify a single article
 func EditArticle(id int, data interface{}) error {
-	if err := db.Model(&Article{}).Where("id = ? ", id).Updates(data).Error; err != nil {
+	if err := Db.Model(&Article{}).Where("id = ? ", id).Updates(data).Error; err != nil {
 		return err
 	}
 
@@ -150,7 +150,7 @@ func AddArticle(data map[string]interface{}) error {
 		CreatedBy:       data["created_by"].(string),
 		UpdatedBy:       data["updated_by"].(string),
 	}
-	if err := db.Create(&article).Error; err != nil {
+	if err := Db.Create(&article).Error; err != nil {
 		return err
 	}
 
@@ -159,7 +159,7 @@ func AddArticle(data map[string]interface{}) error {
 
 // DeleteArticle delete a single article
 func DeleteArticle(id int) error {
-	if err := db.Where("id = ?", id).Delete(Article{}).Error; err != nil {
+	if err := Db.Where("id = ?", id).Delete(Article{}).Error; err != nil {
 		return err
 	}
 
@@ -168,7 +168,7 @@ func DeleteArticle(id int) error {
 
 // CleanAllArticle clear all article
 func CleanAllArticle() error {
-	if err := db.Unscoped().Delete(&Article{}).Error; err != nil {
+	if err := Db.Unscoped().Delete(&Article{}).Error; err != nil {
 		return err
 	}
 

@@ -11,7 +11,7 @@ import (
 	"xiaoyuzhou/pkg/setting"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
 //Model ...
 type Model struct {
@@ -23,7 +23,7 @@ type Model struct {
 // Setup initializes the database instance
 func Setup() {
 	var err error
-	db, err = gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	Db, err = gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		setting.DatabaseSetting.User,
 		setting.DatabaseSetting.Password,
 		setting.DatabaseSetting.Host,
@@ -33,7 +33,7 @@ func Setup() {
 		log.Fatalf("models.Setup err: %v", err)
 	}
 
-	sqlDB, err := db.DB()
+	sqlDB, err := Db.DB()
 	sqlDB.SetMaxIdleConns(100)          // 设置MySQL的最大空闲连接数（推荐100）
 	sqlDB.SetMaxOpenConns(100)          // 设置MySQL的最大连接数（推荐100）
 	sqlDB.SetConnMaxLifetime(time.Hour) // 设置MySQL的空闲连接最大存活时间（推荐10s）
@@ -42,10 +42,10 @@ func Setup() {
 	//db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 
 	// 用新函数替换GORM Create、Update流程自带的回调函数
-	db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
-	db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
+	Db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
+	Db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
 
-	db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
+	Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
 }
 
 func updateTimeStampForBeforeCreateCallback(db *gorm.DB) {

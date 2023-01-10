@@ -38,7 +38,7 @@ func (c *Category) ToCategoryDto() CategoryDto {
 // ExistCategoryByName checks if there is a Category with the same name
 func ExistCategoryByName(name string) (bool, error) {
 	var tag Category
-	err := db.Select("id").Where("name = ?", name).First(&tag).Error
+	err := Db.Select("id").Where("name = ?", name).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -58,7 +58,7 @@ func AddCategory(name string, state int, createdBy string, updatedBy string) err
 		CreatedBy: createdBy,
 		UpdatedBy: updatedBy,
 	}
-	if err := db.Create(&tag).Error; err != nil {
+	if err := Db.Create(&tag).Error; err != nil {
 		return err
 	}
 
@@ -74,10 +74,10 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]CategoryDto, er
 
 	if pageSize > 0 && pageNum > 0 {
 		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
-		err = db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
+		err = Db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
 	} else {
 		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Error
-		err = db.Where(maps).Find(&tags).Error
+		err = Db.Where(maps).Find(&tags).Error
 	}
 
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -94,7 +94,7 @@ func GetCategory(pageNum int, pageSize int, maps interface{}) ([]CategoryDto, er
 // GetCategoryTotal counts the total number of tags based on the constraint
 func GetCategoryTotal(maps interface{}) (int64, error) {
 	var count int64
-	if err := db.Model(&Category{}).Where(maps).Count(&count).Error; err != nil {
+	if err := Db.Model(&Category{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -104,7 +104,7 @@ func GetCategoryTotal(maps interface{}) (int64, error) {
 // ExistCategoryByID determines whether a Category exists based on the ID
 func ExistCategoryByID(id int) (bool, error) {
 	var tag Category
-	err := db.Select("id").Where("id = ? ", id).First(&tag).Error
+	err := Db.Select("id").Where("id = ? ", id).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -117,7 +117,7 @@ func ExistCategoryByID(id int) (bool, error) {
 
 // DeleteCategory delete a Category
 func DeleteCategory(id int) error {
-	if err := db.Where("id = ?", id).Delete(&Category{}).Error; err != nil {
+	if err := Db.Where("id = ?", id).Delete(&Category{}).Error; err != nil {
 		return err
 	}
 
@@ -126,7 +126,7 @@ func DeleteCategory(id int) error {
 
 // EditCategory modify a single Category
 func EditCategory(id int, data interface{}) error {
-	if err := db.Model(&Category{}).Where("id = ? ", id).Updates(data).Error; err != nil {
+	if err := Db.Model(&Category{}).Where("id = ? ", id).Updates(data).Error; err != nil {
 		return err
 	}
 
@@ -135,7 +135,7 @@ func EditCategory(id int, data interface{}) error {
 
 // CleanAllCategory clear all Category
 func CleanAllCategory() (bool, error) {
-	if err := db.Unscoped().Delete(&Category{}).Error; err != nil {
+	if err := Db.Unscoped().Delete(&Category{}).Error; err != nil {
 		return false, err
 	}
 
@@ -143,7 +143,7 @@ func CleanAllCategory() (bool, error) {
 }
 
 func GetCategoryByID(id int) (tag *Category, err error) {
-	err = db.Select("id").Where("id = ? ", id).First(&tag).Error
+	err = Db.Select("id").Where("id = ? ", id).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
