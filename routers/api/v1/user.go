@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 	"net/http"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/app"
@@ -13,12 +14,14 @@ import (
 type AddUserForm struct {
 	Name   string `form:"name" binding:"required"`
 	Passwd string `form:"passwd" binding:"required"`
+	Role   string `form:"role" binding:"required"`
 }
 
 // AddUser
 // @Summary 添加用户
 // @Param name formData string true "name"
 // @Param passwd formData string true "passwd"
+// @Param role formData string true "role"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/user [post]
@@ -40,6 +43,7 @@ func AddUser(c *gin.Context) {
 		Passwd:    user.Passwd,
 		CreatedBy: c.GetString("username"),
 		UpdatedBy: c.GetString("username"),
+		Role:      user.Role,
 	}
 	exists, err := userService.ExistByName()
 	if err != nil {
@@ -64,6 +68,7 @@ func AddUser(c *gin.Context) {
 // @Summary 获取用户
 // @Param id query int false "id"
 // @Param name query string false "name"
+// @Param role query string false "role"
 // @Router /manager/user [get]
 // @Security ApiKeyAuth
 // @Tags Manager
@@ -73,15 +78,16 @@ func AddUser(c *gin.Context) {
 func GetUser(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
-		user GetUserForm
 	)
 
-	if err := c.ShouldBind(&user); err != nil {
-		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
-		return
+	name := c.Query("name")
+	role := c.Query("role")
+	id := com.StrTo(c.Query("id")).MustInt()
+	userService := user_service.UserInput{
+		Name: name,
+		ID:   uint(id),
+		Role: role,
 	}
-
-	userService := user_service.UserInput{}
 	users, err := userService.GetUser()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetUserFail, nil)
@@ -95,11 +101,6 @@ func GetUser(c *gin.Context) {
 type GetUserResponse struct {
 	Lists []models.UserDto `json:"lists"`
 	Count int              `json:"count"`
-}
-
-type GetUserForm struct {
-	Name string `json:"name"`
-	Id   string `json:"id"`
 }
 
 // GetCurrentLoginUserInfo

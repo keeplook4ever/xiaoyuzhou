@@ -34,12 +34,12 @@ func Setup() {
 	}
 
 	sqlDB, err := Db.DB()
+	if err != nil {
+		log.Fatalf("models.Setup err: %v", err)
+	}
 	sqlDB.SetMaxIdleConns(100)          // 设置MySQL的最大空闲连接数（推荐100）
 	sqlDB.SetMaxOpenConns(100)          // 设置MySQL的最大连接数（推荐100）
 	sqlDB.SetConnMaxLifetime(time.Hour) // 设置MySQL的空闲连接最大存活时间（推荐10s）
-
-	//db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	//db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 
 	// 用新函数替换GORM Create、Update流程自带的回调函数
 	err = Db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
@@ -51,7 +51,7 @@ func Setup() {
 		log.Fatalf("models.Replace err: %v", err)
 	}
 
-	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{})
+	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{})
 	if err != nil {
 		log.Fatalf("models.AutoMigrate err: %v", err)
 	}

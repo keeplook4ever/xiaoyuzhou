@@ -1,10 +1,23 @@
 package models
 
+import (
+	"math/rand"
+	"time"
+	"xiaoyuzhou/pkg/util"
+)
+
 type Lottery struct {
 	Model
-	Score   int    `gorm:"score,not null" json:"score"` // 日签分数
-	Keyword string `gorm:"word,not null" json:"word"`   // 日签关键字
-	Content string `gorm:"content" json:"content"`      // 日签内容
+	MinScore    int     `gorm:"column:min_score,not null" json:"min_score"` // 最小分数
+	MaxScore    int     `gorm:"column:max_score,not null" json:"max_score"` // 最大分数
+	KeyWord     string  `gorm:"column:keyword,not null" json:"keyword"`     // 运势文字
+	Probability float32 `gorm:"column:probability" json:"probability"`      // 概率
+}
+
+type LotteryContent struct {
+	Model
+	KeyWord string `gorm:"column:keyword;not null"`
+	Content string `gorm:"column:content;not null"`
 }
 
 type LotteryDto struct {
@@ -14,9 +27,22 @@ type LotteryDto struct {
 }
 
 func (l *Lottery) ToLotteryDto() LotteryDto {
+	score := util.GetScore(l.MinScore, l.MaxScore)
+	content, _ := GetLotteryContent(l.KeyWord)
 	return LotteryDto{
-		Score:   l.Score,
-		Keyword: l.Keyword,
-		Content: l.Content,
+		Score:   score,
+		Keyword: l.KeyWord,
+		Content: content,
 	}
+}
+
+func GetLotteryContent(keyword string) (string, error) {
+	var contents []string
+	err := Db.Model(&LotteryContent{}).Pluck("content", &contents).Where("keyword = %s", keyword).Error
+	if err != nil {
+		return "", err
+	}
+	// 随机取一个值
+	rand.Seed(time.Now().Unix())
+	return contents[rand.Intn(len(contents))], nil
 }

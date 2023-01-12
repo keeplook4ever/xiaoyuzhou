@@ -676,6 +676,12 @@ const docTemplate = `{
                         "description": "name",
                         "name": "name",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "role",
+                        "name": "role",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -721,6 +727,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "passwd",
                         "name": "passwd",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "role",
+                        "name": "role",
                         "in": "formData",
                         "required": true
                     }
@@ -1039,6 +1052,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 },
                 "updated_at": {

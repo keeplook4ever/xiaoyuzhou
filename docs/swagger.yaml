@@ -126,6 +126,8 @@ definitions:
         type: integer
       name:
         type: string
+      role:
+        type: string
       updated_at:
         type: integer
       updated_by:
@@ -684,6 +686,10 @@ paths:
         in: query
         name: name
         type: string
+      - description: role
+        in: query
+        name: role
+        type: string
       responses:
         "200":
           description: OK
@@ -712,6 +718,11 @@ paths:
       - description: passwd
         in: formData
         name: passwd
+        required: true
+        type: string
+      - description: role
+        in: formData
+        name: role
         required: true
         type: string
       responses:

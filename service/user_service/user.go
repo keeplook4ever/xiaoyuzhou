@@ -2,6 +2,7 @@ package user_service
 
 import (
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/util"
 )
 
 type UserInput struct {
@@ -10,6 +11,7 @@ type UserInput struct {
 	Passwd    string `json:"passwd"`
 	CreatedBy string `json:"created_by"`
 	UpdatedBy string `json:"updated_by"`
+	Role      string `json:"role"`
 }
 
 func (u *UserInput) ExistByName() (bool, error) {
@@ -17,7 +19,12 @@ func (u *UserInput) ExistByName() (bool, error) {
 }
 
 func (u *UserInput) GetUser() ([]models.UserDto, error) {
-	users, err := models.GetUser(u.getMaps())
+	cond, vals, err := util.SqlWhereBuild(u.getMaps(), "and")
+	if err != nil {
+		return nil, err
+	}
+
+	users, err := models.GetUser(cond, vals)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +36,7 @@ func (u *UserInput) GetUser() ([]models.UserDto, error) {
 }
 
 func (u *UserInput) Add() error {
-	return models.AddUser(u.Name, u.Passwd, u.CreatedBy, u.UpdatedBy)
+	return models.AddUser(u.Name, u.Passwd, u.CreatedBy, u.UpdatedBy, u.Role)
 }
 
 func (u *UserInput) Check() (bool, error) {
@@ -47,5 +54,8 @@ func (u *UserInput) getMaps() map[string]interface{} {
 		maps["id"] = u.ID
 	}
 
+	if u.Role != "" {
+		maps["role"] = u.Role
+	}
 	return maps
 }

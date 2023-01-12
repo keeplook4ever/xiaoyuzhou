@@ -2,8 +2,10 @@ package util
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 	"xiaoyuzhou/pkg/setting"
 )
 
@@ -32,7 +34,7 @@ const (
 	IsNotNull
 )
 
-// sql build where
+// SqlWhereBuild sql build where
 func SqlWhereBuild(where map[string]interface{}, connect string) (whereSQL string, vals []interface{}, err error) {
 	for k, v := range where {
 		ks := strings.Split(k, " ")
@@ -102,4 +104,11 @@ func SqlWhereBuild(where map[string]interface{}, connect string) (whereSQL strin
 		}
 	}
 	return
+}
+
+// GetScore 从最小最大获取一个中间随机数
+func GetScore(min, max int) int {
+	rand.Seed(time.Now().Unix())
+	n := rand.Intn(max-min) + min
+	return n
 }
