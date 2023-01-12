@@ -105,6 +105,16 @@ func InitRouter() *gin.Engine {
 		//获取当前登录用户信息
 		apiManagerV1.GET("/user/info", v1.GetCurrentLoginUserInfo)
 
+		//获取运势Lottery配置表
+		apiManagerV1.GET("/lottery", v1.GetLotteryForManager)
+
+		//获取运势内容表LotteryContent
+		apiManagerV1.GET("/lottery-content", v1.GetLotteryContentForManager)
+
+		//添加运势Lottery配置表
+		apiManagerV1.POST("/lottery", v1.AddLotteryType)
+		//添加具体运势内容LotteryContent
+		apiManagerV1.POST("/lottery-content", v1.AddLotteryContent)
 	}
 
 	return r

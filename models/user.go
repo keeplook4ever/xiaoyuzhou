@@ -6,11 +6,11 @@ import (
 
 type User struct {
 	Model            // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	Name      string `gorm:"column:name;unique;not null" json:"name" ` // 用户名唯一
-	Passwd    string `gorm:"column:passwd;not null" json:"passwd"`
-	CreatedBy string `gorm:"column:created_by;not null" json:"created_by"`
-	UpdatedBy string `gorm:"column:updated_by;not null" json:"updated_by"`
-	Role      string `gorm:"column:role;not null;default:user" json:"role"`
+	Name      string `gorm:"column:name;unique;not null;type:varchar(50)" json:"name" ` // 用户名唯一
+	Passwd    string `gorm:"column:passwd;not null;type:varchar(50)" json:"passwd"`
+	CreatedBy string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`
+	UpdatedBy string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`
+	Role      string `gorm:"column:role;not null;default:user;type:varchar(50)" json:"role"`
 }
 
 type UserDto struct {

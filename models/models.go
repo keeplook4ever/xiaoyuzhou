@@ -15,9 +15,9 @@ var Db *gorm.DB
 
 //Model ...
 type Model struct {
-	ID        uint `gorm:"primarykey" json:"id"`
-	CreatedAt int  `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt int  `gorm:"column:updated_at" json:"updated_at"`
+	ID        uint `gorm:"primaryKey;not null;autoIncrement;type:int" json:"id"`
+	CreatedAt int  `gorm:"column:created_at;not null;type:int" json:"created_at"`
+	UpdatedAt int  `gorm:"column:updated_at;not null;type:int" json:"updated_at"`
 }
 
 // Setup initializes the database instance

@@ -98,6 +98,40 @@ definitions:
       updated_by:
         type: string
     type: object
+  models.Lottery:
+    properties:
+      created_at:
+        type: integer
+      id:
+        type: integer
+      keyword:
+        description: 运势文字
+        type: string
+      max_score:
+        description: 最大分数
+        type: integer
+      min_score:
+        description: 最小分数
+        type: integer
+      probability:
+        description: 概率
+        type: number
+      updated_at:
+        type: integer
+    type: object
+  models.LotteryContent:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: integer
+      id:
+        type: integer
+      key_word:
+        type: string
+      updated_at:
+        type: integer
+    type: object
   models.LotteryDto:
     properties:
       content:
@@ -213,6 +247,31 @@ definitions:
     required:
     - name
     - state
+    type: object
+  v1.AddLotteryContentData:
+    properties:
+      content:
+        type: string
+      key_word:
+        type: string
+    required:
+    - content
+    - key_word
+    type: object
+  v1.AddLotteryData:
+    properties:
+      key_word:
+        type: string
+      max_score:
+        type: integer
+      min_score:
+        type: integer
+      probability:
+        type: number
+    required:
+    - key_word
+    - max_score
+    - probability
     type: object
   v1.GetArticlesResponse:
     properties:
@@ -655,6 +714,116 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改文章类型
+      tags:
+      - Manager
+  /manager/lottery:
+    get:
+      parameters:
+      - description: 运势文字
+        in: formData
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Lottery'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取全部运势表Lottery
+      tags:
+      - Manager
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 运势类关键
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddLotteryData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加运势类型关键字，分数，概率等
+      tags:
+      - Manager
+  /manager/lottery-content:
+    get:
+      parameters:
+      - description: 运势文字
+        in: formData
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.LotteryContent'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取全部运势内容表LotteryContent
+      tags:
+      - Manager
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 运势具体内容
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddLotteryContentData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加运势详细内容
       tags:
       - Manager
   /manager/s3/token:

@@ -6,10 +6,10 @@ import (
 
 type Category struct {
 	Model
-	Name      string    `gorm:"column:name;not null;unique" json:"name"`
-	CreatedBy string    `gorm:"column:created_by;not null" json:"created_by"`
-	UpdatedBy string    `gorm:"column:updated_by;not null" json:"updated_by"`
-	State     int       `gorm:"column:state;not null;default:1" json:"state"` //0表示禁用，1表示启用
+	Name      string    `gorm:"column:name;not null;unique;type:varchar(40)" json:"name"`
+	CreatedBy string    `gorm:"column:created_by;not null;type:varchar(40)" json:"created_by"`
+	UpdatedBy string    `gorm:"column:updated_by;not null;type:varchar(40)" json:"updated_by"`
+	State     int       `gorm:"column:state;not null;default:1;type:tinyint(1)" json:"state"` //0表示禁用，1表示启用
 	Articles  []Article `json:"articles,omitempty"`
 }
 

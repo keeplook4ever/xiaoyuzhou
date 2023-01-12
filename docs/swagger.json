@@ -615,6 +615,184 @@
                 }
             }
         },
+        "/manager/lottery": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取全部运势表Lottery",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "运势文字",
+                        "name": "keyword",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Lottery"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加运势类型关键字，分数，概率等",
+                "parameters": [
+                    {
+                        "description": "运势类关键",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddLotteryData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/lottery-content": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取全部运势内容表LotteryContent",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "运势文字",
+                        "name": "keyword",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.LotteryContent"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加运势详细内容",
+                "parameters": [
+                    {
+                        "description": "运势具体内容",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddLotteryContentData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/s3/token": {
             "post": {
                 "security": [
@@ -1003,6 +1181,56 @@
                 }
             }
         },
+        "models.Lottery": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "keyword": {
+                    "description": "运势文字",
+                    "type": "string"
+                },
+                "max_score": {
+                    "description": "最大分数",
+                    "type": "integer"
+                },
+                "min_score": {
+                    "description": "最小分数",
+                    "type": "integer"
+                },
+                "probability": {
+                    "description": "概率",
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LotteryContent": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "key_word": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.LotteryDto": {
             "type": "object",
             "properties": {
@@ -1165,6 +1393,43 @@
                 "state": {
                     "type": "integer",
                     "default": 1
+                }
+            }
+        },
+        "v1.AddLotteryContentData": {
+            "type": "object",
+            "required": [
+                "content",
+                "key_word"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "key_word": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.AddLotteryData": {
+            "type": "object",
+            "required": [
+                "key_word",
+                "max_score",
+                "probability"
+            ],
+            "properties": {
+                "key_word": {
+                    "type": "string"
+                },
+                "max_score": {
+                    "type": "integer"
+                },
+                "min_score": {
+                    "type": "integer"
+                },
+                "probability": {
+                    "type": "number"
                 }
             }
         },
