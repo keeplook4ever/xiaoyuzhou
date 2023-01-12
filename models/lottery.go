@@ -84,6 +84,13 @@ func AddLottery(minScore, maxScore int, keyWord string, probability float32) err
 	return nil
 }
 
+func EditLottery(id int, maps map[string]interface{}) error {
+	if err := Db.Model(&Lottery{}).Where("id = ? ", id).Updates(maps).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func AddLotteryContent(keyWord, content string) error {
 	lc := LotteryContent{
 		KeyWord: keyWord,

@@ -30,12 +30,13 @@ type AddLotteryContentData struct {
 // GetLottery
 // @Summary 获取日签
 // @Produce  json
-// @Param uid query int true "用户uid"
+// @Param uid query string true "用户uid"
 // @Success 200 {object} GetLotteryResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /player/lottery [get]
 // @Tags Player
+
 func GetLottery(c *gin.Context) {
 	appG := app.Gin{C: c}
 	uid := c.Query("uid")
@@ -158,6 +159,43 @@ func AddLotteryContent(c *gin.Context) {
 	}
 	if err := lotteryContentInput.Add(); err != nil {
 		appG.Response(http.StatusOK, "添加LotteryContent失败", nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+type EditLotteryForm struct {
+	MaxScore    int     `form:"max_score"`
+	MinScore    int     `form:"min_score"`
+	KeyWord     string  `form:"keyword"`
+	Probability float32 `form:"probability"`
+	ID          int     `form:"id" binding:"required"`
+}
+
+// EditLottery
+// @Summary 修改运势类型
+// @Produce json
+// @Param max_score formData int false "最大分数"
+// @Param min_score formData int false "最小分数"
+// @Param keyword formData string false "关键字"
+// @Param probability formData float32 false "概率"
+func EditLottery(c *gin.Context) {
+	appG := app.Gin{C: c}
+	var l EditLotteryForm
+	if err := c.ShouldBindJSON(&l); err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR, nil)
+		return
+	}
+	lotteryInput := lottery_service.LotteryInput{
+		KeyWord:     l.KeyWord,
+		MaxScore:    l.MaxScore,
+		MinScore:    l.MinScore,
+		Probability: l.Probability,
+		ID:          l.ID,
+	}
+
+	if err := lotteryInput.Edit(); err != nil {
+		appG.Response(http.StatusOK, "编辑失败", nil)
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)

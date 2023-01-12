@@ -6,6 +6,7 @@ import (
 )
 
 type LotteryInput struct {
+	ID          int     `json:"id"`
 	MinScore    int     `json:"min_score"`   // 最小分数
 	MaxScore    int     `json:"max_score"`   // 最大分数
 	KeyWord     string  `json:"keyword"`     // 运势文字
@@ -26,6 +27,10 @@ func GetLuckyForPlayer() (models.LuckyTodayDto, error) {
 
 func (l *LotteryInput) Add() error {
 	return models.AddLottery(l.MinScore, l.MaxScore, l.KeyWord, l.Probability)
+}
+
+func (l *LotteryInput) Edit() error {
+	return models.EditLottery(l.ID, l.getMaps())
 }
 
 func (lc *LotteryContentInput) Add() error {
