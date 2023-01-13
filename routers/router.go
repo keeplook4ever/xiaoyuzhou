@@ -113,6 +113,9 @@ func InitRouter() *gin.Engine {
 
 		//添加运势Lottery配置表
 		apiManagerV1.POST("/lottery", v1.AddLotteryType)
+
+		//修改Lottery
+		apiManagerV1.PUT("/lottery", v1.EditLottery)
 		//添加具体运势内容LotteryContent
 		apiManagerV1.POST("/lottery-content", v1.AddLotteryContent)
 	}

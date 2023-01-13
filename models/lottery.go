@@ -36,18 +36,13 @@ func (l *Lottery) ToLotteryDto() LotteryDto {
 	}
 }
 
-func GetLotteries(cond string, vals []interface{}) ([]Lottery, error) {
+func GetLotteries() ([]Lottery, error) {
 	var lotteries []Lottery
-	err := Db.Model(&Lottery{}).Where(cond, vals...).Find(&lotteries).Error
+	err := Db.Model(&Lottery{}).Find(&lotteries).Error
 	if err != nil {
 		return nil, err
 	}
 	return lotteries, nil
-	//resp := make([]LotteryDto, 0)
-	//for _, l := range lotteries {
-	//	resp = append(resp, l.ToLotteryDto())
-	//}
-	//return resp, nil
 }
 
 func GetLotteryContents(cond string, vals []interface{}) ([]LotteryContent, error) {
@@ -70,22 +65,21 @@ func GetOneRandLotteryContent(kw string) (string, error) {
 	return contents[rand.Intn(len(contents))], nil
 }
 
-func AddLottery(minScore, maxScore int, keyWord string, probability float32) error {
-	lott := Lottery{
-		MinScore:    minScore,
-		MaxScore:    maxScore,
-		KeyWord:     keyWord,
-		Probability: probability,
-	}
-	err := Db.Model(&Lottery{}).Create(&lott).Error
+func AddLottery(keyWordList []string, scoreList []int, probabilityList []float32) error {
+	lottSlice := covertLottery(keyWordList, scoreList, probabilityList)
+	err := Db.Model(&Lottery{}).Create(&lottSlice).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func EditLottery(id int, maps map[string]interface{}) error {
-	if err := Db.Model(&Lottery{}).Where("id = ? ", id).Updates(maps).Error; err != nil {
+func EditLottery(keyWordList []string, scoreList []int, probabilityList []float32) error {
+	lottSlice := covertLottery(keyWordList, scoreList, probabilityList)
+	if err := Db.Where("1=1").Delete(&Lottery{}).Error; err != nil {
+		return err
+	}
+	if err := Db.Model(&Lottery{}).Create(&lottSlice).Error; err != nil {
 		return err
 	}
 	return nil
@@ -101,4 +95,26 @@ func AddLotteryContent(keyWord, content string) error {
 		return err
 	}
 	return nil
+}
+
+func UpdateLotteryContent(id int, data map[string]interface{}) error {
+	err := Db.Model(&LotteryContent{}).Where("id = ?", id).Updates(data).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func covertLottery(keyWordList []string, scoreList []int, probabilityList []float32) []Lottery {
+	var minScore int
+	lottSlice := make([]Lottery, 0)
+	for i, v := range keyWordList {
+		if i == 0 {
+			minScore = 1 //最小分数是1
+		} else {
+			minScore = scoreList[i-1] + 1
+		}
+		lottSlice = append(lottSlice, Lottery{KeyWord: v, MaxScore: scoreList[i], MinScore: minScore, Probability: probabilityList[i]})
+	}
+	return lottSlice
 }

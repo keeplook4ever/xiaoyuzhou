@@ -637,14 +637,6 @@ const docTemplate = `{
                     "Manager"
                 ],
                 "summary": "获取全部运势表Lottery",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "运势文字",
-                        "name": "keyword",
-                        "in": "formData"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -657,6 +649,45 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改运势类型",
+                "parameters": [
+                    {
+                        "description": "运势类",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.InputLotteryData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/app.Response"
                         }
@@ -687,12 +718,12 @@ const docTemplate = `{
                 "summary": "添加运势类型关键字，分数，概率等",
                 "parameters": [
                     {
-                        "description": "运势类关键",
+                        "description": "运势类",
                         "name": "_",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddLotteryData"
+                            "$ref": "#/definitions/v1.InputLotteryData"
                         }
                     }
                 ],
@@ -997,46 +1028,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/player/lottery": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Player"
-                ],
-                "summary": "获取日签",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "用户uid",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.GetLotteryResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -1239,34 +1230,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LotteryDto": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "keyword": {
-                    "type": "string"
-                },
-                "score": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.LuckyTodayDto": {
-            "type": "object",
-            "properties": {
-                "song": {
-                    "type": "string"
-                },
-                "spell": {
-                    "type": "string"
-                },
-                "todo": {
-                    "type": "string"
-                }
-            }
-        },
         "models.UserDto": {
             "type": "object",
             "properties": {
@@ -1419,28 +1382,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.AddLotteryData": {
-            "type": "object",
-            "required": [
-                "key_word",
-                "max_score",
-                "probability"
-            ],
-            "properties": {
-                "key_word": {
-                    "type": "string"
-                },
-                "max_score": {
-                    "type": "integer"
-                },
-                "min_score": {
-                    "type": "integer"
-                },
-                "probability": {
-                    "type": "number"
-                }
-            }
-        },
         "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
@@ -1483,17 +1424,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GetLotteryResponse": {
-            "type": "object",
-            "properties": {
-                "lotteryContent": {
-                    "$ref": "#/definitions/models.LotteryDto"
-                },
-                "luckyContent": {
-                    "$ref": "#/definitions/models.LuckyTodayDto"
-                }
-            }
-        },
         "v1.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -1504,6 +1434,37 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.UserDto"
+                    }
+                }
+            }
+        },
+        "v1.InputLotteryData": {
+            "type": "object",
+            "required": [
+                "keyword_list",
+                "probability_list",
+                "score_list"
+            ],
+            "properties": {
+                "keyword_list": {
+                    "description": "[\"末吉\", \"小吉\", \"吉\", \"大吉\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "probability_list": {
+                    "description": "相加为1",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "score_list": {
+                    "description": "从小到大",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
                     }
                 }
             }
