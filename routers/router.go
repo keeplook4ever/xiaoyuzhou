@@ -107,17 +107,18 @@ func InitRouter() *gin.Engine {
 
 		//获取运势Lottery配置表
 		apiManagerV1.GET("/lottery", v1.GetLotteryForManager)
+		//添加运势Lottery配置表
+		apiManagerV1.POST("/lottery", v1.AddLotteryType)
+		//修改Lottery
+		apiManagerV1.PUT("/lottery", v1.EditLottery)
 
+		//添加具体运势内容LotteryContent
+		apiManagerV1.POST("/lottery-content", v1.AddLotteryContent)
+		//修改运势内容表LotteryContent
+		apiManagerV1.PUT("/lottery-content/:id", v1.EditLotteryContent)
 		//获取运势内容表LotteryContent
 		apiManagerV1.GET("/lottery-content", v1.GetLotteryContentForManager)
 
-		//添加运势Lottery配置表
-		apiManagerV1.POST("/lottery", v1.AddLotteryType)
-
-		//修改Lottery
-		apiManagerV1.PUT("/lottery", v1.EditLottery)
-		//添加具体运势内容LotteryContent
-		apiManagerV1.POST("/lottery-content", v1.AddLotteryContent)
 	}
 
 	return r

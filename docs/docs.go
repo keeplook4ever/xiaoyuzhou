@@ -832,6 +832,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/lottery-content/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改运势详细内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "KeyWord",
+                        "name": "keyword",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Content",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/s3/token": {
             "post": {
                 "security": [

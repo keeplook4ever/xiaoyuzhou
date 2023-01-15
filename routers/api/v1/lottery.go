@@ -18,6 +18,12 @@ type GetLotteryResponse struct {
 	LuckyContent   models.LuckyTodayDto
 }
 
+type EditLotteryContentForm struct {
+	KeyWord string `form:"keyword"`
+	Content string `form:"content" binding:"required"`
+	ID      int    `form:"id" binding:"required"`
+}
+
 type InputLotteryData struct {
 	KeyWordList     []string  `json:"keyword_list" binding:"required"`     //["末吉", "小吉", "吉", "大吉"]
 	ScoreList       []int     `json:"score_list" binding:"required"`       //从小到大
@@ -169,26 +175,30 @@ func AddLotteryContent(c *gin.Context) {
 }
 
 // EditLotteryContent
-// @Summary 添加运势详细内容
-// @Accept json
+// @Summary 修改运势详细内容
 // @Produce json
 // @Param id path int true "ID"
 // @Param keyword formData string false "KeyWord"
-// @Param content formData string false "Content"
+// @Param content formData string true "Content"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /manager/lottery-content/[id] [put]
+// @Router /manager/lottery-content/{id} [put]
 // @Tags Manager
 // @Security ApiKeyAuth
 func EditLotteryContent(c *gin.Context) {
 	appG := app.Gin{C: c}
-	id := com.StrTo(c.Param("id")).MustInt()
-	keyWord := c.PostForm("keyword")
-	content := c.PostForm("content")
+	//keyWord := c.PostForm("keyword")
+	//content := c.PostForm("content")
+	var Lc = EditLotteryContentForm{ID: com.StrTo(c.Param("id")).MustInt()}
+	if err := c.ShouldBind(&Lc); err != nil {
+		appG.Response(http.StatusBadRequest, "请求不合法", nil)
+		return
+	}
+
 	lcInput := lottery_service.LotteryContentInput{
-		ID:      id,
-		KeyWord: keyWord,
-		Content: content,
+		ID:      Lc.ID,
+		KeyWord: Lc.KeyWord,
+		Content: Lc.Content,
 	}
 	if err := lcInput.Update(); err != nil {
 		appG.Response(http.StatusOK, "更新运势内容失败", nil)

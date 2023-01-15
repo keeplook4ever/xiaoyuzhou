@@ -90,7 +90,7 @@ type EditAuthorForm struct {
 func EditAuthor(c *gin.Context) {
 	var (
 		appG   = app.Gin{C: c}
-		author = EditAuthorForm{}
+		author = EditAuthorForm{Id: com.StrTo(c.Param("id")).MustInt()}
 	)
 
 	if err := c.ShouldBind(&author); err != nil {

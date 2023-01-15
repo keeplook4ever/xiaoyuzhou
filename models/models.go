@@ -51,7 +51,7 @@ func Setup() {
 		log.Fatalf("models.Replace err: %v", err)
 	}
 
-	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{})
+	err = Db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci").AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{})
 	if err != nil {
 		log.Fatalf("models.AutoMigrate err: %v", err)
 	}
