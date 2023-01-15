@@ -6,13 +6,15 @@ import (
 )
 
 type LotteryInput struct {
-	KeyWordList     []string  `json:"keyword_list"`
-	ScoreList       []int     `json:"score_list"`
-	ProbabilityList []float32 `json:"probability_list"`
+	MaxScore int `json:"max_score"`
+	MinScore int `json:"min_score"`
+	KeyWord string `json:"keyword"`
+	Probability float32 `json:"probability"`
+	Type string `json:"type"`	//A-D 枚举四大类
 }
 type LotteryContentInput struct {
-	KeyWord string `json:"key_word"`
 	Content string `json:"content"`
+	Type string `json:"type"`
 	ID      int    `json:"id"`
 }
 
@@ -24,20 +26,17 @@ func GetLuckyForPlayer() (models.LuckyTodayDto, error) {
 	return models.LuckyTodayDto{}, nil
 }
 
-func (l *LotteryInput) Add() error {
-	return models.AddLottery(l.KeyWordList, l.ScoreList, l.ProbabilityList)
-}
 
 func (l *LotteryInput) Edit() error {
-	return models.EditLottery(l.KeyWordList, l.ScoreList, l.ProbabilityList)
+	return models.EditLottery(l.Type, l.getMaps())
 }
 
 func (lc *LotteryContentInput) Add() error {
-	return models.AddLotteryContent(lc.KeyWord, lc.Content)
+	return models.AddLotteryContent(lc.Content, lc.Type)
 }
 
 func (lc *LotteryContentInput) Update() error {
-	return models.UpdateLotteryContent(lc.ID, lc.getMaps())
+	return models.UpdateLotteryContent(lc.ID, lc.Type, lc.Content)
 }
 
 func GetLotteryForManager() ([]models.Lottery, error) {
@@ -54,8 +53,8 @@ func (l *LotteryContentInput) GetLotteryContentForManager() ([]models.LotteryCon
 
 func (lc *LotteryContentInput) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
-	if lc.KeyWord != "" {
-		maps["keyword"] = lc.KeyWord
+	if lc.Type != "" {
+		maps["type"] = lc.Type
 	}
 	if lc.ID > 0 {
 		maps["id"] = lc.ID
@@ -67,19 +66,19 @@ func (lc *LotteryContentInput) getMaps() map[string]interface{} {
 	return maps
 }
 
-//func (l *LotteryInput) getMaps() map[string]interface{} {
-//	maps := make(map[string]interface{})
-//	if l.MaxScore > 0 && l.MaxScore < 100 {
-//		maps["max_score"] = l.MaxScore
-//	}
-//	if l.MinScore > 0 && l.MinScore < 100 {
-//		maps["min_score"] = l.MinScore
-//	}
-//	if l.KeyWord != "" {
-//		maps["keyword"] = l.KeyWord
-//	}
-//	if l.Probability != 0.0 {
-//		maps["probability"] = l.Probability
-//	}
-//	return maps
-//}
+func (l *LotteryInput) getMaps() map[string]interface{} {
+	maps := make(map[string]interface{})
+	if l.MaxScore > 0 && l.MaxScore < 100 {
+		maps["max_score"] = l.MaxScore
+	}
+	if l.MinScore > 0 && l.MinScore < 100 {
+		maps["min_score"] = l.MinScore
+	}
+	if l.KeyWord != "" {
+		maps["keyword"] = l.KeyWord
+	}
+	if l.Probability != 0.0 {
+		maps["probability"] = l.Probability
+	}
+	return maps
+}

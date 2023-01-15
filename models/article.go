@@ -11,19 +11,19 @@ type Article struct {
 	CategoryID int      `gorm:"column:category_id;type:int" json:"category_id"`  // 默认外键
 	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
-	SeoTitle        string `gorm:"column:seo_title;not null;unique;type:varchar(50)" json:"seo_title"`
-	SeoUrl          string `gorm:"column:seo_url;not null;unique;type:varchar(50)" json:"seo_url"`
-	PageTitle       string `gorm:"column:page_title;not null;unique;type:varchar(50)" json:"page_title"`
-	MetaDesc        string `gorm:"column:meta_desc;not null;type:varchar(50)" json:"meta_desc"`
-	RelatedArticles string `gorm:"column:related_articles;type:varchar(20)" json:"related_articles"`
+	SeoTitle        string `gorm:"column:seo_title;not null;unique;type:varchar(500)" json:"seo_title"`
+	SeoUrl          string `gorm:"column:seo_url;not null;unique;type:varchar(500)" json:"seo_url"`
+	PageTitle       string `gorm:"column:page_title;not null;unique;type:varchar(500)" json:"page_title"`
+	MetaDesc        string `gorm:"column:meta_desc;not null;type:varchar(500)" json:"meta_desc"`
+	RelatedArticles string `gorm:"column:related_articles;type:varchar(200)" json:"related_articles"`
 	Content         string `gorm:"column:content;not null;type:text" json:"content"`
 	AuthorId        int    `gorm:"column:author_id;not null;type:int" json:"author_id"`
 	Author          Author `gorm:"foreignKey:AuthorId" json:"author,omitempty"` // 一个文章属于一个作者
-	CoverImageUrl   string `gorm:"column:cover_image_url;not null;type:varchar(50)" json:"cover_image_url"`
+	CoverImageUrl   string `gorm:"column:cover_image_url;not null;type:varchar(500)" json:"cover_image_url"`
 	State           int    `gorm:"column:state;not null;type:tinyint(1)" json:"state"`
 	Language        string `gorm:"column:language;not null;type:varchar(2)" json:"language"`
-	CreatedBy       string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`
-	UpdatedBy       string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`
+	CreatedBy       string `gorm:"column:created_by;not null;type:varchar(500)" json:"created_by"`
+	UpdatedBy       string `gorm:"column:updated_by;not null;type:varchar(500)" json:"updated_by"`
 }
 
 type ArticleDto struct {

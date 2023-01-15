@@ -676,55 +676,41 @@ const docTemplate = `{
                 "summary": "修改运势类型",
                 "parameters": [
                     {
-                        "description": "运势类",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.InputLotteryData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
+                        "type": "integer",
+                        "description": "最大值",
+                        "name": "max_score",
+                        "in": "formData"
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
                     {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "添加运势类型关键字，分数，概率等",
-                "parameters": [
+                        "type": "integer",
+                        "description": "最小值",
+                        "name": "min_score",
+                        "in": "formData"
+                    },
                     {
-                        "description": "运势类",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.InputLotteryData"
-                        }
+                        "type": "number",
+                        "description": "概率",
+                        "name": "probability",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "formData"
+                    },
+                    {
+                        "enum": [
+                            "\"A\"",
+                            "\"B\"",
+                            "\"C\"",
+                            "\"D\""
+                        ],
+                        "type": "string",
+                        "description": "好运等级",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -759,10 +745,16 @@ const docTemplate = `{
                 "summary": "获取全部运势内容表LotteryContent",
                 "parameters": [
                     {
+                        "enum": [
+                            "\"A\"",
+                            "\"B\"",
+                            "\"C\"",
+                            "\"D\""
+                        ],
                         "type": "string",
-                        "description": "运势文字",
-                        "name": "keyword",
-                        "in": "formData"
+                        "description": "好运等级",
+                        "name": "type",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -855,10 +847,17 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "enum": [
+                            "\"A\"",
+                            "\"B\"",
+                            "\"C\"",
+                            "\"D\""
+                        ],
                         "type": "string",
-                        "description": "KeyWord",
-                        "name": "keyword",
-                        "in": "formData"
+                        "description": "好运等级",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -1257,6 +1256,10 @@ const docTemplate = `{
                     "description": "概率",
                     "type": "number"
                 },
+                "type": {
+                    "description": "枚举",
+                    "type": "string"
+                },
                 "updated_at": {
                     "type": "integer"
                 }
@@ -1274,7 +1277,11 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "key_word": {
+                "keyword": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "A-D 枚举",
                     "type": "string"
                 },
                 "updated_at": {
@@ -1423,14 +1430,21 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "content",
-                "key_word"
+                "type"
             ],
             "properties": {
                 "content": {
                     "type": "string"
                 },
-                "key_word": {
-                    "type": "string"
+                "type": {
+                    "description": "枚举A-D",
+                    "type": "string",
+                    "enum": [
+                        "A",
+                        "B",
+                        "C",
+                        "D"
+                    ]
                 }
             }
         },
@@ -1486,37 +1500,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.UserDto"
-                    }
-                }
-            }
-        },
-        "v1.InputLotteryData": {
-            "type": "object",
-            "required": [
-                "keyword_list",
-                "probability_list",
-                "score_list"
-            ],
-            "properties": {
-                "keyword_list": {
-                    "description": "[\"末吉\", \"小吉\", \"吉\", \"大吉\"]",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "probability_list": {
-                    "description": "相加为1",
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
-                },
-                "score_list": {
-                    "description": "从小到大",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
                     }
                 }
             }

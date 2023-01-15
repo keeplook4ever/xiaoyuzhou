@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
 	"net/http"
 	"reflect"
 	"sort"
@@ -19,19 +18,21 @@ type GetLotteryResponse struct {
 }
 
 type EditLotteryContentForm struct {
-	KeyWord string `form:"keyword"`
 	Content string `form:"content" binding:"required"`
-	ID      int    `form:"id" binding:"required"`
+	Type      string    `form:"type" binding:"required"`
+	Id int `path:"id" binding:"required"`
 }
 
-type InputLotteryData struct {
-	KeyWordList     []string  `json:"keyword_list" binding:"required"`     //["末吉", "小吉", "吉", "大吉"]
-	ScoreList       []int     `json:"score_list" binding:"required"`       //从小到大
-	ProbabilityList []float32 `json:"probability_list" binding:"required"` //相加为1
+type EditLotteryForm struct {
+	MaxScore int `form:"max_score"`
+	MinScore int `form:"min_score"`
+	Probability float32 `form:"probability"`
+	KeyWord string `form:"keyword"`
+	Type string `form:"type" binding:"required" enums:"A,B,C,D"`// A-D 枚举
 }
 
 type AddLotteryContentData struct {
-	KeyWord string `json:"key_word" binding:"required"`
+	Type string `json:"type" binding:"required" enums:"A,B,C,D"` //枚举A-D
 	Content string `json:"content" binding:"required"`
 }
 
@@ -83,44 +84,15 @@ func GetLotteryForManager(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, lotteries)
 }
 
-// AddLotteryType
-// @Summary 添加运势类型关键字，分数，概率等
-// @Produce json
-// @Accept json
-// @Param _ body InputLotteryData true "运势类"
-// @Success 200 {object} app.Response
-// @Failure 500 {object} app.Response
-// @Router /manager/lottery [post]
-// @Tags Manager
-// @Security ApiKeyAuth
-func AddLotteryType(c *gin.Context) {
-	appG := app.Gin{C: c}
-	var lottery InputLotteryData
-	if err := c.ShouldBindJSON(&lottery); err != nil {
-		appG.Response(http.StatusBadRequest, e.ERROR, nil)
-		return
-	}
-	//校验上传值是否合法
-	if !checkLotteryValid(lottery.KeyWordList, lottery.ScoreList, lottery.ProbabilityList) {
-		appG.Response(http.StatusOK, "参数不合法", nil)
-		return
-	}
-	lotteryInput := lottery_service.LotteryInput{
-		KeyWordList:     lottery.KeyWordList,
-		ScoreList:       lottery.ScoreList,
-		ProbabilityList: lottery.ProbabilityList,
-	}
-	if err := lotteryInput.Add(); err != nil {
-		appG.Response(http.StatusOK, "添加Lottery出错", nil)
-		return
-	}
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
-}
 
 // EditLottery
 // @Summary 修改运势类型
 // @Produce json
-// @Param _ body InputLotteryData true "运势类"
+// @Param max_score formData int false "最大值"
+// @Param min_score formData int false "最小值"
+// @Param probability formData float32 false "概率"
+// @Param keyword formData string false "关键字"
+// @Param type formData string true "好运等级" Enums("A","B","C","D")
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/lottery [put]
@@ -128,15 +100,17 @@ func AddLotteryType(c *gin.Context) {
 // @Security ApiKeyAuth
 func EditLottery(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var l InputLotteryData
+	var l EditLotteryForm
 	if err := c.ShouldBind(&l); err != nil {
 		appG.Response(http.StatusBadRequest, e.ERROR, nil)
 		return
 	}
 	lotteryInput := lottery_service.LotteryInput{
-		KeyWordList:     l.KeyWordList,
-		ScoreList:       l.ScoreList,
-		ProbabilityList: l.ProbabilityList,
+		MaxScore: l.MaxScore,
+		MinScore: l.MinScore,
+		KeyWord: l.KeyWord,
+		Type: l.Type,
+		Probability: l.Probability,
 	}
 
 	if err := lotteryInput.Edit(); err != nil {
@@ -164,8 +138,8 @@ func AddLotteryContent(c *gin.Context) {
 		return
 	}
 	lotteryContentInput := lottery_service.LotteryContentInput{
-		KeyWord: lotteryC.KeyWord,
 		Content: lotteryC.Content,
+		Type: lotteryC.Type,  // type 代表A-D不同等级
 	}
 	if err := lotteryContentInput.Add(); err != nil {
 		appG.Response(http.StatusOK, "添加LotteryContent失败", nil)
@@ -178,7 +152,7 @@ func AddLotteryContent(c *gin.Context) {
 // @Summary 修改运势详细内容
 // @Produce json
 // @Param id path int true "ID"
-// @Param keyword formData string false "KeyWord"
+// @Param type formData string true "好运等级" Enums("A","B","C","D")
 // @Param content formData string true "Content"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -187,18 +161,18 @@ func AddLotteryContent(c *gin.Context) {
 // @Security ApiKeyAuth
 func EditLotteryContent(c *gin.Context) {
 	appG := app.Gin{C: c}
-	//keyWord := c.PostForm("keyword")
-	//content := c.PostForm("content")
-	var Lc = EditLotteryContentForm{ID: com.StrTo(c.Param("id")).MustInt()}
+	var Lc = EditLotteryContentForm{
+		//Id: com.StrTo(c.Param("id")).MustInt(),
+	}
 	if err := c.ShouldBind(&Lc); err != nil {
 		appG.Response(http.StatusBadRequest, "请求不合法", nil)
 		return
 	}
 
 	lcInput := lottery_service.LotteryContentInput{
-		ID:      Lc.ID,
-		KeyWord: Lc.KeyWord,
-		Content: Lc.Content,
+		ID: 		Lc.Id,
+		Type:      	Lc.Type,
+		Content: 	Lc.Content,
 	}
 	if err := lcInput.Update(); err != nil {
 		appG.Response(http.StatusOK, "更新运势内容失败", nil)
@@ -211,7 +185,7 @@ func EditLotteryContent(c *gin.Context) {
 // GetLotteryContentForManager
 // @Summary 获取全部运势内容表LotteryContent
 // @Produce json
-// @Param keyword formData string false "运势文字"
+// @Param type query string false "好运等级" Enums("A","B","C","D")
 // @Success 200 {object} []models.LotteryContent
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -220,9 +194,9 @@ func EditLotteryContent(c *gin.Context) {
 // @Security ApiKeyAuth
 func GetLotteryContentForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
-	keyword := c.Query("keyword")
+	tP := c.Query("type")
 	lotteryInput := lottery_service.LotteryContentInput{
-		KeyWord: keyword,
+		Type: tP,
 	}
 
 	var lotteryContents []models.LotteryContent

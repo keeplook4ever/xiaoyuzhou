@@ -10,13 +10,15 @@ type Lottery struct {
 	Model
 	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"` // 最小分数
 	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"` // 最大分数
-	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(5)" json:"keyword"`     // 运势文字
+	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`     // 运势文字
 	Probability float32 `gorm:"column:probability;type:float" json:"probability"`           // 概率
+	Type 	string `gorm:"column:type;type:varchar(10)" json:"type"`  //枚举
 }
 
 type LotteryContent struct {
 	Model
-	KeyWord string `gorm:"column:keyword;not null;type:varchar(5)" json:"key_word"`
+	Type string `gorm:"column:type;not null;type:varchar(1)" json:"type"`  //A-D 枚举
+	KeyWord string `gorm:"column:keyword;not null;type:varchar(10)" json:"keyword"`
 	Content string `gorm:"column:content;not null;type:text" json:"content"`
 }
 
@@ -65,30 +67,18 @@ func GetOneRandLotteryContent(kw string) (string, error) {
 	return contents[rand.Intn(len(contents))], nil
 }
 
-func AddLottery(keyWordList []string, scoreList []int, probabilityList []float32) error {
-	lottSlice := covertLottery(keyWordList, scoreList, probabilityList)
-	err := Db.Model(&Lottery{}).Create(&lottSlice).Error
-	if err != nil {
+
+func EditLottery(typE string, data map[string]interface{}) error {
+	if err := Db.Model(&Lottery{}).Where("type = ?", typE).Updates(data).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func EditLottery(keyWordList []string, scoreList []int, probabilityList []float32) error {
-	lottSlice := covertLottery(keyWordList, scoreList, probabilityList)
-	if err := Db.Where("1=1").Delete(&Lottery{}).Error; err != nil {
-		return err
-	}
-	if err := Db.Model(&Lottery{}).Create(&lottSlice).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-func AddLotteryContent(keyWord, content string) error {
+func AddLotteryContent(content, typE string) error {
 	lc := LotteryContent{
-		KeyWord: keyWord,
 		Content: content,
+		Type: typE,
 	}
 	err := Db.Model(&LotteryContent{}).Create(&lc).Error
 	if err != nil {
@@ -97,8 +87,8 @@ func AddLotteryContent(keyWord, content string) error {
 	return nil
 }
 
-func UpdateLotteryContent(id int, data map[string]interface{}) error {
-	err := Db.Model(&LotteryContent{}).Where("id = ?", id).Updates(data).Error
+func UpdateLotteryContent(id int, typE string, content string) error {
+	err := Db.Model(&LotteryContent{}).Where("id = ? and type = ?", id, typE).Updates(map[string]string{"content": content}).Error
 	if err != nil {
 		return err
 	}
