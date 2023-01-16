@@ -34,11 +34,8 @@ func InitRouter() *gin.Engine {
 	apiPlayerV1 := r.Group("/api/v1/player/")
 	{
 
-		// 日签相关
-		lotteryV1 := apiPlayerV1.Group("/lottery")
-		{
-			lotteryV1.GET("", v1.GetLottery)
-		}
+		// 获取日签相关
+		apiPlayerV1.GET("/lottery", v1.GetLotteryForUser)
 
 		// 塔罗牌相关
 		apiPlayerV1.Group("/tarot")

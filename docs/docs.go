@@ -1088,6 +1088,46 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/player/lottery": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取日签",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetLotteryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1292,6 +1332,34 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.LotteryDto": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "keyword": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LuckyTodayDto": {
+            "type": "object",
+            "properties": {
+                "song": {
+                    "type": "string"
+                },
+                "spell": {
+                    "type": "string"
+                },
+                "todo": {
+                    "type": "string"
                 }
             }
         },
@@ -1522,6 +1590,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.CategoryDto"
                     }
+                }
+            }
+        },
+        "v1.GetLotteryResponse": {
+            "type": "object",
+            "properties": {
+                "lotteryContent": {
+                    "$ref": "#/definitions/models.LotteryDto"
+                },
+                "luckyContent": {
+                    "$ref": "#/definitions/models.LuckyTodayDto"
                 }
             }
         },

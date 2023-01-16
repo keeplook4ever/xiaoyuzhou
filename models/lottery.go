@@ -3,7 +3,10 @@ package models
 import (
 	"errors"
 	"math/rand"
+	"strconv"
+	"strings"
 	"time"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -28,9 +31,14 @@ type LotteryDto struct {
 	Content string `json:"content"`
 }
 
-func (l *Lottery) ToLotteryDto() LotteryDto {
+type TypeAndProb struct {
+	Type string  `json:"type"`
+	Prob float32 `json:"prob"`
+}
+
+func (l *Lottery) makeLotteryWithContent() LotteryDto {
 	score := util.GetScore(l.MinScore, l.MaxScore)
-	content, _ := GetOneRandLotteryContent(l.Type)
+	content, _ := getOneRandLotteryContent(l.Type)
 	return LotteryDto{
 		Score:   score,
 		Keyword: l.KeyWord,
@@ -56,7 +64,20 @@ func GetLotteryContents(cond string, vals []interface{}) ([]LotteryContent, erro
 	return lotteryContents, nil
 }
 
-func GetOneRandLotteryContent(tyPe string) (string, error) {
+func GetOneRandLottery() (*LotteryDto, error) {
+	lotteries, err := GetLotteries()
+	if err != nil {
+		return nil, err
+	}
+	if len(lotteries) == 0 {
+		return nil, errors.New("没有设置lottery")
+	}
+	lotteryChose := getOneLotteryWithProb(lotteries)
+	lotteryWithContent := lotteryChose.makeLotteryWithContent()
+	return &lotteryWithContent, nil
+}
+
+func getOneRandLotteryContent(tyPe string) (string, error) {
 	var contents []string
 	err := Db.Model(&LotteryContent{}).Pluck("content", &contents).Where("type = ?", tyPe).Error
 	if err != nil {
@@ -106,4 +127,35 @@ func DeleteLotteryContent(id int) error {
 		return nil
 	}
 	return errors.New("该类型不够啦！")
+}
+
+func getOneLotteryWithProb(lotteries []Lottery) Lottery {
+	// 随机算法
+	var typeWithProb map[string]float32
+	origIndexArray := make([]string, 0)
+
+	var indexStringSlice [][]string // 类型字符按照概率生成的string切片
+	// 生成100个1234下标，其中个数多少取决于其的概率值
+
+	for i, l := range lotteries {
+		typeWithProb[l.Type] = l.Probability
+		indexString := strconv.Itoa(i)
+		indexStringSlice[i] = strings.Split(strings.Repeat(indexString, int(l.Probability*100)), "")
+		origIndexArray = append(origIndexArray, indexStringSlice[i]...)
+	}
+
+	logging.Debugf("count: %d || value: %v", len(origIndexArray), origIndexArray)
+	// 将顺序排列的slice打乱，在rand.Intn(len)取下标，取随机
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(origIndexArray), func(i, j int) {
+		origIndexArray[i], origIndexArray[j] = origIndexArray[j], origIndexArray[i]
+	})
+	logging.Debugf("count: %d || Shuffled: %v", len(origIndexArray), origIndexArray)
+
+	rand.Seed(time.Now().UnixNano())
+	n := rand.Intn(len(origIndexArray))
+	indexChose := origIndexArray[n]
+
+	intIndex, _ := strconv.Atoi(indexChose)
+	return lotteries[intIndex]
 }

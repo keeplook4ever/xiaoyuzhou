@@ -1,5 +1,11 @@
 package models
 
+import (
+	"math/rand"
+	"time"
+	"xiaoyuzhou/pkg/logging"
+)
+
 type LuckyToday struct {
 	Model
 	Spell string `gorm:"column:spell;not null;type:varchar(191)" json:"spell"` //今日好运咒语
@@ -19,4 +25,21 @@ func (l *LuckyToday) ToLuckyTodayDto() LuckyTodayDto {
 		Todo:  l.Todo,
 		Song:  l.Song,
 	}
+}
+
+func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
+	var luckList []LuckyToday
+	if err := Db.Model(&LuckyToday{}).Find(&luckList).Error; err != nil {
+		return nil, err
+	}
+	logging.Debugf(" %v ", luckList)
+	idList := make([]uint, 0)
+	for _, v := range luckList {
+		idList = append(idList, v.ID)
+	}
+
+	rand.Seed(time.Now().Unix())
+	luckyChose := luckList[rand.Intn(len(idList))].ToLuckyTodayDto()
+
+	return &luckyChose, nil
 }

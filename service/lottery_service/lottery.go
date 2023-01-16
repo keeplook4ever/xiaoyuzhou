@@ -18,12 +18,13 @@ type LotteryContentInput struct {
 	ID      int    `json:"id"`
 }
 
-func GetLotteryForPlayer() (models.LotteryDto, error) {
-	return models.LotteryDto{}, nil
+func GetLotteryForPlayer() (*models.LotteryDto, error) {
+	//TODO 按照相应概率抽取文字和分数
+	return models.GetOneRandLottery()
 }
 
-func GetLuckyForPlayer() (models.LuckyTodayDto, error) {
-	return models.LuckyTodayDto{}, nil
+func GetLuckyForPlayer() (*models.LuckyTodayDto, error) {
+	return models.GetOneRandomLuckyToday()
 }
 
 func (l *LotteryInput) Edit() error {

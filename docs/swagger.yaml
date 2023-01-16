@@ -136,6 +136,24 @@ definitions:
       updated_at:
         type: integer
     type: object
+  models.LotteryDto:
+    properties:
+      content:
+        type: string
+      keyword:
+        type: string
+      score:
+        type: integer
+    type: object
+  models.LuckyTodayDto:
+    properties:
+      song:
+        type: string
+      spell:
+        type: string
+      todo:
+        type: string
+    type: object
   models.UserDto:
     properties:
       created_at:
@@ -296,6 +314,13 @@ definitions:
         items:
           $ref: '#/definitions/models.CategoryDto'
         type: array
+    type: object
+  v1.GetLotteryResponse:
+    properties:
+      lotteryContent:
+        $ref: '#/definitions/models.LotteryDto'
+      luckyContent:
+        $ref: '#/definitions/models.LuckyTodayDto'
     type: object
   v1.GetUserResponse:
     properties:
@@ -999,6 +1024,32 @@ paths:
       summary: 通过登录态获取当前登录用户信息
       tags:
       - Manager
+  /player/lottery:
+    get:
+      parameters:
+      - description: 用户uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetLotteryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取日签
+      tags:
+      - Player
 securityDefinitions:
   ApiKeyAuth:
     in: header
