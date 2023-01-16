@@ -10,7 +10,7 @@ type Author struct {
 	Name      string `gorm:"column:name;not null;unique;type:varchar(50)" json:"name"`
 	Gender    int    `gorm:"column:gender;not null;type:tinyint(1)" json:"gender"`
 	Age       int    `gorm:"column:age;not null;type:tinyint(2)" json:"age"`
-	Desc      string `gorm:"column:desc;not null;type:varchar(100)" json:"desc"` // 简介
+	Desc      string `gorm:"column:desc;not null;type:varchar(191)" json:"desc"` // 简介
 	CreatedBy string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`
 	UpdatedBy string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`
 

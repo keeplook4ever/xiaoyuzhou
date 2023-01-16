@@ -25,7 +25,7 @@ type AddArticleForm struct {
 	SeoUrl          string `json:"seo_url" binding:"required"`
 	PageTitle       string `json:"page_title" binding:"required"`
 	MetaDesc        string `json:"meta_desc" binding:"required"`
-	RelatedArticles []int  `json:"related_articles" binding:"required"`
+	RelatedArticles []int  `json:"related_articles"`
 	Content         string `json:"content" binding:"required"`
 	AuthorId        int    `json:"author_id"  binding:"required"`
 	CoverImageUrl   string `json:"cover_image_url" binding:"required"`
