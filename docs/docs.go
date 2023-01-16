@@ -636,7 +636,7 @@ const docTemplate = `{
                 "tags": [
                     "Manager"
                 ],
-                "summary": "获取全部运势表Lottery",
+                "summary": "获取运势表Lottery",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -673,44 +673,19 @@ const docTemplate = `{
                 "tags": [
                     "Manager"
                 ],
-                "summary": "修改运势类型",
+                "summary": "编辑运势表Lottery",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "最大值",
-                        "name": "max_score",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "最小值",
-                        "name": "min_score",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "number",
-                        "description": "概率",
-                        "name": "probability",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "关键字",
-                        "name": "keyword",
-                        "in": "formData"
-                    },
-                    {
-                        "enum": [
-                            "\"A\"",
-                            "\"B\"",
-                            "\"C\"",
-                            "\"D\""
-                        ],
-                        "type": "string",
-                        "description": "好运等级",
-                        "name": "type",
-                        "in": "formData",
-                        "required": true
+                        "description": "编辑运势",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.EditLotteryForm"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -746,10 +721,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "enum": [
-                            "\"A\"",
-                            "\"B\"",
-                            "\"C\"",
-                            "\"D\""
+                            "A",
+                            "B",
+                            "C",
+                            "D"
                         ],
                         "type": "string",
                         "description": "好运等级",
@@ -848,10 +823,10 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            "\"A\"",
-                            "\"B\"",
-                            "\"C\"",
-                            "\"D\""
+                            "A",
+                            "B",
+                            "C",
+                            "D"
                         ],
                         "type": "string",
                         "description": "好运等级",
@@ -864,6 +839,40 @@ const docTemplate = `{
                         "description": "Content",
                         "name": "content",
                         "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "删除运势内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1277,9 +1286,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "keyword": {
-                    "type": "string"
-                },
                 "type": {
                     "description": "A-D 枚举",
                     "type": "string"
@@ -1325,7 +1331,6 @@ const docTemplate = `{
                 "language",
                 "meta_desc",
                 "page_title",
-                "related_articles",
                 "seo_title",
                 "seo_url",
                 "state"
@@ -1438,6 +1443,36 @@ const docTemplate = `{
                 },
                 "type": {
                     "description": "枚举A-D",
+                    "type": "string",
+                    "enum": [
+                        "A",
+                        "B",
+                        "C",
+                        "D"
+                    ]
+                }
+            }
+        },
+        "v1.EditLotteryForm": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "keyword": {
+                    "type": "string"
+                },
+                "max_score": {
+                    "type": "integer"
+                },
+                "min_score": {
+                    "type": "integer"
+                },
+                "probability": {
+                    "type": "number"
+                },
+                "type": {
+                    "description": "A-D 枚举",
                     "type": "string",
                     "enum": [
                         "A",

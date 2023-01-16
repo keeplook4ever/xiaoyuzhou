@@ -130,8 +130,6 @@ definitions:
         type: integer
       id:
         type: integer
-      keyword:
-        type: string
       type:
         description: A-D 枚举
         type: string
@@ -199,7 +197,6 @@ definitions:
     - language
     - meta_desc
     - page_title
-    - related_articles
     - seo_title
     - seo_url
     - state
@@ -250,6 +247,27 @@ definitions:
         type: string
     required:
     - content
+    - type
+    type: object
+  v1.EditLotteryForm:
+    properties:
+      keyword:
+        type: string
+      max_score:
+        type: integer
+      min_score:
+        type: integer
+      probability:
+        type: number
+      type:
+        description: A-D 枚举
+        enum:
+        - A
+        - B
+        - C
+        - D
+        type: string
+    required:
     - type
     type: object
   v1.GetArticlesResponse:
@@ -709,37 +727,19 @@ paths:
             $ref: '#/definitions/app.Response'
       security:
       - ApiKeyAuth: []
-      summary: 获取全部运势表Lottery
+      summary: 获取运势表Lottery
       tags:
       - Manager
     put:
       parameters:
-      - description: 最大值
-        in: formData
-        name: max_score
-        type: integer
-      - description: 最小值
-        in: formData
-        name: min_score
-        type: integer
-      - description: 概率
-        in: formData
-        name: probability
-        type: number
-      - description: 关键字
-        in: formData
-        name: keyword
-        type: string
-      - description: 好运等级
-        enum:
-        - '"A"'
-        - '"B"'
-        - '"C"'
-        - '"D"'
-        in: formData
-        name: type
+      - description: 编辑运势
+        in: body
+        name: _
         required: true
-        type: string
+        schema:
+          items:
+            $ref: '#/definitions/v1.EditLotteryForm'
+          type: array
       produces:
       - application/json
       responses:
@@ -753,7 +753,7 @@ paths:
             $ref: '#/definitions/app.Response'
       security:
       - ApiKeyAuth: []
-      summary: 修改运势类型
+      summary: 编辑运势表Lottery
       tags:
       - Manager
   /manager/lottery-content:
@@ -761,10 +761,10 @@ paths:
       parameters:
       - description: 好运等级
         enum:
-        - '"A"'
-        - '"B"'
-        - '"C"'
-        - '"D"'
+        - A
+        - B
+        - C
+        - D
         in: query
         name: type
         type: string
@@ -817,6 +817,27 @@ paths:
       tags:
       - Manager
   /manager/lottery-content/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除运势内容
+      tags:
+      - Manager
     put:
       parameters:
       - description: ID
@@ -826,10 +847,10 @@ paths:
         type: integer
       - description: 好运等级
         enum:
-        - '"A"'
-        - '"B"'
-        - '"C"'
-        - '"D"'
+        - A
+        - B
+        - C
+        - D
         in: formData
         name: type
         required: true

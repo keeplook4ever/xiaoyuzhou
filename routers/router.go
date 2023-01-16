@@ -118,7 +118,8 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.PUT("/lottery-content/:id", v1.EditLotteryContent)
 		//获取运势内容表LotteryContent
 		apiManagerV1.GET("/lottery-content", v1.GetLotteryContentForManager)
-
+		//删除LotteryContent
+		apiManagerV1.DELETE("/lottery-content/:id", v1.DeleteLotteryContent)
 	}
 
 	return r

@@ -6,15 +6,15 @@ import (
 )
 
 type LotteryInput struct {
-	MaxScore int `json:"max_score"`
-	MinScore int `json:"min_score"`
-	KeyWord string `json:"keyword"`
+	MaxScore    int     `json:"max_score"`
+	MinScore    int     `json:"min_score"`
+	KeyWord     string  `json:"keyword"`
 	Probability float32 `json:"probability"`
-	Type string `json:"type"`	//A-D 枚举四大类
+	Type        string  `json:"type"` //A-D 枚举四大类
 }
 type LotteryContentInput struct {
 	Content string `json:"content"`
-	Type string `json:"type"`
+	Type    string `json:"type"`
 	ID      int    `json:"id"`
 }
 
@@ -26,7 +26,6 @@ func GetLuckyForPlayer() (models.LuckyTodayDto, error) {
 	return models.LuckyTodayDto{}, nil
 }
 
-
 func (l *LotteryInput) Edit() error {
 	return models.EditLottery(l.Type, l.getMaps())
 }
@@ -36,7 +35,11 @@ func (lc *LotteryContentInput) Add() error {
 }
 
 func (lc *LotteryContentInput) Update() error {
-	return models.UpdateLotteryContent(lc.ID, lc.Type, lc.Content)
+	return models.UpdateLotteryContent(lc.ID, lc.getMaps())
+}
+
+func (lc *LotteryContentInput) Delete() error {
+	return models.DeleteLotteryContent(lc.ID)
 }
 
 func GetLotteryForManager() ([]models.Lottery, error) {

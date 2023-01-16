@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"math/rand"
 	"time"
 	"xiaoyuzhou/pkg/util"
@@ -10,15 +11,14 @@ type Lottery struct {
 	Model
 	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"` // 最小分数
 	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"` // 最大分数
-	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`     // 运势文字
+	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`    // 运势文字
 	Probability float32 `gorm:"column:probability;type:float" json:"probability"`           // 概率
-	Type 	string `gorm:"column:type;type:varchar(10)" json:"type"`  //枚举
+	Type        string  `gorm:"column:type;type:varchar(10)" json:"type"`                   //枚举
 }
 
 type LotteryContent struct {
 	Model
-	Type string `gorm:"column:type;not null;type:varchar(1)" json:"type"`  //A-D 枚举
-	KeyWord string `gorm:"column:keyword;not null;type:varchar(10)" json:"keyword"`
+	Type    string `gorm:"column:type;not null;type:varchar(1)" json:"type"` //A-D 枚举
 	Content string `gorm:"column:content;not null;type:text" json:"content"`
 }
 
@@ -30,7 +30,7 @@ type LotteryDto struct {
 
 func (l *Lottery) ToLotteryDto() LotteryDto {
 	score := util.GetScore(l.MinScore, l.MaxScore)
-	content, _ := GetOneRandLotteryContent(l.KeyWord)
+	content, _ := GetOneRandLotteryContent(l.Type)
 	return LotteryDto{
 		Score:   score,
 		Keyword: l.KeyWord,
@@ -56,9 +56,9 @@ func GetLotteryContents(cond string, vals []interface{}) ([]LotteryContent, erro
 	return lotteryContents, nil
 }
 
-func GetOneRandLotteryContent(kw string) (string, error) {
+func GetOneRandLotteryContent(tyPe string) (string, error) {
 	var contents []string
-	err := Db.Model(&LotteryContent{}).Pluck("content", &contents).Where("keyword = ?", kw).Error
+	err := Db.Model(&LotteryContent{}).Pluck("content", &contents).Where("type = ?", tyPe).Error
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +66,6 @@ func GetOneRandLotteryContent(kw string) (string, error) {
 	rand.Seed(time.Now().Unix())
 	return contents[rand.Intn(len(contents))], nil
 }
-
 
 func EditLottery(typE string, data map[string]interface{}) error {
 	if err := Db.Model(&Lottery{}).Where("type = ?", typE).Updates(data).Error; err != nil {
@@ -78,7 +77,7 @@ func EditLottery(typE string, data map[string]interface{}) error {
 func AddLotteryContent(content, typE string) error {
 	lc := LotteryContent{
 		Content: content,
-		Type: typE,
+		Type:    typE,
 	}
 	err := Db.Model(&LotteryContent{}).Create(&lc).Error
 	if err != nil {
@@ -87,24 +86,24 @@ func AddLotteryContent(content, typE string) error {
 	return nil
 }
 
-func UpdateLotteryContent(id int, typE string, content string) error {
-	err := Db.Model(&LotteryContent{}).Where("id = ? and type = ?", id, typE).Updates(map[string]string{"content": content}).Error
+func UpdateLotteryContent(id int, data interface{}) error {
+	err := Db.Model(&LotteryContent{}).Where("id = ?", id).Updates(data).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func covertLottery(keyWordList []string, scoreList []int, probabilityList []float32) []Lottery {
-	var minScore int
-	lottSlice := make([]Lottery, 0)
-	for i, v := range keyWordList {
-		if i == 0 {
-			minScore = 1 //最小分数是1
-		} else {
-			minScore = scoreList[i-1] + 1
+func DeleteLotteryContent(id int) error {
+	// 删除时需要确认是否该类型 >= 2
+	var count int64
+	Db.Model(&LotteryContent{}).Where("id = ?", id).Count(&count)
+	if count >= 2 {
+		err := Db.Where("id = ?", id).Delete(&LotteryContent{}).Error
+		if err != nil {
+			return err
 		}
-		lottSlice = append(lottSlice, Lottery{KeyWord: v, MaxScore: scoreList[i], MinScore: minScore, Probability: probabilityList[i]})
+		return nil
 	}
-	return lottSlice
+	return errors.New("该类型不够啦！")
 }
