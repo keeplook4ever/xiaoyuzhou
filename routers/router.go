@@ -85,8 +85,6 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.PUT("/articles/:id", v1.EditArticle)
 		//删除指定文章
 		apiManagerV1.DELETE("/articles/:id", v1.DeleteArticle)
-		//生成文章海报
-		apiManagerV1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 
 		//添加作者接口
 		apiManagerV1.POST("/author", v1.AddAuthor)

@@ -282,8 +282,8 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 // @Tags Player
 func GetLotteryForUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	//uid := c.Query("uid")
-	lottery, err := lottery_service.GetLotteryForPlayer()
+	uid := c.Query("uid")
+	lottery, err := lottery_service.GetLotteryForPlayer(uid)
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetLotteryFail, nil)
 		return

@@ -52,7 +52,7 @@ func Setup() {
 	}
 	// 数据库的/etc/my.conf里已经配置了CHARSET，所有表字段都是utf8mb4, 字段都是utf8mb4_unicode_ci
 	//err = Db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{})
-	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{})
+	err = Db.AutoMigrate(&Author{}, &Article{}, &Category{}, &User{}, &Lottery{}, &LuckyToday{}, &LotteryContent{}, &PlayerLotteryLog{})
 	if err != nil {
 		log.Fatalf("models.AutoMigrate err: %v", err)
 	}

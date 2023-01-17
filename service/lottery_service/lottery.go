@@ -1,7 +1,11 @@
 package lottery_service
 
 import (
+	"fmt"
+	"log"
+	"time"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -20,8 +24,19 @@ type LotteryContentInput struct {
 	PageSize int
 }
 
-func GetLotteryForPlayer() (*models.LotteryDto, error) {
-	return models.GetOneRandLottery()
+func GetLotteryForPlayer(uid string) (*models.LotteryDto, error) {
+	cc, err := models.GetOneRandLottery()
+	if err != nil {
+		return nil, err
+	}
+	// 成功之后需要记录日志
+	ts := int(time.Now().Unix())
+	err = models.CreatPlayerLotteryLog(uid, ts, cc.Score, cc.Keyword, cc.Content)
+	if err != nil {
+		log.Printf("Create Player Lottery Log Failed: %v", err)
+		logging.Error(fmt.Sprintf("CreatPlayerLotteryLog Failed: %v", err))
+	}
+	return cc, nil
 }
 
 func GetLuckyForPlayer() (*models.LuckyTodayDto, error) {
