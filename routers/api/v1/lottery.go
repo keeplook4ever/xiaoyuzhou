@@ -1,8 +1,10 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
+	"log"
 	"net/http"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/app"
@@ -280,9 +282,7 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 // @Tags Player
 func GetLotteryForUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	uid := c.Query("uid")
-	logging.Debugf("uid is: %s", uid)
-	// TODO 存储用户uid的记录
+	//uid := c.Query("uid")
 	lottery, err := lottery_service.GetLotteryForPlayer()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetLotteryFail, nil)
@@ -293,5 +293,12 @@ func GetLotteryForUser(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ErrorGetLuckytodyFail, nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryForUserResponse{LotteryContent: *lottery, LuckyContent: *luckyTody})
+	resp := GetLotteryForUserResponse{LotteryContent: *lottery, LuckyContent: *luckyTody}
+	// TODO 存储用户uid的记录
+	//err = lottery_service.LogPlayerRecord(uid, resp)
+	if err != nil {
+		log.Printf("ErroR: %s, Info: %v", "记录用户抽签记录失败", err.Error())
+		logging.Error(fmt.Sprintf("ErroR: %s, Info: %v", "记录用户抽签记录失败", err.Error()))
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
