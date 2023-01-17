@@ -3,7 +3,6 @@ package models
 import (
 	"math/rand"
 	"time"
-	"xiaoyuzhou/pkg/logging"
 )
 
 type LuckyToday struct {
@@ -32,7 +31,6 @@ func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
 	if err := Db.Model(&LuckyToday{}).Find(&luckList).Error; err != nil {
 		return nil, err
 	}
-	logging.Debugf(" %v ", luckList)
 	idList := make([]uint, 0)
 	for _, v := range luckList {
 		idList = append(idList, v.ID)

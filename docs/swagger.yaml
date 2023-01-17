@@ -315,7 +315,25 @@ definitions:
           $ref: '#/definitions/models.CategoryDto'
         type: array
     type: object
-  v1.GetLotteryResponse:
+  v1.GetLotteryContentForManagerResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.LotteryContent'
+        type: array
+    type: object
+  v1.GetLotteryForManagerResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.Lottery'
+        type: array
+    type: object
+  v1.GetLotteryForUserResponse:
     properties:
       lotteryContent:
         $ref: '#/definitions/models.LotteryDto'
@@ -739,9 +757,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Lottery'
-            type: array
+            $ref: '#/definitions/v1.GetLotteryForManagerResponse'
         "400":
           description: Bad Request
           schema:
@@ -799,9 +815,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.LotteryContent'
-            type: array
+            $ref: '#/definitions/v1.GetLotteryContentForManagerResponse'
         "400":
           description: Bad Request
           schema:
@@ -1038,7 +1052,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.GetLotteryResponse'
+            $ref: '#/definitions/v1.GetLotteryForUserResponse'
         "400":
           description: Bad Request
           schema:

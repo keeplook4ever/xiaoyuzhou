@@ -74,7 +74,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 // ExistArticleByID checks if an article exists based on ID
 func ExistArticleByID(id int) (bool, error) {
 	var article Article
-	err := Db.Model(&Article{}).Select("id").Where("id = ? ", id).First(&article).Error
+	err := Db.Model(&Article{}).Select("id").Where("id = ? ", id).Find(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}

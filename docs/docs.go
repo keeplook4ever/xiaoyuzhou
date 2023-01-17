@@ -641,10 +641,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Lottery"
-                            }
+                            "$ref": "#/definitions/v1.GetLotteryForManagerResponse"
                         }
                     },
                     "400": {
@@ -736,10 +733,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.LotteryContent"
-                            }
+                            "$ref": "#/definitions/v1.GetLotteryContentForManagerResponse"
                         }
                     },
                     "400": {
@@ -1111,7 +1105,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetLotteryResponse"
+                            "$ref": "#/definitions/v1.GetLotteryForUserResponse"
                         }
                     },
                     "400": {
@@ -1593,7 +1587,35 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GetLotteryResponse": {
+        "v1.GetLotteryContentForManagerResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.LotteryContent"
+                    }
+                }
+            }
+        },
+        "v1.GetLotteryForManagerResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Lottery"
+                    }
+                }
+            }
+        },
+        "v1.GetLotteryForUserResponse": {
             "type": "object",
             "properties": {
                 "lotteryContent": {

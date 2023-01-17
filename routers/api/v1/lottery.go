@@ -11,7 +11,7 @@ import (
 	"xiaoyuzhou/service/lottery_service"
 )
 
-type GetLotteryResponse struct {
+type GetLotteryForUserResponse struct {
 	LotteryContent models.LotteryDto
 	LuckyContent   models.LuckyTodayDto
 }
@@ -35,10 +35,20 @@ type AddLotteryContentData struct {
 	Content string `json:"content" binding:"required"`
 }
 
+type GetLotteryForManagerResponse struct {
+	Lists []models.Lottery `json:"lists"`
+	Count int              `json:"count"`
+}
+
+type GetLotteryContentForManagerResponse struct {
+	Lists []models.LotteryContent `json:"lists"`
+	Count int                     `json:"count"`
+}
+
 // GetLotteryForManager
 // @Summary 获取运势表Lottery
 // @Produce json
-// @Success 200 {object} []models.Lottery
+// @Success 200 {object} GetLotteryForManagerResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/lottery [get]
@@ -46,13 +56,12 @@ type AddLotteryContentData struct {
 // @Security ApiKeyAuth
 func GetLotteryForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var lotteries []models.Lottery
 	lotteries, err := lottery_service.GetLotteryForManager()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势表出错", nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, lotteries)
+	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryForManagerResponse{Lists: lotteries, Count: len(lotteries)})
 }
 
 // EditLottery
@@ -91,11 +100,6 @@ func EditLottery(c *gin.Context) {
 		}
 	}
 
-	// 更新一个需要联动更新
-	//if err := lotteryInput.Edit(); err != nil {
-	//	appG.Response(http.StatusOK, "编辑失败", nil)
-	//	return
-	//}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -175,7 +179,7 @@ func DeleteLotteryContent(c *gin.Context) {
 		ID: id,
 	}
 	if err := lcInput.Delete(); err != nil {
-		appG.Response(http.StatusOK, "删除失败", nil)
+		appG.Response(http.StatusOK, err.Error(), nil)
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
@@ -185,7 +189,7 @@ func DeleteLotteryContent(c *gin.Context) {
 // @Summary 获取全部运势内容表LotteryContent
 // @Produce json
 // @Param type query string false "好运等级" Enums(A,B,C,D)
-// @Success 200 {object} []models.LotteryContent
+// @Success 200 {object} GetLotteryContentForManagerResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/lottery-content [get]
@@ -198,13 +202,12 @@ func GetLotteryContentForManager(c *gin.Context) {
 		Type: tP,
 	}
 
-	var lotteryContents []models.LotteryContent
 	lotteryContents, err := lotteryInput.GetLotteryContentForManager()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势内容表出错", nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, lotteryContents)
+	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryContentForManagerResponse{Lists: lotteryContents, Count: len(lotteryContents)})
 }
 
 // 校验上传Lottery是否合法
@@ -266,7 +269,7 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 // @Summary 获取日签
 // @Produce  json
 // @Param uid query string true "用户uid"
-// @Success 200 {object} GetLotteryResponse
+// @Success 200 {object} GetLotteryForUserResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /player/lottery [get]
@@ -275,7 +278,7 @@ func GetLotteryForUser(c *gin.Context) {
 	appG := app.Gin{C: c}
 	uid := c.Query("uid")
 	logging.Debugf("uid is: %s", uid)
-	// 存储用户uid的记录
+	// TODO 存储用户uid的记录
 	lottery, err := lottery_service.GetLotteryForPlayer()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetLotteryFail, nil)
@@ -286,5 +289,5 @@ func GetLotteryForUser(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ErrorGetLuckytodyFail, nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryResponse{LotteryContent: *lottery, LuckyContent: *luckyTody})
+	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryForUserResponse{LotteryContent: *lottery, LuckyContent: *luckyTody})
 }
