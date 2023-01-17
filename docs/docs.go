@@ -886,6 +886,182 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/lucky": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取今日好运内容",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "咒语",
+                        "name": "spell",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "适宜",
+                        "name": "todo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "歌曲",
+                        "name": "song",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加今日好运内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddLuckyForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/lucky/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改今日好运内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditLuckyForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改今日好运内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/s3/token": {
             "post": {
                 "security": [
@@ -1333,13 +1509,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
+                    "description": "运势内容",
                     "type": "string"
                 },
                 "keyword": {
+                    "description": "运势关键字",
                     "type": "string"
                 },
                 "score": {
+                    "description": "运势分",
                     "type": "integer"
+                },
+                "type": {
+                    "description": "运势等级",
+                    "type": "string"
                 }
             }
         },
@@ -1347,12 +1530,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "song": {
+                    "description": "今日好运歌曲",
                     "type": "string"
                 },
                 "spell": {
+                    "description": "今日好运咒语",
                     "type": "string"
                 },
                 "todo": {
+                    "description": "今日适宜",
                     "type": "string"
                 }
             }
@@ -1515,6 +1701,25 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.AddLuckyForm": {
+            "type": "object",
+            "required": [
+                "song",
+                "spell",
+                "todo"
+            ],
+            "properties": {
+                "song": {
+                    "type": "string"
+                },
+                "spell": {
+                    "type": "string"
+                },
+                "todo": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.EditLotteryForm": {
             "type": "object",
             "required": [
@@ -1542,6 +1747,26 @@ const docTemplate = `{
                         "C",
                         "D"
                     ]
+                }
+            }
+        },
+        "v1.EditLuckyForm": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "spell": {
+                    "type": "string"
+                },
+                "todo": {
+                    "type": "string"
                 }
             }
         },

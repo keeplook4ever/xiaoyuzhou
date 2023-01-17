@@ -25,9 +25,10 @@ type LotteryContent struct {
 }
 
 type LotteryDto struct {
-	Score   int    `json:"score"`
-	Keyword string `json:"keyword"`
-	Content string `json:"content"`
+	Score   int    `json:"score"`   //运势分
+	Keyword string `json:"keyword"` //运势关键字
+	Content string `json:"content"` //运势内容
+	Type    string `json:"type"`    //运势等级
 }
 
 type TypeAndProb struct {
@@ -42,6 +43,7 @@ func (l *Lottery) makeLotteryWithContent() LotteryDto {
 		Score:   score,
 		Keyword: l.KeyWord,
 		Content: content,
+		Type:    l.Type,
 	}
 }
 
@@ -54,9 +56,9 @@ func GetLotteries() ([]Lottery, error) {
 	return lotteries, nil
 }
 
-func GetLotteryContents(cond string, vals []interface{}) ([]LotteryContent, error) {
+func GetLotteryContents(pageNum int, pageSize int, cond string, vals []interface{}) ([]LotteryContent, error) {
 	var lotteryContents []LotteryContent
-	err := Db.Model(&LotteryContent{}).Where(cond, vals...).Find(&lotteryContents).Error
+	err := Db.Model(&LotteryContent{}).Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&lotteryContents).Error
 	if err != nil {
 		return nil, err
 	}

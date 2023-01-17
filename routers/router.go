@@ -117,6 +117,15 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.GET("/lottery-content", v1.GetLotteryContentForManager)
 		//删除LotteryContent
 		apiManagerV1.DELETE("/lottery-content/:id", v1.DeleteLotteryContent)
+
+		//添加今日好运相关内容
+		apiManagerV1.POST("/lucky", v1.AddLucky)
+		//修改今日好运内容
+		apiManagerV1.PUT("/lucky/:id", v1.EditLucky)
+		//删除今日好运内容
+		apiManagerV1.DELETE("/lucky/:id", v1.DeleteLucky)
+		//获取今日好运
+		apiManagerV1.GET("/lucky", v1.GetLucky)
 	}
 
 	return r

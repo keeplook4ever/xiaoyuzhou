@@ -1,6 +1,7 @@
 package models
 
 import (
+	"gorm.io/gorm"
 	"math/rand"
 	"time"
 )
@@ -13,9 +14,9 @@ type LuckyToday struct {
 }
 
 type LuckyTodayDto struct {
-	Spell string `json:"spell"`
-	Todo  string `json:"todo"`
-	Song  string `json:"song"`
+	Spell string `json:"spell"` //今日好运咒语
+	Todo  string `json:"todo"`  //今日适宜
+	Song  string `json:"song"`  //今日好运歌曲
 }
 
 func (l *LuckyToday) ToLuckyTodayDto() LuckyTodayDto {
@@ -40,4 +41,46 @@ func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
 	luckyChose := luckList[rand.Intn(len(idList))].ToLuckyTodayDto()
 
 	return &luckyChose, nil
+}
+
+func AddLucky(spell, todo, song string) error {
+	lkToAdd := LuckyToday{
+		Spell: spell,
+		Todo:  todo,
+		Song:  song,
+	}
+	if err := Db.Create(&lkToAdd).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func EditLucky(id int, data map[string]interface{}) error {
+	if err := Db.Model(&LuckyToday{}).Where("id = ?", id).Updates(data).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteLucky(id int) error {
+	if err := Db.Where("id = ?", id).Delete(&LuckyToday{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetLuckys(pageNum int, pageSize int, cond string, vals []interface{}) ([]LuckyTodayDto, error) {
+	var lucks []LuckyToday
+
+	err := Db.Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&lucks).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	resp := make([]LuckyTodayDto, len(lucks))
+
+	for i, aa := range lucks {
+		resp[i] = aa.ToLuckyTodayDto()
+	}
+	return resp, nil
 }

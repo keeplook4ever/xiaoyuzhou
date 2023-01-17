@@ -8,6 +8,8 @@ import (
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/pkg/setting"
+	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/lottery_service"
 )
 
@@ -199,7 +201,9 @@ func GetLotteryContentForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
 	tP := c.Query("type")
 	lotteryInput := lottery_service.LotteryContentInput{
-		Type: tP,
+		Type:     tP,
+		PageNum:  util.GetPage(c),
+		PageSize: setting.AppSetting.PageSize,
 	}
 
 	lotteryContents, err := lotteryInput.GetLotteryContentForManager()

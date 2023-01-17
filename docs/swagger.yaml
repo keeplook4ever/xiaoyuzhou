@@ -139,19 +139,28 @@ definitions:
   models.LotteryDto:
     properties:
       content:
+        description: 运势内容
         type: string
       keyword:
+        description: 运势关键字
         type: string
       score:
+        description: 运势分
         type: integer
+      type:
+        description: 运势等级
+        type: string
     type: object
   models.LuckyTodayDto:
     properties:
       song:
+        description: 今日好运歌曲
         type: string
       spell:
+        description: 今日好运咒语
         type: string
       todo:
+        description: 今日适宜
         type: string
     type: object
   models.UserDto:
@@ -267,6 +276,19 @@ definitions:
     - content
     - type
     type: object
+  v1.AddLuckyForm:
+    properties:
+      song:
+        type: string
+      spell:
+        type: string
+      todo:
+        type: string
+    required:
+    - song
+    - spell
+    - todo
+    type: object
   v1.EditLotteryForm:
     properties:
       keyword:
@@ -287,6 +309,19 @@ definitions:
         type: string
     required:
     - type
+    type: object
+  v1.EditLuckyForm:
+    properties:
+      id:
+        type: integer
+      song:
+        type: string
+      spell:
+        type: string
+      todo:
+        type: string
+    required:
+    - id
     type: object
   v1.GetArticlesResponse:
     properties:
@@ -913,6 +948,115 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改运势详细内容
+      tags:
+      - Manager
+  /manager/lucky:
+    get:
+      parameters:
+      - description: 咒语
+        in: query
+        name: spell
+        type: string
+      - description: 适宜
+        in: query
+        name: todo
+        type: string
+      - description: 歌曲
+        in: query
+        name: song
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取今日好运内容
+      tags:
+      - Manager
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddLuckyForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加今日好运内容
+      tags:
+      - Manager
+  /manager/lucky/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改今日好运内容
+      tags:
+      - Manager
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditLuckyForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改今日好运内容
       tags:
       - Manager
   /manager/s3/token:
