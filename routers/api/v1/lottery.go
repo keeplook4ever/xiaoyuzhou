@@ -16,8 +16,8 @@ import (
 )
 
 type GetLotteryForUserResponse struct {
-	LotteryContent models.LotteryDto
-	LuckyContent   models.LuckyTodayDto
+	LotteryContent models.LotteryDto    `json:"lottery_content"`
+	LuckyContent   models.LuckyTodayDto `json:"lucky_content"`
 }
 
 type EditLotteryContentForm struct {
