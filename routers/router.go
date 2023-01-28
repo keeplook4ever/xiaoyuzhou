@@ -30,6 +30,7 @@ func InitRouter() *gin.Engine {
 	r.POST("/api/v1/manager/user/auth", v1.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	r.GET("/health", v1.HealthCheck)
 	// 用户使用接口
 	apiPlayerV1 := r.Group("/api/v1/player/")
 	{
