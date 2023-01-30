@@ -5,7 +5,21 @@ import (
 	"xiaoyuzhou/pkg/util"
 )
 
-type LuckyInput struct {
+type LuckyInputMany struct {
+	Id       int
+	Spells   []string
+	Todos    []string
+	Songs    []string
+	PageNum  int
+	PageSize int
+}
+
+type LuckyInputContent struct {
+	Id    int
+	Lists []string
+}
+
+type LuckyInputOne struct {
 	Id       int
 	Spell    string
 	Todo     string
@@ -14,19 +28,19 @@ type LuckyInput struct {
 	PageSize int
 }
 
-func (lk *LuckyInput) Add() error {
-	return models.AddLucky(lk.Spell, lk.Todo, lk.Song)
+func (lk *LuckyInputMany) Add() error {
+	return models.AddLucky(lk.Spells, lk.Todos, lk.Songs)
 }
 
-func (lk *LuckyInput) Edit() error {
+func (lk *LuckyInputOne) Edit() error {
 	return models.EditLucky(lk.Id, lk.getMapsEdit())
 }
 
-func (lk *LuckyInput) Delete() error {
+func (lk *LuckyInputOne) Delete() error {
 	return models.DeleteLucky(lk.Id)
 }
 
-func (lk *LuckyInput) Get() ([]models.LuckyTodayDto, error) {
+func (lk *LuckyInputOne) Get() ([]models.LuckyTodayDto, error) {
 	cond, vals, err := util.SqlWhereBuild(lk.getMapsGet(), "and")
 	if err != nil {
 		return nil, err
@@ -34,7 +48,7 @@ func (lk *LuckyInput) Get() ([]models.LuckyTodayDto, error) {
 	return models.GetLuckys(lk.PageNum, lk.PageSize, cond, vals)
 }
 
-func (lk *LuckyInput) getMapsGet() map[string]interface{} {
+func (lk *LuckyInputOne) getMapsGet() map[string]interface{} {
 	data := make(map[string]interface{})
 	if lk.Spell != "" {
 		data["spell like"] = "%" + lk.Spell + "%"
@@ -48,7 +62,7 @@ func (lk *LuckyInput) getMapsGet() map[string]interface{} {
 	return data
 }
 
-func (lk *LuckyInput) getMapsEdit() map[string]interface{} {
+func (lk *LuckyInputOne) getMapsEdit() map[string]interface{} {
 	data := make(map[string]interface{})
 	if lk.Spell != "" {
 		data["spell"] = lk.Spell

@@ -13,9 +13,7 @@ import (
 )
 
 type AddLuckyForm struct {
-	Spell string `json:"spell" binding:"required"`
-	Todo  string `json:"todo" binding:"required"`
-	Song  string `json:"song" binding:"required"`
+	Lists []string `json:"lists" binding:"required"`
 }
 
 type EditLuckyForm struct {
@@ -26,13 +24,14 @@ type EditLuckyForm struct {
 }
 
 // AddLucky
-// @Summary 添加今日好运内容
+// @Summary 添加今日好运咒语
 // @Param _ body AddLuckyForm true "参数"
+// @Param type path string true "类型" Enums(spell,song,todo)
 // @Produce json
 // @Accept json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /manager/lucky [post]
+// @Router /manager/lucky/{type} [post]
 // @Security ApiKeyAuth
 // @Tags Manager
 func AddLucky(c *gin.Context) {
@@ -42,10 +41,8 @@ func AddLucky(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, "非法请求", nil)
 		return
 	}
-	luckyI := lucky_service.LuckyInput{
-		Spell: reqData.Spell,
-		Todo:  reqData.Todo,
-		Song:  reqData.Song,
+	luckyI := lucky_service.LuckyInputContent{
+		Lists: reqData.Lists,
 	}
 	if err := luckyI.Add(); err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)
@@ -71,7 +68,7 @@ func EditLucky(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, "参数不合法", nil)
 		return
 	}
-	luckI := lucky_service.LuckyInput{
+	luckI := lucky_service.LuckyInputOne{
 		Id:    com.StrTo(c.Param("id")).MustInt(),
 		Spell: reqData.Spell,
 		Todo:  reqData.Todo,
@@ -97,7 +94,7 @@ func EditLucky(c *gin.Context) {
 func DeleteLucky(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := com.StrTo(c.Param("id")).MustInt()
-	luckI := lucky_service.LuckyInput{
+	luckI := lucky_service.LuckyInputOne{
 		Id: id,
 	}
 	if err := luckI.Delete(); err != nil {

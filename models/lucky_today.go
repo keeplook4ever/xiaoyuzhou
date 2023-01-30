@@ -6,11 +6,19 @@ import (
 	"time"
 )
 
-type LuckyToday struct {
+type LuckySpell struct {
 	Model
 	Spell string `gorm:"column:spell;not null;type:varchar(191)" json:"spell"` //今日好运咒语
-	Todo  string `gorm:"column:todo;not null;type:varchar(191)" json:"todo"`   //今日适宜
-	Song  string `gorm:"column:song;not null;type:varchar(191)" json:"song"`   //今日幸运之歌
+}
+
+type LuckyTodo struct {
+	Model
+	Todo string `gorm:"column:todo;not null;type:varchar(191)" json:"todo"` //今日适宜
+}
+
+type LuckySong struct {
+	Model
+	Song string `gorm:"column:song;not null;type:varchar(191)" json:"song"` //今日幸运之歌
 }
 
 type LuckyTodayDto struct {
@@ -43,7 +51,7 @@ func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
 	return &luckyChose, nil
 }
 
-func AddLucky(spell, todo, song string) error {
+func AddLucky(spell, todo, song []string) error {
 	lkToAdd := LuckyToday{
 		Spell: spell,
 		Todo:  todo,
