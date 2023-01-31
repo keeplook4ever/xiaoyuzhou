@@ -76,7 +76,7 @@ func GetUser(cond string, vals []interface{}) ([]User, error) {
 // CheckUser checks if user exists
 func CheckUser(username, password string) (bool, error) {
 	var user User
-	err := Db.Select("id").Where(User{Name: username, Passwd: password}).First(&user).Error
+	err := Db.Select("id").Where(User{Name: username, Passwd: password}).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
