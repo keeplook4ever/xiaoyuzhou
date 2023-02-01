@@ -63,14 +63,15 @@ func AddUser(name, passwd, createdBy, updatedBy, role string) error {
 	return nil
 }
 
-func GetUser(cond string, vals []interface{}) ([]User, error) {
+func GetUser(cond string, vals []interface{}) ([]User, int64, error) {
 	var user []User
-
+	var count int64
+	Db.Model(&User{}).Where(cond, vals...).Count(&count)
 	err := Db.Where(cond, vals...).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+		return nil, count, err
 	}
-	return user, nil
+	return user, count, nil
 }
 
 // CheckUser checks if user exists

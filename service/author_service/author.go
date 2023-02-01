@@ -51,18 +51,18 @@ func (a *AuthorInput) Edit() error {
 	return models.EditAuthor(a.ID, data)
 }
 
-func (a *AuthorInput) GetAll() ([]models.AuthorDto, error) {
+func (a *AuthorInput) GetAll() ([]models.AuthorDto, int64, error) {
 	var (
 		authors []models.AuthorDto
 	)
 
 	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	authors, err = models.GetAuthors(a.PageNum, a.PageSize, cond, vals)
+	authors, count, err := models.GetAuthors(a.PageNum, a.PageSize, cond, vals)
 
-	return authors, nil
+	return authors, count, nil
 }
 
 func (a *AuthorInput) Count() (int64, error) {

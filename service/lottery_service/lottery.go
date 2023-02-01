@@ -59,14 +59,14 @@ func (lc *LotteryContentInput) Delete() error {
 	return models.DeleteLotteryContent(lc.ID)
 }
 
-func GetLotteryForManager() ([]models.Lottery, error) {
+func GetLotteryForManager() ([]models.Lottery, int64, error) {
 	return models.GetLotteries()
 }
 
-func (l *LotteryContentInput) GetLotteryContentForManager() ([]models.LotteryContent, error) {
+func (l *LotteryContentInput) GetLotteryContentForManager() ([]models.LotteryContent, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(l.getMapsGet(), "and")
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	return models.GetLotteryContents(l.PageNum, l.PageSize, cond, vals)
 }

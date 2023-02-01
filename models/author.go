@@ -102,12 +102,13 @@ func GetAuthorTotal(cond string, vals []interface{}) (int64, error) {
 	return count, nil
 }
 
-func GetAuthors(pageNum int, pageSize int, cond string, vals []interface{}) ([]AuthorDto, error) {
+func GetAuthors(pageNum int, pageSize int, cond string, vals []interface{}) ([]AuthorDto, int64, error) {
 	var (
 		authors []Author
 		err     error
+		count   int64
 	)
-
+	Db.Where(cond, vals...).Count(&count)
 	if pageSize > 0 && pageNum > 0 {
 		err = Db.Where(cond, vals...).Find(&authors).Offset(pageNum).Limit(pageSize).Error
 	} else {
@@ -115,11 +116,11 @@ func GetAuthors(pageNum int, pageSize int, cond string, vals []interface{}) ([]A
 	}
 
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+		return nil, count, err
 	}
 	resp := make([]AuthorDto, 0)
 	for _, a := range authors {
 		resp = append(resp, a.ToAuthorDto())
 	}
-	return resp, nil
+	return resp, count, nil
 }

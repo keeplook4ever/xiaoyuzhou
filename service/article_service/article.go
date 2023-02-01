@@ -89,7 +89,7 @@ func (a *ArticleInput) Edit() error {
 	return models.EditArticle(a.ID, data)
 }
 
-func (a *ArticleInput) Get() ([]models.ArticleDto, error) {
+func (a *ArticleInput) Get() ([]models.ArticleDto, int64, error) {
 	var (
 		articles []models.ArticleDto
 		//cacheArticles []manager.ArticleDto
@@ -116,15 +116,15 @@ func (a *ArticleInput) Get() ([]models.ArticleDto, error) {
 	//}
 	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	articles, err = models.GetArticles(a.PageNum, a.PageSize, cond, vals)
+	articles, count, err := models.GetArticles(a.PageNum, a.PageSize, cond, vals)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	//gredis.Set(key, articles, 3600)
-	return articles, nil
+	return articles, count, nil
 }
 
 func (a *ArticleInput) Delete() error {

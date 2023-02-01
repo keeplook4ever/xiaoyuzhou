@@ -16,7 +16,7 @@ import (
 
 type GetCategoryResponse struct {
 	Lists []models.CategoryDto `json:"lists"`
-	Count int                  `json:"count"`
+	Count int64                `json:"count"`
 }
 
 // GetCategory
@@ -47,7 +47,7 @@ func GetCategory(c *gin.Context) {
 		PageNum:  util.GetPage(c),
 		PageSize: util.GetPageSize(c),
 	}
-	categories, err := categoryService.GetAll()
+	categories, count, err := categoryService.GetAll()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetCategoriesFail, nil)
 		return
@@ -55,7 +55,7 @@ func GetCategory(c *gin.Context) {
 
 	var res GetCategoryResponse
 	res.Lists = categories
-	res.Count = len(categories)
+	res.Count = count
 
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }

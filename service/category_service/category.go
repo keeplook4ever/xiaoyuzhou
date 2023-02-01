@@ -53,20 +53,20 @@ func (t *CategoryInput) Count() (int64, error) {
 	return models.GetCategoryTotal(t.getMaps())
 }
 
-func (t *CategoryInput) GetAll() ([]models.CategoryDto, error) {
+func (t *CategoryInput) GetAll() ([]models.CategoryDto, int64, error) {
 	var (
 		categories []models.CategoryDto
 	)
 	cond, vals, err := util.SqlWhereBuild(t.getMaps(), "and")
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	categories, err = models.GetCategory(t.PageNum, t.PageSize, cond, vals)
+	categories, count, err := models.GetCategory(t.PageNum, t.PageSize, cond, vals)
 	if err != nil {
-		return nil, err
+		return nil, count, err
 	}
 
-	return categories, nil
+	return categories, count, nil
 }
 
 //

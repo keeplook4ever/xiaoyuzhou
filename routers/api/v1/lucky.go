@@ -144,7 +144,7 @@ func GetLucky(c *gin.Context) {
 
 type GetLuckyResponse struct {
 	Lists interface{} `json:"lists"`
-	Count int         `json:"count"`
+	Count int64       `json:"count"`
 	Type  string      `json:"type"`
 }
 

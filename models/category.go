@@ -66,11 +66,13 @@ func AddCategory(name string, state int, createdBy string, updatedBy string) err
 }
 
 // GetCategory gets a list of tags based on paging and constraints
-func GetCategory(pageNum int, pageSize int, cond string, vals []interface{}) ([]CategoryDto, error) {
+func GetCategory(pageNum int, pageSize int, cond string, vals []interface{}) ([]CategoryDto, int64, error) {
 	var (
-		tags []Category
-		err  error
+		tags  []Category
+		err   error
+		count int64
 	)
+	Db.Where(cond, vals...).Count(&count)
 
 	if pageSize > 0 && pageNum > 0 {
 		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
@@ -81,14 +83,14 @@ func GetCategory(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 	}
 
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+		return nil, count, err
 	}
 
 	resp := make([]CategoryDto, 0)
 	for _, c := range tags {
 		resp = append(resp, c.ToCategoryDto())
 	}
-	return resp, nil
+	return resp, count, nil
 }
 
 // GetCategoryTotal counts the total number of tags based on the constraint

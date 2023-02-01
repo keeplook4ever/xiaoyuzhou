@@ -47,26 +47,30 @@ func (l *Lottery) makeLotteryWithContent() LotteryDto {
 	}
 }
 
-func GetLotteries() ([]Lottery, error) {
+func GetLotteries() ([]Lottery, int64, error) {
 	var lotteries []Lottery
 	err := Db.Model(&Lottery{}).Find(&lotteries).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return lotteries, nil
+	var count int64
+	Db.Model(&Lottery{}).Count(&count)
+	return lotteries, count, nil
 }
 
-func GetLotteryContents(pageNum int, pageSize int, cond string, vals []interface{}) ([]LotteryContent, error) {
+func GetLotteryContents(pageNum int, pageSize int, cond string, vals []interface{}) ([]LotteryContent, int64, error) {
 	var lotteryContents []LotteryContent
 	err := Db.Model(&LotteryContent{}).Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&lotteryContents).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return lotteryContents, nil
+	var count int64
+	Db.Model(&LotteryContent{}).Where(cond, vals...).Count(&count)
+	return lotteryContents, count, nil
 }
 
 func GetOneRandLottery() (*LotteryDto, error) {
-	lotteries, err := GetLotteries()
+	lotteries, _, err := GetLotteries()
 	if err != nil {
 		return nil, err
 	}

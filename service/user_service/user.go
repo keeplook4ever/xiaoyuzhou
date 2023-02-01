@@ -18,21 +18,21 @@ func (u *UserInput) ExistByName() (bool, error) {
 	return models.ExistUserByName(u.Name)
 }
 
-func (u *UserInput) GetUser() ([]models.UserDto, error) {
+func (u *UserInput) GetUser() ([]models.UserDto, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(u.getMaps(), "and")
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	users, err := models.GetUser(cond, vals)
+	users, count, err := models.GetUser(cond, vals)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	resp := make([]models.UserDto, 0)
 	for _, u := range users {
 		resp = append(resp, u.ToUserDto())
 	}
-	return resp, nil
+	return resp, count, nil
 }
 
 func (u *UserInput) Add() error {

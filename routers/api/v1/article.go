@@ -250,7 +250,7 @@ func DeleteArticle(c *gin.Context) {
 
 type GetArticlesResponse struct {
 	Lists []models.ArticleDto `json:"lists"`
-	Count int                 `json:"total"`
+	Count int64               `json:"total"` //符合条件的总数，不是单页数量
 }
 
 // GetArticles
@@ -324,14 +324,14 @@ func GetArticles(c *gin.Context) {
 		PageSize:      util.GetPageSize(c),
 	}
 
-	articles, err := articleService.Get()
+	articles, count, err := articleService.Get()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetArticlesFail, nil)
 		return
 	}
 	var res GetArticlesResponse
 	res.Lists = articles
-	res.Count = len(articles)
+	res.Count = count
 
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }

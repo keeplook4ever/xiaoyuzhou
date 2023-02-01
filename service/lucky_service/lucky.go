@@ -18,7 +18,7 @@ func (lk *LuckyInputContent) Add() error {
 	return models.AddLucky(lk.Lists, lk.Type)
 }
 
-func (lk *LuckyInputContent) Get() (string, interface{}, int, error) {
+func (lk *LuckyInputContent) Get() (string, interface{}, int64, error) {
 	return models.GetLuckys(lk.Type, lk.PageNum, lk.PageSize)
 }
 

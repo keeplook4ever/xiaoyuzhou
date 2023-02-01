@@ -97,12 +97,13 @@ func GetArticleTotal(cond string, vals []interface{}) (int64, error) {
 }
 
 // GetArticles gets a list of articles based on paging constraints
-func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]ArticleDto, error) {
+func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]ArticleDto, int64, error) {
 	var articles []Article
-
+	var count int64
+	Db.Model(&Article{}).Where(cond, vals...).Count(&count)
 	err := Db.Preload("Category").Preload("Author").Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+		return nil, 0, err
 	}
 
 	resp := make([]ArticleDto, len(articles))
@@ -110,7 +111,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 	for i, aa := range articles {
 		resp[i] = aa.ToArticleDto()
 	}
-	return resp, nil
+	return resp, count, nil
 }
 
 // GetArticle Get a single article based on ID

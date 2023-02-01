@@ -40,12 +40,12 @@ type AddLotteryContentData struct {
 
 type GetLotteryForManagerResponse struct {
 	Lists []models.Lottery `json:"lists"`
-	Count int              `json:"count"`
+	Count int64            `json:"count"`
 }
 
 type GetLotteryContentForManagerResponse struct {
 	Lists []models.LotteryContent `json:"lists"`
-	Count int                     `json:"count"`
+	Count int64                   `json:"count"`
 }
 
 // GetLotteryForManager
@@ -59,12 +59,12 @@ type GetLotteryContentForManagerResponse struct {
 // @Security ApiKeyAuth
 func GetLotteryForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
-	lotteries, err := lottery_service.GetLotteryForManager()
+	lotteries, count, err := lottery_service.GetLotteryForManager()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势表出错", nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryForManagerResponse{Lists: lotteries, Count: len(lotteries)})
+	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryForManagerResponse{Lists: lotteries, Count: count})
 }
 
 // EditLottery
@@ -207,12 +207,12 @@ func GetLotteryContentForManager(c *gin.Context) {
 		PageSize: util.GetPageSize(c),
 	}
 
-	lotteryContents, err := lotteryInput.GetLotteryContentForManager()
+	lotteryContents, count, err := lotteryInput.GetLotteryContentForManager()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势内容表出错", nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryContentForManagerResponse{Lists: lotteryContents, Count: len(lotteryContents)})
+	appG.Response(http.StatusOK, e.SUCCESS, GetLotteryContentForManagerResponse{Lists: lotteryContents, Count: count})
 }
 
 // 校验上传Lottery是否合法

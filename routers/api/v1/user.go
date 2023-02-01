@@ -88,19 +88,18 @@ func GetUser(c *gin.Context) {
 		ID:   uint(id),
 		Role: role,
 	}
-	users, err := userService.GetUser()
+	users, count, err := userService.GetUser()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetUserFail, nil)
 		return
 	}
-	count := len(users)
 	// 定义返回数据
 	appG.Response(http.StatusOK, e.SUCCESS, GetUserResponse{Lists: users, Count: count})
 }
 
 type GetUserResponse struct {
 	Lists []models.UserDto `json:"lists"`
-	Count int              `json:"count"`
+	Count int64            `json:"count"`
 }
 
 // GetCurrentLoginUserInfo
@@ -119,7 +118,7 @@ func GetCurrentLoginUserInfo(c *gin.Context) {
 	userService := user_service.UserInput{
 		Name: username,
 	}
-	user, err := userService.GetUser()
+	user, _, err := userService.GetUser()
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetUserInfoFail, nil)
 		return
