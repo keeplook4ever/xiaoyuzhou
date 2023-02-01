@@ -39,35 +39,46 @@ func Import(r io.Reader) error {
 	TodoRows, _ := xlsx.GetRows("todo")
 	SpellRows, _ := xlsx.GetRows("spell")
 	SongRows, _ := xlsx.GetRows("song")
-	for _, row := range TodoRows {
-		var data []string
-		for _, cell := range row {
-			data = append(data, cell)
+	if TodoRows != nil {
+		var TodoData []string
+		for _, row := range TodoRows {
+			for _, cell := range row {
+				if cell != "" {
+					TodoData = append(TodoData, cell)
+				}
+			}
 		}
-		if err = models.AddLucky(data, "todo"); err != nil {
+		if err = models.AddLucky(TodoData, "todo"); err != nil {
+			fiErrString += err.Error()
+		}
+	}
+	if SpellRows != nil {
+		var SpellData []string
+		for _, row := range SpellRows {
+			for _, cell := range row {
+				if cell != "" {
+					SpellData = append(SpellData, cell)
+				}
+			}
+		}
+		if err = models.AddLucky(SpellData, "spell"); err != nil {
+			fiErrString += err.Error()
+		}
+	}
+	if SongRows != nil {
+		var SongData []string
+		for _, row := range SongRows {
+			for _, cell := range row {
+				if cell != "" {
+					SongData = append(SongData, cell)
+				}
+			}
+		}
+		if err = models.AddLucky(SongData, "song"); err != nil {
 			fiErrString += err.Error()
 		}
 	}
 
-	for _, row := range SpellRows {
-		var data []string
-		for _, cell := range row {
-			data = append(data, cell)
-		}
-		if err = models.AddLucky(data, "spell"); err != nil {
-			fiErrString += err.Error()
-		}
-	}
-
-	for _, row := range SongRows {
-		var data []string
-		for _, cell := range row {
-			data = append(data, cell)
-		}
-		if err = models.AddLucky(data, "song"); err != nil {
-			fiErrString += err.Error()
-		}
-	}
 	if fiErrString != "" {
 		return errors.New(fiErrString)
 	}
