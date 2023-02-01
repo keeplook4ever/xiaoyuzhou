@@ -28,14 +28,6 @@ type LuckyTodayDto struct {
 	Song  string `json:"song"`  //今日好运歌曲
 }
 
-//func (l *LuckyToday) ToLuckyTodayDto() LuckyTodayDto {
-//	return LuckyTodayDto{
-//		Spell: l.Spell,
-//		Todo:  l.Todo,
-//		Song:  l.Song,
-//	}
-//}
-
 // GetOneRandomLuckyToday 为用户产生一个随机的今日好运内容
 func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
 	var luckToday LuckyTodayDto
@@ -70,7 +62,8 @@ func GetOneRandomLuckyToday() (*LuckyTodayDto, error) {
 }
 
 func AddLucky(data []string, _type string) error {
-	if _type == "spell" {
+	switch _type {
+	case "spell":
 		toAdd := make([]LuckySpell, 0)
 		for _, value := range data {
 			toAdd = append(toAdd, LuckySpell{Spell: value})
@@ -78,9 +71,7 @@ func AddLucky(data []string, _type string) error {
 		if err := Db.Create(&toAdd).Error; err != nil {
 			return err
 		}
-	}
-
-	if _type == "song" {
+	case "song":
 		toAdd := make([]LuckySong, 0)
 		for _, value := range data {
 			toAdd = append(toAdd, LuckySong{Song: value})
@@ -88,9 +79,7 @@ func AddLucky(data []string, _type string) error {
 		if err := Db.Create(&toAdd).Error; err != nil {
 			return err
 		}
-	}
-
-	if _type == "todo" {
+	case "todo":
 		toAdd := make([]LuckyTodo, 0)
 		for _, value := range data {
 			toAdd = append(toAdd, LuckyTodo{Todo: value})
@@ -98,44 +87,75 @@ func AddLucky(data []string, _type string) error {
 		if err := Db.Create(&toAdd).Error; err != nil {
 			return err
 		}
+	default:
+		return errors.New("type not supported")
 	}
 
 	return nil
 }
 
-func EditLuckySpell(id int, data map[string]interface{}) error {
-	if err := Db.Model(&LuckySpell{}).Where("id = ?", id).Updates(data).Error; err != nil {
-		return err
+func EditLucky(xtype string, id int, data string) error {
+	switch xtype {
+	case "spell":
+		if err := Db.Model(&LuckySpell{}).Where("id = ?", id).Update("spell", data).Error; err != nil {
+			return err
+		}
+	case "todo":
+		if err := Db.Model(&LuckyTodo{}).Where("id = ?", id).Update("todo", data).Error; err != nil {
+			return err
+		}
+	case "song":
+		if err := Db.Model(&LuckySong{}).Where("id = ?", id).Update("song", data).Error; err != nil {
+			return err
+		}
+	default:
+		return errors.New("type not supported")
 	}
 	return nil
 }
 
-//func DeleteLucky(id int) error {
-//	if err := Db.Where("id = ?", id).Delete(&LuckyToday{}).Error; err != nil {
-//		return err
-//	}
-//	return nil
-//}
+func DeleteLucky(xtype string, idSlice []int) error {
+	switch xtype {
+	case "spell":
+		if err := Db.Delete(&LuckySpell{}, idSlice).Error; err != nil {
+			return err
+		}
+	case "todo":
+		if err := Db.Delete(&LuckyTodo{}, idSlice).Error; err != nil {
+			return err
+		}
+	case "song":
+		if err := Db.Delete(&LuckySong{}, idSlice).Error; err != nil {
+			return err
+		}
+	default:
+		return errors.New("type not supported")
+	}
+	return nil
+}
 
 func GetLuckys(_type string, pageNum int, pageSize int) (string, interface{}, int, error) {
-	if _type == "spell" {
+	switch _type {
+	case "spell":
 		var lucks []LuckySpell
 		if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
 			return _type, nil, 0, err
 		}
 		return _type, lucks, len(lucks), nil
-	} else if _type == "song" {
+
+	case "song":
 		var lucks []LuckySong
 		if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
 			return _type, nil, 0, err
 		}
 		return _type, lucks, len(lucks), nil
-	} else if _type == "todo" {
+	case "todo":
 		var lucks []LuckyTodo
 		if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
 			return _type, nil, 0, err
 		}
 		return _type, lucks, len(lucks), nil
+	default:
+		return _type, nil, 0, errors.New("type not supported")
 	}
-	return "", nil, 0, nil
 }

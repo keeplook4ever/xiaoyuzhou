@@ -7,7 +7,6 @@ import (
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
-	"xiaoyuzhou/pkg/setting"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/author_service"
 )
@@ -149,7 +148,7 @@ func GetAuthors(c *gin.Context) {
 		Name:     name,
 		ID:       id,
 		PageNum:  util.GetPage(c),
-		PageSize: setting.AppSetting.PageSize,
+		PageSize: util.GetPageSize(c),
 	}
 	authors, err := authorService.GetAll()
 	if err != nil {

@@ -929,6 +929,48 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改今日好运内容",
+                "parameters": [
+                    {
+                        "description": "修改好运内容",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditLuckyForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -954,6 +996,87 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.AddLuckyForm"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "删除今日好运内容",
+                "parameters": [
+                    {
+                        "description": "删除lucky",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.DeleteLuckyForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/lucky/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "上传今日好运excel",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "excel文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1636,6 +1759,30 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.DeleteLuckyForm": {
+            "type": "object",
+            "required": [
+                "id_list",
+                "type"
+            ],
+            "properties": {
+                "id_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "description": "spell:咒语，song:歌曲, todo:适宜",
+                    "type": "string",
+                    "enum": [
+                        "spell",
+                        "song",
+                        "todo"
+                    ]
+                }
+            }
+        },
         "v1.EditLotteryForm": {
             "type": "object",
             "required": [
@@ -1662,6 +1809,30 @@ const docTemplate = `{
                         "B",
                         "C",
                         "D"
+                    ]
+                }
+            }
+        },
+        "v1.EditLuckyForm": {
+            "type": "object",
+            "required": [
+                "content",
+                "id",
+                "type"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "spell",
+                        "song",
+                        "todo"
                     ]
                 }
             }

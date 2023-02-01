@@ -3,7 +3,6 @@ package v1
 import (
 	"net/http"
 	"xiaoyuzhou/models"
-	"xiaoyuzhou/pkg/setting"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/article_service"
 	"xiaoyuzhou/service/author_service"
@@ -322,7 +321,7 @@ func GetArticles(c *gin.Context) {
 		AuthorId:      authorId,
 		State:         state,
 		PageNum:       util.GetPage(c),
-		PageSize:      setting.AppSetting.PageSize,
+		PageSize:      util.GetPageSize(c),
 	}
 
 	articles, err := articleService.Get()

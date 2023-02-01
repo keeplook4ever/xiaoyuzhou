@@ -11,7 +11,6 @@ import (
 
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
-	"xiaoyuzhou/pkg/setting"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -46,7 +45,7 @@ func GetCategory(c *gin.Context) {
 		Name:     name,
 		State:    state,
 		PageNum:  util.GetPage(c),
-		PageSize: setting.AppSetting.PageSize,
+		PageSize: util.GetPageSize(c),
 	}
 	categories, err := categoryService.GetAll()
 	if err != nil {

@@ -1,13 +1,12 @@
 package test
 
 import (
+	"context"
 	"encoding/base64"
 	"github.com/go-pay/gopay/paypal"
-	"os"
 	"testing"
 
 	"github.com/go-pay/gopay"
-	"github.com/go-pay/gopay/pkg/util"
 	"github.com/go-pay/gopay/pkg/xlog"
 )
 
@@ -20,7 +19,20 @@ var (
 	Secret   = "EDg0Z3QrZVyYsqapxoaY9oh9pXjs98qDlr0By23h9vxRoBmN0NTX4UzafXgCXRX6yDDb7BBFtf4K0APo"
 )
 
-func TestMain(m *testing.M) {
+//func TestMain(m *testing.M) {
+//
+//	os.Exit(m.Run())
+//}
+
+func TestBasicAuth(t *testing.T) {
+	uname := "jerry"
+	passwd := "12346"
+	auth := base64.StdEncoding.EncodeToString([]byte(uname + ":" + passwd))
+	xlog.Debugf("Basic %s", auth)
+}
+
+func TestCreateOrder(t *testing.T) {
+
 	client, err := paypal.NewClient(Clientid, Secret, false)
 	if err != nil {
 		xlog.Error(err)
@@ -32,44 +44,46 @@ func TestMain(m *testing.M) {
 	xlog.Debugf("Appid: %s", client.Appid)
 	xlog.Debugf("AccessToken: %s", client.AccessToken)
 	xlog.Debugf("ExpiresIn: %d", client.ExpiresIn)
-	os.Exit(m.Run())
-}
 
-func TestBasicAuth(t *testing.T) {
-	uname := "jerry"
-	passwd := "12346"
-	auth := base64.StdEncoding.EncodeToString([]byte(uname + ":" + passwd))
-	xlog.Debugf("Basic %s", auth)
-}
+	// Create Orders example
+	var pus []*paypal.PurchaseUnit
+	var item = &paypal.PurchaseUnit{
+		ReferenceId: "TX12333331231232",
+		Amount: &paypal.Amount{
+			CurrencyCode: "USD",
+			Value:        "8",
+		},
+	}
+	pus = append(pus, item)
 
+	bm := make(gopay.BodyMap)
+	bm.Set("intent", "CAPTURE").
+		Set("purchase_units", pus).
+		SetBodyMap("application_context", func(b gopay.BodyMap) {
+			b.Set("brand_name", "gopay").
+				Set("locale", "en-PT").
+				Set("return_url", "https://example.com/returnUrl").
+				Set("cancel_url", "https://example.com/cancelUrl")
+		})
+	ctx := context.Background()
+	ppRsp, err := client.CreateOrder(ctx, bm)
+	if err != nil {
+		xlog.Error(err)
+		return
+	}
+	if ppRsp.Code != paypal.Success {
+		// do something
+		xlog.Error("!!!")
+		return
+	}
 
-
-// Create Orders example
-var pus []*paypal.PurchaseUnit
-var item = &paypal.PurchaseUnit{
-	ReferenceId: "TX123333312312312312",
-	Amount: &paypal.Amount{
-		CurrencyCode: "USD",
-		Value:        "8",
-	},
-}
-pus = append(pus, item)
-
-bm := make(gopay.BodyMap)
-bm.Set("intent", "CAPTURE").
-Set("purchase_units", pus).
-SetBodyMap("application_context", func(b gopay.BodyMap) {
-	b.Set("brand_name", "gopay").
-		Set("locale", "en-PT").
-		Set("return_url", "https://example.com/returnUrl").
-		Set("cancel_url", "https://example.com/cancelUrl")
-})
-ppRsp, err := client.CreateOrder(ctx, bm)
-if err != nil {
-xlog.Error(err)
-return
-}
-if ppRsp.Code != paypal.Success {
-// do something
-return
+	ppRspc, err := client.OrderCapture(ctx, ppRsp.Response.Id, nil)
+	if err != nil {
+		xlog.Error(err)
+		return
+	}
+	if ppRspc.Code != paypal.Success {
+		// do something
+		return
+	}
 }

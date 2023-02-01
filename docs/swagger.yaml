@@ -294,6 +294,23 @@ definitions:
     - data
     - type
     type: object
+  v1.DeleteLuckyForm:
+    properties:
+      id_list:
+        items:
+          type: integer
+        type: array
+      type:
+        description: spell:咒语，song:歌曲, todo:适宜
+        enum:
+        - spell
+        - song
+        - todo
+        type: string
+    required:
+    - id_list
+    - type
+    type: object
   v1.EditLotteryForm:
     properties:
       keyword:
@@ -313,6 +330,23 @@ definitions:
         - D
         type: string
     required:
+    - type
+    type: object
+  v1.EditLuckyForm:
+    properties:
+      content:
+        type: string
+      id:
+        type: integer
+      type:
+        enum:
+        - spell
+        - song
+        - todo
+        type: string
+    required:
+    - content
+    - id
     - type
     type: object
   v1.GetArticlesResponse:
@@ -951,6 +985,32 @@ paths:
       tags:
       - Manager
   /manager/lucky:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除lucky
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.DeleteLuckyForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除今日好运内容
+      tags:
+      - Manager
     get:
       parameters:
       - description: 咒语\歌曲\适宜
@@ -1002,6 +1062,56 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 添加今日好运内容咒语
+      tags:
+      - Manager
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 修改好运内容
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditLuckyForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改今日好运内容
+      tags:
+      - Manager
+  /manager/lucky/upload:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: excel文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传今日好运excel
       tags:
       - Manager
   /manager/s3/token:
