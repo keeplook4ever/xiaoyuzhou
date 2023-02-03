@@ -1332,7 +1332,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/paypal/capture/order/{order_id}": {
+        "/player/paypal/capture/orders/{order_id}": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1369,7 +1369,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/paypal/checkout/order": {
+        "/player/paypal/checkout/orders": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1390,6 +1390,43 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.CreatePayPalOrderForm"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/player/paypal/checkout/orders/{order_id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取PayPal订单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
