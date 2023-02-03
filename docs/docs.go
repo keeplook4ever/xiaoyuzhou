@@ -1331,6 +1331,82 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/player/paypal/capture/order/{order_id}": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "捕获PapPal支付订单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/player/paypal/checkout/order": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "创建PapPal支付订单",
+                "parameters": [
+                    {
+                        "description": "创建订单请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreatePayPalOrderForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1759,6 +1835,28 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.CreatePayPalOrderForm": {
+            "type": "object",
+            "required": [
+                "amount",
+                "currency_code",
+                "uid"
+            ],
+            "properties": {
+                "amount": {
+                    "description": "\"金额\"",
+                    "type": "integer"
+                },
+                "currency_code": {
+                    "description": "\"货币代码\"",
+                    "type": "string"
+                },
+                "uid": {
+                    "description": "\"用户ID\"",
+                    "type": "string"
+                }
+            }
+        },
         "v1.DeleteLuckyForm": {
             "type": "object",
             "required": [
@@ -1847,6 +1945,7 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "description": "符合条件的总数，不是单页数量",
                     "type": "integer"
                 }
             }

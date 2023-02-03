@@ -55,11 +55,16 @@ func InitRouter() *gin.Engine {
 
 		}
 
-		// 支付相关
-		apiPlayerV1.Group("/pay")
+		// PayPal相关
+		paypalV1 := apiPlayerV1.Group("/paypal")
 		{
+			//创建PayPal支付订单
+			paypalV1.POST("/checkout/order", v1.CreatePayPalOrder)
 
+			//捕获PayPal订单
+			paypalV1.POST("/capture/order/:order_id", v1.CapturePayPalOrder)
 		}
+
 	}
 
 	// 后台管理接口
