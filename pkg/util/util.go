@@ -106,8 +106,8 @@ func SqlWhereBuild(where map[string]interface{}, connect string) (whereSQL strin
 	return
 }
 
-// GetScore 从最小最大获取一个中间随机数
-func GetScore(min, max int) int {
+// RandFromRange 从最小最大获取一个中间随机数
+func RandFromRange(min, max int) int {
 	rand.Seed(time.Now().Unix())
 	n := rand.Intn(max-min) + min
 	return n

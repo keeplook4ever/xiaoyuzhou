@@ -182,3 +182,12 @@ func (a *ArticleInput) getMaps() map[string]interface{} {
 	}
 	return maps
 }
+
+
+func GetArticleForPlayer(cnt int) ([]models.ArticleDto, error) {
+	return models.GetLatestArticle(cnt)
+}
+
+func GetSpecificArticleForPlayer(id int) (*models.ArticleDto, error) {
+	return models.GetArticleByID(id)
+}

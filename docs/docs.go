@@ -1292,6 +1292,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/player/article": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "首页展示文章",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ArticleDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/player/article/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "根据文章ID获取特定文章给用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/player/lottery": {
             "get": {
                 "produces": [
@@ -1515,6 +1567,10 @@ const docTemplate = `{
                 "page_title": {
                     "type": "string"
                 },
+                "read_num": {
+                    "description": "阅读数",
+                    "type": "integer"
+                },
                 "related_articles": {
                     "type": "array",
                     "items": {
@@ -1526,6 +1582,10 @@ const docTemplate = `{
                 },
                 "seo_url": {
                     "type": "string"
+                },
+                "star_num": {
+                    "description": "点赞数",
+                    "type": "integer"
                 },
                 "state": {
                     "type": "integer"

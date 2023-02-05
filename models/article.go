@@ -45,6 +45,9 @@ type ArticleDto struct {
 	CreatedBy       string `json:"created_by"`
 	UpdatedAt       int    `json:"updated_at"`
 	UpdatedBy       string `json:"updated_by"`
+	StarNum 		int 	`json:"star_num"` // 点赞数
+	ReadNum 		int 	`json:"read_num"` // 阅读数
+
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
@@ -68,6 +71,8 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		UpdatedAt:       itself.UpdatedAt,
 		CreatedBy:       itself.CreatedBy,
 		UpdatedBy:       itself.UpdatedBy,
+		StarNum: util.RandFromRange(300, 500),
+		ReadNum: util.RandFromRange(100, 200),
 	}
 }
 
@@ -114,15 +119,15 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 	return resp, count, nil
 }
 
-// GetArticle Get a single article based on ID
-func GetArticle(id int) (*Article, error) {
+// GetArticleByID Get a single article based on ID
+func GetArticleByID(id int) (*ArticleDto, error) {
 	var article Article
-	err := Db.Where("id = ? ", id).First(&article).Error
+	err := Db.Where("id = ? ", id).Find(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-
-	return &article, nil
+	resp := article.ToArticleDto()
+	return &resp, nil
 }
 
 // EditArticle modify a single article
@@ -174,4 +179,23 @@ func CleanAllArticle() error {
 	}
 
 	return nil
+}
+
+
+func GetLatestArticle(cnt int) ([]ArticleDto, error) {
+	var articles []Article
+	var count int64
+	Db.Model(&Article{}).Count(&count)
+	if count < int64(cnt) {
+		cnt = int(count)
+	}
+	err := Db.Preload("Category").Preload("Author").Order("created_at desc").Limit(cnt).Find(&articles).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	resp := make([]ArticleDto, 0)
+	for _, art := range articles {
+		resp = append(resp, art.ToArticleDto())
+	}
+	return resp, nil
 }

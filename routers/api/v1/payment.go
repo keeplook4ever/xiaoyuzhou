@@ -26,7 +26,11 @@ type CreatePayPalOrderForm struct {
 	CurrencyCode string `json:"currency_code" binding:"required"` // "货币代码"
 	Amount       int    `json:"amount" binding:"required"`        // "金额"
 	Uid          string `json:"uid" binding:"required"`           // "用户ID"
+	ReturnURL    string `json:"return_url" binding:"required"`    // "支付成功返回URL"
+	CancelURL    string `json:"cancel_url"  binding:"required"`   // "取消支付URL"
 }
+
+// 账单地址：
 
 // CreatePayPalOrder
 // @Summary 创建PapPal支付订单
@@ -57,6 +61,8 @@ func CreatePayPalOrder(c *gin.Context) {
 	xlog.Debugf("AccessToken: %s", client.AccessToken)
 	xlog.Debugf("ExpiresIn: %d", client.ExpiresIn)
 	xlog.Debugf("Uid: %s", formD.Uid)
+	xlog.Debugf("ReturnURL: %s", formD.ReturnURL)
+	xlog.Debugf("CacelURL: %s", formD.CancelURL)
 	// Create Orders example
 	var pus []*paypal.PurchaseUnit
 	var item = &paypal.PurchaseUnit{
@@ -75,8 +81,8 @@ func CreatePayPalOrder(c *gin.Context) {
 		SetBodyMap("application_context", func(b gopay.BodyMap) {
 			b.Set("brand_name", "xiaoyuzhou").
 				//Set("locale", "en-PT").
-				Set("return_url", "https://example.com/returnUrl").
-				Set("cancel_url", "https://example.com/cancelUrl")
+				Set("return_url", formD.ReturnURL).
+				Set("cancel_url", formD.CancelURL)
 		})
 	ctx := context.Background()
 	ppRsp, err := client.CreateOrder(ctx, bm)
