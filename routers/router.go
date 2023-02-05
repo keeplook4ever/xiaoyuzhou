@@ -47,10 +47,10 @@ func InitRouter() *gin.Engine {
 		// 文章相关
 		{
 			// 首页展示最新几篇文章
-			apiPlayerV1.GET("/article", v1.GetArticleForPlayer)
+			apiPlayerV1.GET("/articles", v1.GetArticleForPlayer)
 
 			// 首页获取某个特定文章
-			apiPlayerV1.GET("/article/:id", v1.GetSpecificArticleForPlayer)
+			apiPlayerV1.GET("/article", v1.GetSpecificArticleForPlayer)
 		}
 
 		// 星座相关

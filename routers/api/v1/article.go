@@ -336,17 +336,16 @@ func GetArticles(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-
 // GetArticleForPlayer
 // @Summary 首页展示文章
 // @Produce json
 // @Success 200 {object} []models.ArticleDto
 // @Failure 500 {object} app.Response
 // @Tags Player
-// @Router /player/article [get]
+// @Router /player/articles [get]
 func GetArticleForPlayer(c *gin.Context) {
 	appG := app.Gin{C: c}
-	articleList, err  := article_service.GetArticleForPlayer(5)
+	articleList, err := article_service.GetArticleForPlayer(4)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取文章失败", nil)
 		return
@@ -355,18 +354,20 @@ func GetArticleForPlayer(c *gin.Context) {
 }
 
 // GetSpecificArticleForPlayer
-// @Summary 根据文章ID获取特定文章给用户
-// @Param id path int true "ID"
+// @Summary 根据文章SEO URL获取特定文章给用户
+// @Param seo_url query string true "SEO URL"
 // @Accept json
 // @Produce json
-// @Router /player/article/{id} [get]
+// @Success 200 {object} models.ArticleDto
+// @Failure 500 {object} app.Response
+// @Router /player/article [get]
 // @Tags Player
 func GetSpecificArticleForPlayer(c *gin.Context) {
 	appG := app.Gin{
 		C: c,
 	}
-	id := com.StrTo(c.Param("id")).MustInt()
-	article, err := article_service.GetSpecificArticleForPlayer(id)
+	seoUrl := c.Query("seo_url")
+	article, err := article_service.GetSpecificArticleBySeoUrl(seoUrl)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return

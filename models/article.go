@@ -45,13 +45,17 @@ type ArticleDto struct {
 	CreatedBy       string `json:"created_by"`
 	UpdatedAt       int    `json:"updated_at"`
 	UpdatedBy       string `json:"updated_by"`
-	StarNum 		int 	`json:"star_num"` // 点赞数
-	ReadNum 		int 	`json:"read_num"` // 阅读数
+	StarNum         int    `json:"star_num"` // 点赞数
+	ReadNum         int    `json:"read_num"` // 阅读数
 
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
-func (itself *Article) ToArticleDto() ArticleDto {
+func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
+	content := ""
+	if hasContent {
+		content = itself.Content
+	}
 	return ArticleDto{
 		ID:              itself.ID,
 		CategoryID:      itself.Category.ID,
@@ -61,7 +65,7 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		PageTitle:       itself.PageTitle,
 		MetaDesc:        itself.MetaDesc,
 		RelatedArticles: util.String2Int(strings.Split(itself.RelatedArticles, ",")),
-		Content:         itself.Content,
+		Content:         content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,
 		CoverImageUrl:   itself.CoverImageUrl,
@@ -71,8 +75,8 @@ func (itself *Article) ToArticleDto() ArticleDto {
 		UpdatedAt:       itself.UpdatedAt,
 		CreatedBy:       itself.CreatedBy,
 		UpdatedBy:       itself.UpdatedBy,
-		StarNum: util.RandFromRange(300, 500),
-		ReadNum: util.RandFromRange(100, 200),
+		StarNum:         util.RandFromRange(300, 500),
+		ReadNum:         util.RandFromRange(100, 200),
 	}
 }
 
@@ -114,7 +118,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 	resp := make([]ArticleDto, len(articles))
 
 	for i, aa := range articles {
-		resp[i] = aa.ToArticleDto()
+		resp[i] = aa.ToArticleDto(true)
 	}
 	return resp, count, nil
 }
@@ -126,7 +130,17 @@ func GetArticleByID(id int) (*ArticleDto, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-	resp := article.ToArticleDto()
+	resp := article.ToArticleDto(true)
+	return &resp, nil
+}
+
+func GetArticleBySeoUrl(url string) (*ArticleDto, error) {
+	var article Article
+	err := Db.Where("seo_url = ? ", url).Find(&article).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	resp := article.ToArticleDto(true)
 	return &resp, nil
 }
 
@@ -181,7 +195,6 @@ func CleanAllArticle() error {
 	return nil
 }
 
-
 func GetLatestArticle(cnt int) ([]ArticleDto, error) {
 	var articles []Article
 	var count int64
@@ -195,7 +208,7 @@ func GetLatestArticle(cnt int) ([]ArticleDto, error) {
 	}
 	resp := make([]ArticleDto, 0)
 	for _, art := range articles {
-		resp = append(resp, art.ToArticleDto())
+		resp = append(resp, art.ToArticleDto(false))
 	}
 	return resp, nil
 }
