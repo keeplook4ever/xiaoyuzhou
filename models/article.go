@@ -127,7 +127,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 func GetArticleByID(id int) (*ArticleDto, error) {
 	var article Article
 	err := Db.Where("id = ? ", id).Find(&article).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
 	}
 	resp := article.ToArticleDto(true)
@@ -136,8 +136,8 @@ func GetArticleByID(id int) (*ArticleDto, error) {
 
 func GetArticleBySeoUrl(url string) (*ArticleDto, error) {
 	var article Article
-	err := Db.Where("seo_url = ? ", url).Find(&article).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	err := Db.Where("seo_url = ? ", url).First(&article).Error
+	if err != nil {
 		return nil, err
 	}
 	resp := article.ToArticleDto(true)

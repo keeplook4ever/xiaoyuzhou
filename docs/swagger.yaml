@@ -305,15 +305,23 @@ definitions:
       amount:
         description: '"金额"'
         type: integer
+      cancel_url:
+        description: '"取消支付URL"'
+        type: string
       currency_code:
         description: '"货币代码"'
+        type: string
+      return_url:
+        description: '"支付成功返回URL"'
         type: string
       uid:
         description: '"用户ID"'
         type: string
     required:
     - amount
+    - cancel_url
     - currency_code
+    - return_url
     - uid
     type: object
   v1.DeleteLuckyForm:
@@ -1262,6 +1270,30 @@ paths:
       - Manager
   /player/article:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: SEO URL
+        in: query
+        name: seo_url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ArticleDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 根据文章SEO URL获取特定文章给用户
+      tags:
+      - Player
+  /player/articles:
+    get:
       produces:
       - application/json
       responses:
@@ -1276,22 +1308,6 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: 首页展示文章
-      tags:
-      - Player
-  /player/article/{id}:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses: {}
-      summary: 根据文章ID获取特定文章给用户
       tags:
       - Player
   /player/lottery:
