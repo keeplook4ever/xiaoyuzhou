@@ -8,7 +8,7 @@ import (
 
 type Article struct {
 	Model               // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	CategoryID int      `gorm:"column:category_id;type:int" json:"category_id"`  // 默认外键
+	CategoryID int      `gorm:"column:category_id;type:int" json:"category_id"` // 默认外键
 	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
 	SeoTitle        string `gorm:"column:seo_title;not null;unique;type:varchar(100)" json:"seo_title"`
@@ -27,27 +27,26 @@ type Article struct {
 }
 
 type ArticleDto struct {
-	ID              uint   `json:"id"`
-	CategoryID      uint   `json:"category_id"`
-	CategoryName    string `json:"category_name"`
-	SeoTitle        string `json:"seo_title"`
-	SeoUrl          string `json:"seo_url"`
-	PageTitle       string `json:"page_title"`
-	MetaDesc        string `json:"meta_desc"`
-	RelatedArticles []int  `json:"related_articles"`
-	Content         string `json:"content"`
-	AuthorID        uint   `json:"author_id"`
-	AuthorName      string `json:"author_name"`
-	CoverImageUrl   string `json:"cover_image_url"`
-	State           int    `json:"state"`
-	Language        string `json:"language"`
-	CreatedAt       int    `json:"created_at"`
-	CreatedBy       string `json:"created_by"`
-	UpdatedAt       int    `json:"updated_at"`
-	UpdatedBy       string `json:"updated_by"`
-	StarNum         int    `json:"star_num"` // 点赞数
-	ReadNum         int    `json:"read_num"` // 阅读数
-
+	ID              uint   `json:"id,omitempty"`
+	CategoryID      uint   `json:"category_id,omitempty"`
+	CategoryName    string `json:"category_name,omitempty"`
+	SeoTitle        string `json:"seo_title,omitempty"`
+	SeoUrl          string `json:"seo_url,omitempty"`
+	PageTitle       string `json:"page_title,omitempty"`
+	MetaDesc        string `json:"meta_desc,omitempty"`
+	RelatedArticles []int  `json:"related_articles,omitempty"`
+	Content         string `json:"content,omitempty"`
+	AuthorID        uint   `json:"author_id,omitempty"`
+	AuthorName      string `json:"author_name,omitempty"`
+	CoverImageUrl   string `json:"cover_image_url,omitempty"`
+	State           int    `json:"state,omitempty"`
+	Language        string `json:"language,omitempty"`
+	CreatedAt       int    `json:"created_at,omitempty"`
+	CreatedBy       string `json:"created_by,omitempty"`
+	UpdatedAt       int    `json:"updated_at,omitempty"`
+	UpdatedBy       string `json:"updated_by,omitempty"`
+	StarNum         int    `json:"star_num,omitempty"` // 点赞数
+	ReadNum         int    `json:"read_num,omitempty"` // 阅读数
 }
 
 // ToArticleDto 从数据库结构抽取前端需要的字段返回
@@ -76,7 +75,7 @@ func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
 		CreatedBy:       itself.CreatedBy,
 		UpdatedBy:       itself.UpdatedBy,
 		StarNum:         util.RandFromRange(300, 500),
-		ReadNum:         util.RandFromRange(900, 400),
+		ReadNum:         util.RandFromRange(900, 1400),
 	}
 }
 
