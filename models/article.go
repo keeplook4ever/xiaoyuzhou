@@ -76,7 +76,7 @@ func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
 		CreatedBy:       itself.CreatedBy,
 		UpdatedBy:       itself.UpdatedBy,
 		StarNum:         util.RandFromRange(300, 500),
-		ReadNum:         util.RandFromRange(100, 200),
+		ReadNum:         util.RandFromRange(900, 400),
 	}
 }
 
