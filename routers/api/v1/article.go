@@ -1,21 +1,21 @@
 package v1
 
 import (
+	"github.com/boombuler/barcode/qr"
 	"net/http"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/qrcode"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/article_service"
 	"xiaoyuzhou/service/author_service"
 	"xiaoyuzhou/service/category_service"
 
 	"github.com/astaxie/beego/validation"
-	"github.com/boombuler/barcode/qr"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
-	"xiaoyuzhou/pkg/qrcode"
 )
 
 type AddArticleForm struct {
@@ -334,6 +334,45 @@ func GetArticles(c *gin.Context) {
 	res.Count = count
 
 	appG.Response(http.StatusOK, e.SUCCESS, res)
+}
+
+// GetArticleForPlayer
+// @Summary 首页展示文章
+// @Produce json
+// @Success 200 {object} []models.ArticleDto
+// @Failure 500 {object} app.Response
+// @Tags Player
+// @Router /player/articles [get]
+func GetArticleForPlayer(c *gin.Context) {
+	appG := app.Gin{C: c}
+	articleList, err := article_service.GetArticleForPlayer(4)
+	if err != nil {
+		appG.Response(http.StatusOK, "获取文章失败", nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, articleList)
+}
+
+// GetSpecificArticleForPlayer
+// @Summary 根据文章SEO URL获取特定文章给用户
+// @Param seo_url query string true "SEO URL"
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.ArticleDto
+// @Failure 500 {object} app.Response
+// @Router /player/article [get]
+// @Tags Player
+func GetSpecificArticleForPlayer(c *gin.Context) {
+	appG := app.Gin{
+		C: c,
+	}
+	seoUrl := c.Query("seo_url")
+	article, err := article_service.GetSpecificArticleBySeoUrl(seoUrl)
+	if err != nil {
+		appG.Response(http.StatusOK, "获取失败", nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, article)
 }
 
 const (

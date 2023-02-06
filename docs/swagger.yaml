@@ -45,6 +45,9 @@ definitions:
         type: string
       page_title:
         type: string
+      read_num:
+        description: 阅读数
+        type: integer
       related_articles:
         items:
           type: integer
@@ -53,6 +56,9 @@ definitions:
         type: string
       seo_url:
         type: string
+      star_num:
+        description: 点赞数
+        type: integer
       state:
         type: integer
       updated_at:
@@ -1254,6 +1260,40 @@ paths:
       summary: 通过登录态获取当前登录用户信息
       tags:
       - Manager
+  /player/article:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ArticleDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 首页展示文章
+      tags:
+      - Player
+  /player/article/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 根据文章ID获取特定文章给用户
+      tags:
+      - Player
   /player/lottery:
     get:
       parameters:

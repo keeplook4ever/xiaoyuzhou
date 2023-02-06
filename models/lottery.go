@@ -37,7 +37,7 @@ type TypeAndProb struct {
 }
 
 func (l *Lottery) makeLotteryWithContent() LotteryDto {
-	score := util.GetScore(l.MinScore, l.MaxScore)
+	score := util.RandFromRange(l.MinScore, l.MaxScore)
 	content, _ := getOneRandLotteryContent(l.Type)
 	return LotteryDto{
 		Score:   score,
