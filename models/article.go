@@ -8,7 +8,7 @@ import (
 
 type Article struct {
 	Model               // gorm.Model 包含了ID，CreatedAt， UpdatedAt， DeletedAt
-	CategoryID int      `gorm:"column:category_id;type:int" json:"category_id"` // 默认外键
+	CategoryID int      `gorm:"column:category_id;type:int" json:"category_id"`  // 默认外键
 	Category   Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // 一个文章属于一个类型
 
 	SeoTitle        string `gorm:"column:seo_title;not null;unique;type:varchar(100)" json:"seo_title"`
@@ -24,6 +24,8 @@ type Article struct {
 	Language        string `gorm:"column:language;not null;type:varchar(2)" json:"language"`
 	CreatedBy       string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`
 	UpdatedBy       string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`
+	StarNum         int    `gorm:"column:star_num;not null;type:int" json:"star_num"` // 点赞数
+	ReadNum         int    `gorm:"column:read_num;not null;type:int" json:"read_num"` // 阅读数
 }
 
 type ArticleDto struct {
@@ -74,8 +76,8 @@ func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
 		UpdatedAt:       itself.UpdatedAt,
 		CreatedBy:       itself.CreatedBy,
 		UpdatedBy:       itself.UpdatedBy,
-		StarNum:         util.RandFromRange(300, 500),
-		ReadNum:         util.RandFromRange(900, 1400),
+		StarNum:         itself.StarNum,
+		ReadNum:         itself.ReadNum,
 	}
 }
 
@@ -168,6 +170,8 @@ func AddArticle(data map[string]interface{}) error {
 		Language:        data["language"].(string),
 		CreatedBy:       data["created_by"].(string),
 		UpdatedBy:       data["updated_by"].(string),
+		ReadNum:         data["read_num"].(int),
+		StarNum:         data["star_num"].(int),
 	}
 	if err := Db.Create(&article).Error; err != nil {
 		return err

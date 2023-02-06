@@ -4,6 +4,7 @@ import (
 	"github.com/boombuler/barcode/qr"
 	"net/http"
 	"strings"
+	"time"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/qrcode"
 	"xiaoyuzhou/pkg/util"
@@ -77,6 +78,14 @@ func AddArticle(c *gin.Context) {
 		return
 	}
 
+	starNum := util.RandFromRange(100, 800)
+	time.Sleep(time.Microsecond)
+	readNum := util.RandFromRange(100, 800)
+
+	// 点赞数要小于阅读数
+	if starNum > readNum {
+		util.SwapTwoInt(&starNum, &readNum)
+	}
 	articleService := article_service.ArticleInput{
 		CategoryID:      article.CategoryID,
 		SeoTitle:        article.SeoTitle,
@@ -91,6 +100,8 @@ func AddArticle(c *gin.Context) {
 		Language:        article.Language,
 		CreatedBy:       c.GetString("username"), // 根据登录态获取
 		UpdatedBy:       c.GetString("username"),
+		ReadNum:         readNum,
+		StarNum:         starNum,
 	}
 	if err = articleService.Add(); err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)

@@ -108,7 +108,12 @@ func SqlWhereBuild(where map[string]interface{}, connect string) (whereSQL strin
 
 // RandFromRange 从最小最大获取一个中间随机数
 func RandFromRange(min, max int) int {
-	rand.Seed(time.Now().Unix())
+	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(max-min) + min
 	return n
+}
+
+// SwapTwoInt 交换两个变量的值
+func SwapTwoInt(a *int, b *int) {
+	*a, *b = *b, *a
 }

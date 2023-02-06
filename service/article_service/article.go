@@ -26,6 +26,8 @@ type ArticleInput struct {
 	CreatedAt       int
 	PageNum         int
 	PageSize        int
+	ReadNum         int
+	StarNum         int
 }
 
 func (a *ArticleInput) Add() error {
@@ -46,6 +48,8 @@ func (a *ArticleInput) Add() error {
 		"language":         a.Language,
 		"created_by":       a.CreatedBy,
 		"updated_by":       a.UpdatedBy,
+		"read_num":         a.ReadNum,
+		"star_num":         a.StarNum,
 	}
 
 	return models.AddArticle(article)
