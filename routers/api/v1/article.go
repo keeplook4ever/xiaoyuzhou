@@ -2,7 +2,6 @@ package v1
 
 import (
 	"net/http"
-	"strings"
 	"time"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/util"
@@ -377,10 +376,7 @@ func GetSpecificArticleForPlayer(c *gin.Context) {
 		C: c,
 	}
 	seoUrl := c.Query("seo_url")
-	if !strings.HasPrefix(seoUrl, "https://") {
-		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
-		return
-	}
+
 	article, err := article_service.GetSpecificArticleBySeoUrl(seoUrl)
 	if err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)
