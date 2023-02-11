@@ -127,7 +127,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}, has
 // GetArticleByIDs Get articles based on IDs
 func GetArticleByIDs(ids []int, hasContent bool) ([]*ArticleDto, error) {
 	var articles []Article
-	err := Db.Where("id in ? ", ids).Find(&articles).Error
+	err := Db.Preload("Category").Preload("Author").Where("id in ? ", ids).Find(&articles).Error
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func GetArticleByIDs(ids []int, hasContent bool) ([]*ArticleDto, error) {
 
 func GetArticleBySeoUrl(url string) (*ArticleDto, error) {
 	var article Article
-	err := Db.Where("seo_url = ? ", url).First(&article).Error
+	err := Db.Preload("Category").Preload("Author").Where("seo_url = ? ", url).First(&article).Error
 	if err != nil {
 		return nil, err
 	}
