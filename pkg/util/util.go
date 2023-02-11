@@ -117,3 +117,24 @@ func RandFromRange(min, max int) int {
 func SwapTwoInt(a *int, b *int) {
 	*a, *b = *b, *a
 }
+
+func StringToIntSlice(str string) (intSlice []int) {
+	if str == "" {
+		return
+	}
+	strList := strings.Split(str, ",")
+	if len(strList) == 0 {
+		return
+	}
+	for _, item := range strList {
+		if item == "" {
+			continue
+		}
+		val, err := strconv.Atoi(item)
+		if err != nil {
+			continue
+		}
+		intSlice = append(intSlice, val)
+	}
+	return
+}

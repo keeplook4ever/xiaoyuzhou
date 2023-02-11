@@ -1292,7 +1292,54 @@ paths:
       summary: 根据文章SEO URL获取特定文章给用户
       tags:
       - Player
+  /player/article/star/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 用户点赞文章API
+      tags:
+      - Player
   /player/articles:
+    get:
+      parameters:
+      - description: ID list
+        in: query
+        items:
+          type: integer
+        name: id_list
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 根据文章id获取文章
+      tags:
+      - Player
+  /player/articles/index:
     get:
       produces:
       - application/json

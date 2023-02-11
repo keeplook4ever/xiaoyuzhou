@@ -107,7 +107,7 @@ func GetArticleTotal(cond string, vals []interface{}) (int64, error) {
 }
 
 // GetArticles gets a list of articles based on paging constraints
-func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]ArticleDto, int64, error) {
+func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}, hasContent bool) ([]ArticleDto, int64, error) {
 	var articles []Article
 	var count int64
 	Db.Model(&Article{}).Where(cond, vals...).Count(&count)
@@ -119,20 +119,24 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 	resp := make([]ArticleDto, len(articles))
 
 	for i, aa := range articles {
-		resp[i] = aa.ToArticleDto(true)
+		resp[i] = aa.ToArticleDto(hasContent)
 	}
 	return resp, count, nil
 }
 
-// GetArticleByID Get a single article based on ID
-func GetArticleByID(id int) (*ArticleDto, error) {
-	var article Article
-	err := Db.Where("id = ? ", id).Find(&article).Error
+// GetArticleByIDs Get articles based on IDs
+func GetArticleByIDs(ids []int, hasContent bool) ([]*ArticleDto, error) {
+	var articles []Article
+	err := Db.Where("id in ? ", ids).Find(&articles).Error
 	if err != nil {
 		return nil, err
 	}
-	resp := article.ToArticleDto(true)
-	return &resp, nil
+	resp := make([]*ArticleDto, 0)
+	for _, art := range articles {
+		v := art.ToArticleDto(hasContent)
+		resp = append(resp, &v)
+	}
+	return resp, nil
 }
 
 func GetArticleBySeoUrl(url string) (*ArticleDto, error) {
@@ -199,13 +203,20 @@ func CleanAllArticle() error {
 }
 
 func GetLatestArticle(cnt int) ([]ArticleDto, error) {
+	var err error
 	var articles []Article
 	var count int64
 	Db.Model(&Article{}).Count(&count)
 	if count < int64(cnt) {
 		cnt = int(count)
 	}
-	err := Db.Preload("Category").Preload("Author").Order("created_at desc").Limit(cnt).Find(&articles).Error
+
+	// 获取全部
+	if cnt == -1 {
+		err = Db.Preload("Category").Preload("Author").Order("created_at desc").Find(&articles).Error
+	} else {
+		err = Db.Preload("Category").Preload("Author").Order("created_at desc").Limit(cnt).Find(&articles).Error
+	}
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

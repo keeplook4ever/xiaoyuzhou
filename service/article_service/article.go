@@ -93,7 +93,7 @@ func (a *ArticleInput) Edit() error {
 	return models.EditArticle(a.ID, data)
 }
 
-func (a *ArticleInput) Get() ([]models.ArticleDto, int64, error) {
+func (a *ArticleInput) Get(hasContent bool) ([]models.ArticleDto, int64, error) {
 	var (
 		articles []models.ArticleDto
 		//cacheArticles []manager.ArticleDto
@@ -122,7 +122,7 @@ func (a *ArticleInput) Get() ([]models.ArticleDto, int64, error) {
 	if err != nil {
 		return nil, 0, err
 	}
-	articles, count, err := models.GetArticles(a.PageNum, a.PageSize, cond, vals)
+	articles, count, err := models.GetArticles(a.PageNum, a.PageSize, cond, vals, hasContent)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -191,8 +191,8 @@ func GetArticleForPlayer(cnt int) ([]models.ArticleDto, error) {
 	return models.GetLatestArticle(cnt)
 }
 
-func GetSpecificArticleForPlayer(id int) (*models.ArticleDto, error) {
-	return models.GetArticleByID(id)
+func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]*models.ArticleDto, error) {
+	return models.GetArticleByIDs(ids, hasContent)
 }
 
 func GetSpecificArticleBySeoUrl(seoUrl string) (*models.ArticleDto, error) {

@@ -333,7 +333,8 @@ func GetArticles(c *gin.Context) {
 		PageSize:      util.GetPageSize(c),
 	}
 
-	articles, count, err := articleService.Get()
+	// 获取带content的文章
+	articles, count, err := articleService.Get(true)
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetArticlesFail, nil)
 		return
@@ -345,21 +346,68 @@ func GetArticles(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-// GetArticleForPlayer
+// GetIndexArticleForPlayer
 // @Summary 首页展示文章
 // @Produce json
 // @Success 200 {object} []models.ArticleDto
 // @Failure 500 {object} app.Response
 // @Tags Player
-// @Router /player/articles [get]
-func GetArticleForPlayer(c *gin.Context) {
+// @Router /player/articles/index [get]
+func GetIndexArticleForPlayer(c *gin.Context) {
 	appG := app.Gin{C: c}
 	articleList, err := article_service.GetArticleForPlayer(4)
 	if err != nil {
-		appG.Response(http.StatusOK, "获取文章失败", nil)
+		appG.Response(http.StatusOK, "获取首页文章失败", nil)
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, articleList)
+}
+
+// GetArticlesAll
+// @Summary 获取文章(可传文章id)
+// @Produce json
+// @Param id_list query []int false "ID list"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Tags Player
+// @Router /player/articles [get]
+func GetArticlesAll(c *gin.Context) {
+	appG := app.Gin{C: c}
+	idList := c.Query("id_list")
+
+	// -1 代表无此参数
+	state := -1
+	tagId := -1
+	authorId := -1
+	if idList == "" {
+		articleService := article_service.ArticleInput{
+			State:      state,
+			CategoryID: tagId,
+			AuthorId:   authorId,
+			PageNum:    util.GetPage(c),
+			PageSize:   util.GetPageSize(c),
+		}
+		// 获取不带content的文章
+		articles, count, err := articleService.Get(false)
+		if err != nil {
+			appG.Response(http.StatusOK, e.ErrorGetArticlesFail, nil)
+			return
+		}
+		var res GetArticlesResponse
+		res.Lists = articles
+		res.Count = count
+
+		appG.Response(http.StatusOK, e.SUCCESS, res)
+	} else {
+		ids := util.StringToIntSlice(idList)
+		article, err := article_service.GetSpecificArticleByIDs(ids, false)
+		if err != nil {
+			appG.Response(http.StatusOK, "获取文章失败", nil)
+			return
+		}
+		appG.Response(http.StatusOK, e.SUCCESS, article)
+	}
+
 }
 
 // GetSpecificArticleForPlayer
