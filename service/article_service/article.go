@@ -99,25 +99,6 @@ func (a *ArticleInput) Get(hasContent bool) ([]models.ArticleDto, int64, error) 
 		//cacheArticles []manager.ArticleDto
 	)
 
-	//cache := cache_service.ArticleInput{
-	//	ID:         a.ID,
-	//	CreatedBy:  a.CreatedBy,
-	//	CategoryID: a.CategoryID,
-	//	State:      a.State,
-	//	AuthorId:   a.AuthorId,
-	//	PageNum:    a.PageNum,
-	//	PageSize:   a.PageSize,
-	//}
-	//key := cache.GetArticlesKey()
-	//if gredis.Exists(key) {
-	//	data, err := gredis.Get(key)
-	//	if err != nil {
-	//		logging.Info(err)
-	//	} else {
-	//		json.Unmarshal(data, &cacheArticles)
-	//		return cacheArticles, nil
-	//	}
-	//}
 	cond, vals, err := util.SqlWhereBuild(a.getMaps(), "and")
 	if err != nil {
 		return nil, 0, err
@@ -191,8 +172,13 @@ func GetArticleForPlayer(cnt int) ([]models.ArticleDto, error) {
 	return models.GetLatestArticle(cnt)
 }
 
-func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]*models.ArticleDto, error) {
-	return models.GetArticleByIDs(ids, hasContent)
+func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]models.ArticleDto, error) {
+	arts, err := models.GetArticleByIDs(ids, hasContent)
+	res := make([]models.ArticleDto, 0)
+	for _, item := range arts {
+		res = append(res, *item)
+	}
+	return res, err
 }
 
 func GetSpecificArticleBySeoUrl(seoUrl string) (*models.ArticleDto, error) {

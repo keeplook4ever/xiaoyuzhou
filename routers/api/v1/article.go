@@ -109,37 +109,29 @@ func AddArticle(c *gin.Context) {
 }
 
 type EditArticleForm struct {
-	ID              int    `form:"id" binding:"required"`
-	CategoryID      int    `form:"category_id"`
-	SeoTitle        string `form:"seo_title"`
-	SeoUrl          string `form:"seo_url"`
-	PageTitle       string `form:"page_title"`
-	MetaDesc        string `form:"meta_desc"`
-	AuthorId        int    `form:"author_id"`
-	Content         string `form:"content"`
-	UpdatedBy       string `form:"updated_by" binding:"required"`
-	CoverImageUrl   string `form:"cover_image_url"`
-	State           int    `form:"state" enums:"0,1"`
-	RelatedArticles []int  `form:"related_articles"`
+	ID              int    `json:"id" binding:"required"`
+	CategoryID      int    `json:"category_id"`
+	SeoTitle        string `json:"seo_title"`
+	SeoUrl          string `json:"seo_url"`
+	PageTitle       string `json:"page_title"`
+	MetaDesc        string `json:"meta_desc"`
+	RelatedArticles []int  `json:"related_articles"`
+	Content         string `json:"content"`
+	AuthorId        int    `json:"author_id"`
+	CoverImageUrl   string `json:"cover_image_url"`
+	State           int    `json:"state" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
+	Language        string `json:"language" enums:"jp,zh,en" default:"jp"`
+	UpdatedBy 		string `json:"updated_by"`
 }
 
 // EditArticle
 // @Summary 修改文章
 // @Produce  json
-// @Param id path int true "ID"
-// @Param category_id formData int false "Category ID"
-// @Param page_title formData string false "Page Title"
-// @Param seo_title formData string false "SEO Title"
-// @Param seo_url formData string false "SEO URL"
-// @Param related_articles formData []int false "Related Articles"
-// @Param meta_desc formData string false "Desc"
-// @Param author_id formData int false "Author ID"
-// @Param content formData string false "Content"
-// @Param cover_image_url formData string false "Cover img URL"
-// @Param state formData int false "State" default(1)
+// @Param _ body EditArticleForm true "修改参数"
+// @Param id path int true "文章ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-//@Security ApiKeyAuth
+// @Security ApiKeyAuth
 // @Router /manager/articles/{id} [put]
 // @Tags Manager
 func EditArticle(c *gin.Context) {
@@ -149,7 +141,7 @@ func EditArticle(c *gin.Context) {
 			UpdatedBy: c.GetString("username")}
 	)
 
-	if err := c.ShouldBind(&article); err != nil {
+	if err := c.ShouldBindJSON(&article); err != nil {
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
 		return
 	}
@@ -405,7 +397,11 @@ func GetArticlesAll(c *gin.Context) {
 			appG.Response(http.StatusOK, "获取文章失败", nil)
 			return
 		}
-		appG.Response(http.StatusOK, e.SUCCESS, article)
+
+		var res GetArticlesResponse
+		res.Lists = article
+		res.Count = int64(len(article))
+		appG.Response(http.StatusOK, e.SUCCESS, res)
 	}
 
 }

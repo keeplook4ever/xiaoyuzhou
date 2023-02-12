@@ -341,6 +341,81 @@ definitions:
     - id_list
     - type
     type: object
+  v1.EditArticleForm:
+    properties:
+      author_id:
+        type: integer
+      category_id:
+        type: integer
+      content:
+        type: string
+      cover_image_url:
+        type: string
+      id:
+        type: integer
+      language:
+        default: jp
+        enum:
+        - jp
+        - zh
+        - en
+        type: string
+      meta_desc:
+        type: string
+      page_title:
+        type: string
+      related_articles:
+        items:
+          type: integer
+        type: array
+      seo_title:
+        type: string
+      seo_url:
+        type: string
+      state:
+        default: 1
+        description: 0表示禁用，1表示启用
+        enum:
+        - 1
+        - 0
+        type: integer
+      updated_by:
+        type: string
+    required:
+    - id
+    type: object
+  v1.EditAuthorForm:
+    properties:
+      age:
+        type: integer
+      desc:
+        type: string
+      gender:
+        default: 2
+        description: 1表示男，2表示女
+        enum:
+        - 1
+        - 2
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    type: object
+  v1.EditCategoryForm:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      state:
+        default: 1
+        type: integer
+    required:
+    - id
+    type: object
   v1.EditLotteryForm:
     properties:
       keyword:
@@ -576,53 +651,16 @@ paths:
       - Manager
     put:
       parameters:
-      - description: ID
+      - description: 修改参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditArticleForm'
+      - description: 文章ID
         in: path
         name: id
         required: true
-        type: integer
-      - description: Category ID
-        in: formData
-        name: category_id
-        type: integer
-      - description: Page Title
-        in: formData
-        name: page_title
-        type: string
-      - description: SEO Title
-        in: formData
-        name: seo_title
-        type: string
-      - description: SEO URL
-        in: formData
-        name: seo_url
-        type: string
-      - description: Related Articles
-        in: formData
-        items:
-          type: integer
-        name: related_articles
-        type: array
-      - description: Desc
-        in: formData
-        name: meta_desc
-        type: string
-      - description: Author ID
-        in: formData
-        name: author_id
-        type: integer
-      - description: Content
-        in: formData
-        name: content
-        type: string
-      - description: Cover img URL
-        in: formData
-        name: cover_image_url
-        type: string
-      - default: 1
-        description: State
-        in: formData
-        name: state
         type: integer
       produces:
       - application/json
@@ -699,27 +737,12 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Name
-        in: formData
-        name: name
-        type: string
-      - description: Age
-        in: formData
-        name: age
-        type: integer
-      - default: 2
-        description: Gender
-        enum:
-        - 1
-        - 2
-        in: formData
-        name: gender
-        type: integer
-      - description: Desc
-        in: formData
-        name: desc
+      - description: 修改作者参数
+        in: body
+        name: _
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/v1.EditAuthorForm'
       produces:
       - application/json
       responses:
@@ -824,15 +847,12 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Name
-        in: formData
-        name: name
-        type: string
-      - default: 1
-        description: State
-        in: formData
-        name: state
-        type: integer
+      - description: 修改类型参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditCategoryForm'
       produces:
       - application/json
       responses:
@@ -1336,7 +1356,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      summary: 根据文章id获取文章
+      summary: 获取文章(可传文章id)
       tags:
       - Player
   /player/articles/index:

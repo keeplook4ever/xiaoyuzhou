@@ -166,75 +166,20 @@ const docTemplate = `{
                 "summary": "修改文章",
                 "parameters": [
                     {
+                        "description": "修改参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditArticleForm"
+                        }
+                    },
+                    {
                         "type": "integer",
-                        "description": "ID",
+                        "description": "文章ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Category ID",
-                        "name": "category_id",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Page Title",
-                        "name": "page_title",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "SEO Title",
-                        "name": "seo_title",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "SEO URL",
-                        "name": "seo_url",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "description": "Related Articles",
-                        "name": "related_articles",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Desc",
-                        "name": "meta_desc",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Author ID",
-                        "name": "author_id",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Content",
-                        "name": "content",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Cover img URL",
-                        "name": "cover_image_url",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "State",
-                        "name": "state",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -396,34 +341,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Age",
-                        "name": "age",
-                        "in": "formData"
-                    },
-                    {
-                        "enum": [
-                            1,
-                            2
-                        ],
-                        "type": "integer",
-                        "default": 2,
-                        "description": "Gender",
-                        "name": "gender",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Desc",
-                        "name": "desc",
-                        "in": "formData",
-                        "required": true
+                        "description": "修改作者参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditAuthorForm"
+                        }
                     }
                 ],
                 "responses": {
@@ -557,17 +481,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "State",
-                        "name": "state",
-                        "in": "formData"
+                        "description": "修改类型参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditCategoryForm"
+                        }
                     }
                 ],
                 "responses": {
@@ -1374,7 +1294,7 @@ const docTemplate = `{
                 "tags": [
                     "Player"
                 ],
-                "summary": "根据文章id获取文章",
+                "summary": "获取文章(可传文章id)",
                 "parameters": [
                     {
                         "type": "array",
@@ -2071,6 +1991,115 @@ const docTemplate = `{
                         "song",
                         "todo"
                     ]
+                }
+            }
+        },
+        "v1.EditArticleForm": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "cover_image_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en"
+                    ]
+                },
+                "meta_desc": {
+                    "type": "string"
+                },
+                "page_title": {
+                    "type": "string"
+                },
+                "related_articles": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seo_title": {
+                    "type": "string"
+                },
+                "seo_url": {
+                    "type": "string"
+                },
+                "state": {
+                    "description": "0表示禁用，1表示启用",
+                    "type": "integer",
+                    "default": 1,
+                    "enum": [
+                        1,
+                        0
+                    ]
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.EditAuthorForm": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "1表示男，2表示女",
+                    "type": "integer",
+                    "default": 2,
+                    "enum": [
+                        1,
+                        2
+                    ]
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.EditCategoryForm": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "integer",
+                    "default": 1
                 }
             }
         },

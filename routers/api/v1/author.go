@@ -66,21 +66,18 @@ func AddAuthor(c *gin.Context) {
 }
 
 type EditAuthorForm struct {
-	Name   string `form:"name"`
-	Age    int    `form:"age"`
-	Gender int    `form:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
-	Desc   string `form:"desc" binding:"required"`
-	Id     int    `form:"id" binding:"required"`
+	Name   string `json:"name"`
+	Age    int    `json:"age"`
+	Gender int    `json:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
+	Desc   string `json:"desc"`
+	Id     int    `json:"id" binding:"required"`
 }
 
 // EditAuthor
 // @Summary 编辑作者
 // @Produce json
 // @Param id path int true "ID"
-// @Param name formData string false "Name"
-// @Param age formData int false "Age"
-// @Param gender formData int false "Gender" Enums(1,2) default(2)
-// @Param desc formData string true "Desc"
+// @Param _ body EditAuthorForm true "修改作者参数"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/author/{id} [put]
@@ -92,7 +89,7 @@ func EditAuthor(c *gin.Context) {
 		author = EditAuthorForm{Id: com.StrTo(c.Param("id")).MustInt()}
 	)
 
-	if err := c.ShouldBind(&author); err != nil {
+	if err := c.ShouldBindJSON(&author); err != nil {
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
 		return
 	}

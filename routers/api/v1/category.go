@@ -110,17 +110,16 @@ func AddCategory(c *gin.Context) {
 }
 
 type EditCategoryForm struct {
-	ID    int    `form:"id" binding:"required"`
-	Name  string `form:"name"`
-	State int    `form:"state" enums:"0,1"` // 0表示禁用，1表示启用
+	ID    int    `json:"id" binding:"required"`
+	Name  string `json:"name"`
+	State int    `json:"state" default:"1"`
 }
 
 // EditCategory
 // @Summary 修改文章类型
 // @Produce  json
 // @Param id path int true "ID"
-// @Param name formData string false "Name"
-// @Param state formData int false "State" default(1)
+// @Param _ body EditCategoryForm true "修改类型参数"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/category/{id} [put]
@@ -131,7 +130,7 @@ func EditCategory(c *gin.Context) {
 		appG = app.Gin{C: c}
 		form = EditCategoryForm{ID: com.StrTo(c.Param("id")).MustInt()}
 	)
-	if err := c.ShouldBind(&form); err != nil {
+	if err := c.ShouldBindJSON(&form); err != nil {
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
 		return
 	}
