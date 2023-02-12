@@ -16,6 +16,7 @@ type AddAuthorForm struct {
 	Age    int    `json:"age" binding:"required"`
 	Gender int    `json:"gender" binding:"required" enums:"1,2" default:"2"` //1表示男，2表示女
 	Desc   string `json:"desc" binding:"required"`
+	AvatarUrl string `json:"avatar_url" binding:"required"`
 }
 
 // AddAuthor
@@ -45,6 +46,7 @@ func AddAuthor(c *gin.Context) {
 		Desc:      author.Desc,
 		CreatedBy: c.GetString("username"), // 创建者从登录用户token获取
 		UpdatedBy: c.GetString("username"), //默认更新者是创建者
+		AvatarUrl: author.AvatarUrl,
 	}
 	exists, err := authorService.ExistByName()
 	if err != nil {
@@ -71,6 +73,7 @@ type EditAuthorForm struct {
 	Gender int    `json:"gender" enums:"1,2" default:"2"` //1表示男，2表示女
 	Desc   string `json:"desc"`
 	Id     int    `json:"id" binding:"required"`
+	AvatarUrl string `json:"avatar_url"`
 }
 
 // EditAuthor
@@ -101,6 +104,7 @@ func EditAuthor(c *gin.Context) {
 		Desc:      author.Desc,
 		ID:        author.Id,
 		UpdatedBy: c.GetString("username"), //修改者从登录用户态获取
+		AvatarUrl: author.AvatarUrl,
 	}
 
 	exists, err := authorService.ExistByID()

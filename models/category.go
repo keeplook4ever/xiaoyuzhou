@@ -72,7 +72,7 @@ func GetCategory(pageNum int, pageSize int, cond string, vals []interface{}) ([]
 		err   error
 		count int64
 	)
-	Db.Where(cond, vals...).Count(&count)
+	Db.Model(&Category{}).Where(cond, vals...).Count(&count)
 
 	if pageSize > 0 && pageNum > 0 {
 		//err = db.Set("gorm:auto_preload", true).Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error

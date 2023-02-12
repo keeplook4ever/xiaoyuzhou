@@ -13,7 +13,7 @@ type Author struct {
 	Desc      string `gorm:"column:desc;not null;type:varchar(191)" json:"desc"` // 简介
 	CreatedBy string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`
 	UpdatedBy string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`
-
+	AvatarUrl string `gorm:"column:avatar_url;not null;type:varchar(199)" json:"avatar_url"` // 头像URL
 	Articles []Article `json:"articles,omitempty"`
 }
 
@@ -27,6 +27,7 @@ type AuthorDto struct {
 	UpdatedBy string `json:"updated_by"`
 	CreatedAt int    `json:"created_at"`
 	UpdatedAt int    `json:"updated_at"`
+	AvatarUrl string `json:"avatar_url"`
 }
 
 func (a *Author) ToAuthorDto() AuthorDto {
@@ -40,6 +41,7 @@ func (a *Author) ToAuthorDto() AuthorDto {
 		UpdatedBy: a.UpdatedBy,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
+		AvatarUrl: a.AvatarUrl,
 	}
 }
 
@@ -70,7 +72,7 @@ func ExistAuthorByName(name string) (bool, error) {
 	return false, nil
 }
 
-func AddAuthor(name string, gender int, age int, desc string, createdBy string, updatedBy string) error {
+func AddAuthor(name string, gender int, age int, desc string, createdBy string, updatedBy string, avatarUrl string) error {
 	author := Author{
 		Name:      name,
 		Gender:    gender,
@@ -78,6 +80,7 @@ func AddAuthor(name string, gender int, age int, desc string, createdBy string, 
 		Desc:      desc,
 		CreatedBy: createdBy,
 		UpdatedBy: updatedBy,
+		AvatarUrl: avatarUrl,
 	}
 	if err := Db.Create(&author).Error; err != nil {
 		return err
@@ -108,7 +111,7 @@ func GetAuthors(pageNum int, pageSize int, cond string, vals []interface{}) ([]A
 		err     error
 		count   int64
 	)
-	Db.Where(cond, vals...).Count(&count)
+	Db.Model(&Author{}).Where(cond, vals...).Count(&count)
 	if pageSize > 0 && pageNum > 0 {
 		err = Db.Where(cond, vals...).Find(&authors).Offset(pageNum).Limit(pageSize).Error
 	} else {

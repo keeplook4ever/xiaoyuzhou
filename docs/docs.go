@@ -1610,6 +1610,9 @@ const docTemplate = `{
                 "age": {
                     "type": "integer"
                 },
+                "avatar_url": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "integer"
                 },
@@ -1850,6 +1853,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "age",
+                "avatar_url",
                 "desc",
                 "gender",
                 "name"
@@ -1857,6 +1861,9 @@ const docTemplate = `{
             "properties": {
                 "age": {
                     "type": "integer"
+                },
+                "avatar_url": {
+                    "type": "string"
                 },
                 "desc": {
                     "type": "string"
@@ -2064,6 +2071,9 @@ const docTemplate = `{
             "properties": {
                 "age": {
                     "type": "integer"
+                },
+                "avatar_url": {
+                    "type": "string"
                 },
                 "desc": {
                     "type": "string"

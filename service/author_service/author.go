@@ -17,6 +17,7 @@ type AuthorInput struct {
 	UpdatedBy string
 	PageNum   int
 	PageSize  int
+	AvatarUrl string //头像URL
 }
 
 func (a *AuthorInput) ExistByID() (bool, error) {
@@ -28,7 +29,7 @@ func (a *AuthorInput) ExistByName() (bool, error) {
 }
 
 func (a *AuthorInput) Add() error {
-	return models.AddAuthor(a.Name, a.Gender, a.Age, a.Desc, a.CreatedBy, a.UpdatedBy)
+	return models.AddAuthor(a.Name, a.Gender, a.Age, a.Desc, a.CreatedBy, a.UpdatedBy, a.AvatarUrl)
 }
 
 func (a *AuthorInput) Edit() error {
@@ -48,6 +49,9 @@ func (a *AuthorInput) Edit() error {
 		data["gender"] = a.Gender
 	}
 
+	if a.AvatarUrl != "" {
+		data["avatar_url"] = a.AvatarUrl
+	}
 	return models.EditAuthor(a.ID, data)
 }
 
