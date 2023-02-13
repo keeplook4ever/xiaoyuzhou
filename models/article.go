@@ -40,6 +40,8 @@ type ArticleDto struct {
 	Content         string `json:"content,omitempty"`
 	AuthorID        uint   `json:"author_id,omitempty"`
 	AuthorName      string `json:"author_name,omitempty"`
+	AuthorDesc 		string 	`json:"author_desc,omitempty"`
+	AuthorAvatarUrl string `json:"author_avatar_url,omitempty"`
 	CoverImageUrl   string `json:"cover_image_url,omitempty"`
 	State           int    `json:"state,omitempty"`
 	Language        string `json:"language,omitempty"`
@@ -69,6 +71,8 @@ func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
 		Content:         content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,
+		AuthorDesc: 	 itself.Author.Desc,
+		AuthorAvatarUrl: itself.Author.AvatarUrl,
 		CoverImageUrl:   itself.CoverImageUrl,
 		State:           itself.State,
 		Language:        itself.Language,
