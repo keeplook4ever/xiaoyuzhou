@@ -184,3 +184,13 @@ func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]models.ArticleDto, e
 func GetSpecificArticleBySeoUrl(seoUrl string) (*models.ArticleDto, error) {
 	return models.GetArticleBySeoUrl(seoUrl)
 }
+
+
+func StarArticle(articleId int, uid string) error {
+	err := models.UpdateStarCountAndCreateLog(articleId, uid)
+	return err
+}
+
+func GetArticleStarStatus(articleId int, uid string) (bool, error) {
+	return models.GetArticleStarLog(articleId, uid)
+}

@@ -28,6 +28,12 @@ type Article struct {
 	ReadNum         int    `gorm:"column:read_num;not null;type:int" json:"read_num"` // 阅读数
 }
 
+type StarLog struct {
+	Model
+	Uid string `gorm:"column:uid;not null;type:varchar(150);unique_index:U_A" json:"uid"` // 点赞的用户uid
+	ArticleId int `gorm:"column:article_id;not null;type:int;unique_index:U_A" json:"article_id"` // 点赞的文章id
+}
+
 type ArticleDto struct {
 	ID              uint   `json:"id,omitempty"`
 	CategoryID      uint   `json:"category_id,omitempty"`
@@ -229,4 +235,48 @@ func GetLatestArticle(cnt int) ([]ArticleDto, error) {
 		resp = append(resp, art.ToArticleDto(false))
 	}
 	return resp, nil
+}
+
+
+func UpdateStarCountAndCreateLog(aId int, uid string) error {
+	// 放在事务里处理两个步骤
+	tx := Db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+
+	if err := tx.Model(&Article{}).Where("id = ?", aId).UpdateColumn("star_num", gorm.Expr("star_num + ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+
+	data := StarLog{
+		Uid: uid,
+		ArticleId: aId,
+	}
+	if err := tx.Model(&StarLog{}).Create(&data).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
+}
+
+
+func GetArticleStarLog(aID int, uid string) (bool, error) {
+	var count int64
+	err := Db.Model(&StarLog{}).Where("uid = ? and article_id = ?", uid, aID).Count(&count).Error; if err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return true, nil
+	}
+	return false, nil
 }

@@ -57,6 +57,9 @@ func InitRouter() *gin.Engine {
 
 			// 点赞文章接口
 			apiPlayerV1.PUT("/article/star/:id", v1.StarOneArticle)
+
+			// 获取是否用户点赞该文章接口
+			apiPlayerV1.GET("/article/star/:id", v1.GetStarStatus)
 		}
 
 		// 星座相关

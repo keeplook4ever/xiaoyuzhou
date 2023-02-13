@@ -21,6 +21,10 @@ definitions:
     type: object
   models.ArticleDto:
     properties:
+      author_avatar_url:
+        type: string
+      author_desc:
+        type: string
       author_id:
         type: integer
       author_name:
@@ -530,6 +534,15 @@ definitions:
         items:
           $ref: '#/definitions/models.UserDto'
         type: array
+    type: object
+  v1.StarStatusResp:
+    properties:
+      status:
+        description: 1代表点赞过，0代表没点赞
+        enum:
+        - 1
+        - 0
+        type: integer
     type: object
   v1.auth:
     properties:
@@ -1320,6 +1333,34 @@ paths:
       tags:
       - Player
   /player/article/star/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.StarStatusResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取用户是否已经点赞此文章
+      tags:
+      - Player
     put:
       consumes:
       - application/json
@@ -1329,6 +1370,11 @@ paths:
         name: id
         required: true
         type: integer
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
       produces:
       - application/json
       responses:

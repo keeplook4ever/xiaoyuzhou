@@ -1250,6 +1250,48 @@ const docTemplate = `{
             }
         },
         "/player/article/star/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取用户是否已经点赞此文章",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "文章ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.StarStatusResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "consumes": [
                     "application/json"
@@ -1267,6 +1309,13 @@ const docTemplate = `{
                         "description": "文章ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1537,6 +1586,12 @@ const docTemplate = `{
         "models.ArticleDto": {
             "type": "object",
             "properties": {
+                "author_avatar_url": {
+                    "type": "string"
+                },
+                "author_desc": {
+                    "type": "string"
+                },
                 "author_id": {
                     "type": "integer"
                 },
@@ -2272,6 +2327,19 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.UserDto"
                     }
+                }
+            }
+        },
+        "v1.StarStatusResp": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "description": "1代表点赞过，0代表没点赞",
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        0
+                    ]
                 }
             }
         },

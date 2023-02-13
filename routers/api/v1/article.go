@@ -432,6 +432,7 @@ func GetSpecificArticleForPlayer(c *gin.Context) {
 // StarOneArticle
 // @Summary 用户点赞文章API
 // @Param id path int true "文章ID"
+// @Param uid query string true "用户ID"
 // @Accept json
 // @Produce json
 // @Success 200 {object} app.Response
@@ -439,7 +440,45 @@ func GetSpecificArticleForPlayer(c *gin.Context) {
 // @Router /player/article/star/{id} [put]
 // @Tags Player
 func StarOneArticle(c *gin.Context) {
-	//appG := app.Gin{C: c}
-	//id := com.StrTo(c.Param("id")).MustInt()
-	//
+	appG := app.Gin{C: c}
+	id := com.StrTo(c.Param("id")).MustInt()
+	uid := c.Query("uid")
+	err := article_service.StarArticle(id, uid)
+	if err != nil {
+		appG.Response(http.StatusOK, "点赞失败", nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+
+type StarStatusResp struct {
+	Status int `json:"status" enums:"1,0"` // 1代表点赞过，0代表没点赞
+}
+
+
+// GetStarStatus
+// @Summary 获取用户是否已经点赞此文章
+// @Param id path int true "文章ID"
+// @Param uid query string true "用户ID"
+// @Accept json
+// @Produce json
+// @Success 200 {object} StarStatusResp
+// @Failure 500 {object} app.Response
+// @Router /player/article/star/{id} [get]
+// @Tags Player
+func GetStarStatus(c *gin.Context) {
+	appG := app.Gin{C: c}
+	id := com.StrTo(c.Param("id")).MustInt()
+	uid := c.Query("uid")
+	stared, err := article_service.GetArticleStarStatus(id, uid)
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	if stared {
+		appG.Response(http.StatusOK, e.SUCCESS, StarStatusResp{Status: 1})
+	} else {
+		appG.Response(http.StatusOK, e.SUCCESS, StarStatusResp{Status: 0})
+	}
 }
