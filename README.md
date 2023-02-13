@@ -42,8 +42,11 @@ $ go run main.go
 
 ## 发布
 ### Build命令
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/xiaoyuzhou
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bin/xiaoyuzhou
 
+//-ldflags="-s -w" 
+// -s：忽略符号表和调试信息。
+// -w：忽略DWARFv3调试信息，使用该选项后将无法使用gdb进行调试。
 
 
 ### 启动命令：
