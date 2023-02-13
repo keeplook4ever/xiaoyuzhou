@@ -111,7 +111,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}, has
 	var articles []Article
 	var count int64
 	Db.Model(&Article{}).Where(cond, vals...).Count(&count)
-	err := Db.Preload("Category").Preload("Author").Where(cond, vals...).Offset(pageNum).Limit(pageSize).Find(&articles).Error
+	err := Db.Preload("Category").Preload("Author").Where(cond, vals...).Order("created_at desc").Offset(pageNum).Limit(pageSize).Find(&articles).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err
 	}
@@ -127,7 +127,7 @@ func GetArticles(pageNum int, pageSize int, cond string, vals []interface{}, has
 // GetArticleByIDs Get articles based on IDs
 func GetArticleByIDs(ids []int, hasContent bool) ([]*ArticleDto, error) {
 	var articles []Article
-	err := Db.Preload("Category").Preload("Author").Where("id in ? ", ids).Find(&articles).Error
+	err := Db.Preload("Category").Preload("Author").Where("id in ? ", ids).Order("created_at desc").Find(&articles).Error
 	if err != nil {
 		return nil, err
 	}
