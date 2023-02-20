@@ -121,7 +121,7 @@ type EditArticleForm struct {
 	CoverImageUrl   string `json:"cover_image_url"`
 	State           int    `json:"state" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
 	Language        string `json:"language" enums:"jp,zh,en" default:"jp"`
-	UpdatedBy 		string `json:"updated_by"`
+	UpdatedBy       string `json:"updated_by"`
 }
 
 // EditArticle
@@ -358,6 +358,7 @@ func GetIndexArticleForPlayer(c *gin.Context) {
 // GetArticlesAll
 // @Summary 获取文章(可传文章id)
 // @Produce json
+// @Param category_id query int false "Category ID"
 // @Param id_list query []int false "ID list"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -366,12 +367,12 @@ func GetIndexArticleForPlayer(c *gin.Context) {
 func GetArticlesAll(c *gin.Context) {
 	appG := app.Gin{C: c}
 	idList := c.Query("id_list")
-
+	categoryId := c.Query("category_id")
 	// -1 代表无此参数
 	state := -1
 	tagId := -1
 	authorId := -1
-	if idList == "" {
+	if idList == "" && categoryId == "" {
 		articleService := article_service.ArticleInput{
 			State:      state,
 			CategoryID: tagId,
@@ -390,7 +391,7 @@ func GetArticlesAll(c *gin.Context) {
 		res.Count = count
 
 		appG.Response(http.StatusOK, e.SUCCESS, res)
-	} else {
+	} else if idList != "" {
 		ids := util.StringToIntSlice(idList)
 		article, err := article_service.GetSpecificArticleByIDs(ids, false)
 		if err != nil {
@@ -401,6 +402,25 @@ func GetArticlesAll(c *gin.Context) {
 		var res GetArticlesResponse
 		res.Lists = article
 		res.Count = int64(len(article))
+		appG.Response(http.StatusOK, e.SUCCESS, res)
+	} else if categoryId != "" {
+		categoryIdInt := com.StrTo(categoryId).MustInt()
+		articleService := article_service.ArticleInput{
+			CategoryID: categoryIdInt,
+			PageNum:    util.GetPage(c),
+			PageSize:   util.GetPageSize(c),
+		}
+
+		// 根据类型ID获取不带content，支持分页的文章
+		articles, count, err := articleService.Get(false)
+		if err != nil {
+			appG.Response(http.StatusOK, e.ErrorGetArticlesFail, nil)
+			return
+		}
+		var res GetArticlesResponse
+		res.Lists = articles
+		res.Count = count
+
 		appG.Response(http.StatusOK, e.SUCCESS, res)
 	}
 
@@ -451,11 +471,9 @@ func StarOneArticle(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
-
 type StarStatusResp struct {
 	Status int `json:"status" enums:"1,0"` // 1代表点赞过，0代表没点赞
 }
-
 
 // GetStarStatus
 // @Summary 获取用户是否已经点赞此文章
