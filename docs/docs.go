@@ -1346,6 +1346,12 @@ const docTemplate = `{
                 "summary": "获取文章(可传文章id)",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "array",
                         "items": {
                             "type": "integer"

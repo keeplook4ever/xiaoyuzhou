@@ -406,6 +406,7 @@ func GetArticlesAll(c *gin.Context) {
 	} else if categoryId != "" {
 		categoryIdInt := com.StrTo(categoryId).MustInt()
 		articleService := article_service.ArticleInput{
+			State:      state,
 			CategoryID: categoryIdInt,
 			PageNum:    util.GetPage(c),
 			PageSize:   util.GetPageSize(c),
