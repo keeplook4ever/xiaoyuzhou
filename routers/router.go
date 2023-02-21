@@ -38,8 +38,6 @@ func InitRouter() *gin.Engine {
 		// 获取日签相关
 		apiPlayerV1.GET("/lottery", v1.GetLotteryForUser)
 
-		// 塔罗牌相关
-		apiPlayerV1.Group("/tarot")
 		{
 
 		}
@@ -149,6 +147,9 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.DELETE("/lucky", v1.DeleteLucky)
 		//获取今日好运
 		apiManagerV1.GET("/lucky", v1.GetLucky)
+
+		//创建塔罗牌
+		apiManagerV1.POST("/tarot", v1.AddTarot)
 	}
 
 	return r
