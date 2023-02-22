@@ -162,7 +162,7 @@ func EditArticle(c *gin.Context) {
 	}
 	exists, err := articleService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ErrorCheckExistArticleFail, nil)
+		appG.Response(http.StatusOK, e.ErrorCheckExistArticleFail, nil)
 		return
 	}
 	if !exists {
@@ -255,7 +255,7 @@ type GetArticlesResponse struct {
 }
 
 // GetArticles
-// @Summary 获取文章
+// @Summary 获取文章：支持分页
 // @Produce  json
 // @Param category_id query int false "Category ID"
 // @Param author_id query int false "Author ID"
@@ -356,7 +356,7 @@ func GetIndexArticleForPlayer(c *gin.Context) {
 }
 
 // GetArticlesAll
-// @Summary 获取文章(可传文章id)
+// @Summary 获取文章(可传文章id)：支持分页
 // @Produce json
 // @Param category_id query int false "Category ID"
 // @Param id_list query []int false "ID list"

@@ -24,7 +24,7 @@
                 "tags": [
                     "Manager"
                 ],
-                "summary": "获取文章",
+                "summary": "获取文章：支持分页",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1037,6 +1037,182 @@
                 }
             }
         },
+        "/manager/tarot": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取塔罗牌:支持分页",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "名字",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "正逆位",
+                        "name": "pos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "星座",
+                        "name": "constellation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "对应人物",
+                        "name": "people",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "对应元素",
+                        "name": "element",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "加强牌",
+                        "name": "enhance",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetTarotResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加塔罗牌内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddTarotForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/tarot/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改塔罗牌内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditTarotForm"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "塔罗牌ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/user": {
             "get": {
                 "security": [
@@ -1335,7 +1511,7 @@
                 "tags": [
                     "Player"
                 ],
-                "summary": "获取文章(可传文章id)",
+                "summary": "获取文章(可传文章id)：支持分页",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1811,6 +1987,118 @@
                 }
             }
         },
+        "models.Tarot": {
+            "type": "object",
+            "properties": {
+                "analyze_one": {
+                    "description": "解析1",
+                    "type": "string"
+                },
+                "analyze_two": {
+                    "description": "解析2",
+                    "type": "string"
+                },
+                "answer_five": {
+                    "description": "回答5",
+                    "type": "string"
+                },
+                "answer_four": {
+                    "description": "回答4",
+                    "type": "string"
+                },
+                "answer_one": {
+                    "description": "回答1",
+                    "type": "string"
+                },
+                "answer_three": {
+                    "description": "回答3",
+                    "type": "string"
+                },
+                "answer_two": {
+                    "description": "回答2",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "卡牌名字",
+                    "type": "string"
+                },
+                "constellation": {
+                    "description": "对应星座",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "element": {
+                    "description": "对应元素",
+                    "type": "string"
+                },
+                "enhance": {
+                    "description": "加强牌",
+                    "type": "string"
+                },
+                "health": {
+                    "description": "健康生活",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "img_url": {
+                    "description": "图片链接",
+                    "type": "string"
+                },
+                "keyword": {
+                    "description": "卡牌解读关键词",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "JP",
+                        "EN",
+                        "CH-S",
+                        "CH-T"
+                    ]
+                },
+                "love": {
+                    "description": "爱情婚姻",
+                    "type": "string"
+                },
+                "money": {
+                    "description": "人际财富",
+                    "type": "string"
+                },
+                "other": {
+                    "description": "其他",
+                    "type": "string"
+                },
+                "people": {
+                    "description": "对应人物",
+                    "type": "string"
+                },
+                "pos": {
+                    "description": "塔罗正逆位",
+                    "type": "string",
+                    "enum": [
+                        "正位",
+                        "逆位"
+                    ]
+                },
+                "pos_meaning": {
+                    "description": "正逆位含义",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "work": {
+                    "description": "事业学业",
+                    "type": "string"
+                }
+            }
+        },
         "models.UserDto": {
             "type": "object",
             "properties": {
@@ -1995,6 +2283,133 @@
                         "song",
                         "todo"
                     ]
+                }
+            }
+        },
+        "v1.AddTarotForm": {
+            "type": "object",
+            "required": [
+                "analyze_one",
+                "analyze_two",
+                "answer_five",
+                "answer_four",
+                "answer_one",
+                "answer_three",
+                "answer_two",
+                "card_name",
+                "constellation",
+                "element",
+                "enhance",
+                "health",
+                "img_url",
+                "keyword",
+                "language",
+                "love",
+                "money",
+                "other",
+                "people",
+                "pos",
+                "pos_meaning",
+                "work"
+            ],
+            "properties": {
+                "analyze_one": {
+                    "description": "解析1",
+                    "type": "string"
+                },
+                "analyze_two": {
+                    "description": "解析2",
+                    "type": "string"
+                },
+                "answer_five": {
+                    "description": "回答5                                      //五个答案",
+                    "type": "string"
+                },
+                "answer_four": {
+                    "description": "回答4",
+                    "type": "string"
+                },
+                "answer_one": {
+                    "description": "回答1",
+                    "type": "string"
+                },
+                "answer_three": {
+                    "description": "回答3",
+                    "type": "string"
+                },
+                "answer_two": {
+                    "description": "回答2",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "卡牌名字",
+                    "type": "string"
+                },
+                "constellation": {
+                    "description": "对应星座",
+                    "type": "string"
+                },
+                "element": {
+                    "description": "对应元素",
+                    "type": "string"
+                },
+                "enhance": {
+                    "description": "加强牌",
+                    "type": "string"
+                },
+                "health": {
+                    "description": "健康生活",
+                    "type": "string"
+                },
+                "img_url": {
+                    "description": "图片链接",
+                    "type": "string"
+                },
+                "keyword": {
+                    "description": "卡牌解读关键词",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "JP",
+                        "EN",
+                        "CH-S",
+                        "CH-T"
+                    ]
+                },
+                "love": {
+                    "description": "爱情婚姻",
+                    "type": "string"
+                },
+                "money": {
+                    "description": "人际财富",
+                    "type": "string"
+                },
+                "other": {
+                    "description": "其他",
+                    "type": "string"
+                },
+                "people": {
+                    "description": "对应人物",
+                    "type": "string"
+                },
+                "pos": {
+                    "description": "塔罗正逆位",
+                    "type": "string",
+                    "enum": [
+                        "正位",
+                        "逆位"
+                    ]
+                },
+                "pos_meaning": {
+                    "description": "正逆位含义",
+                    "type": "string"
+                },
+                "work": {
+                    "description": "事业学业",
+                    "type": "string"
                 }
             }
         },
@@ -2220,6 +2635,124 @@
                 }
             }
         },
+        "v1.EditTarotForm": {
+            "type": "object",
+            "required": [
+                "answer_five",
+                "answer_four",
+                "answer_one",
+                "answer_three",
+                "answer_two"
+            ],
+            "properties": {
+                "analyze_one": {
+                    "description": "解析1",
+                    "type": "string"
+                },
+                "analyze_two": {
+                    "description": "解析2",
+                    "type": "string"
+                },
+                "answer_five": {
+                    "description": "回答5",
+                    "type": "string"
+                },
+                "answer_four": {
+                    "description": "回答4",
+                    "type": "string"
+                },
+                "answer_one": {
+                    "description": "回答1",
+                    "type": "string"
+                },
+                "answer_three": {
+                    "description": "回答3",
+                    "type": "string"
+                },
+                "answer_two": {
+                    "description": "回答2",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "卡牌名字",
+                    "type": "string"
+                },
+                "constellation": {
+                    "description": "对应星座",
+                    "type": "string"
+                },
+                "element": {
+                    "description": "对应元素",
+                    "type": "string"
+                },
+                "enhance": {
+                    "description": "加强牌",
+                    "type": "string"
+                },
+                "health": {
+                    "description": "健康生活",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "塔罗牌ID",
+                    "type": "integer"
+                },
+                "img_url": {
+                    "description": "图片链接",
+                    "type": "string"
+                },
+                "keyword": {
+                    "description": "卡牌解读关键词",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "JP",
+                        "EN",
+                        "CH-S",
+                        "CH-T"
+                    ]
+                },
+                "love": {
+                    "description": "爱情婚姻",
+                    "type": "string"
+                },
+                "money": {
+                    "description": "人际财富",
+                    "type": "string"
+                },
+                "other": {
+                    "description": "其他",
+                    "type": "string"
+                },
+                "people": {
+                    "description": "对应人物",
+                    "type": "string"
+                },
+                "pos": {
+                    "description": "塔罗正逆位",
+                    "type": "string",
+                    "enum": [
+                        "正位",
+                        "逆位"
+                    ]
+                },
+                "pos_meaning": {
+                    "description": "正逆位含义",
+                    "type": "string"
+                },
+                "updated_by": {
+                    "description": "修改人",
+                    "type": "string"
+                },
+                "work": {
+                    "description": "事业学业",
+                    "type": "string"
+                }
+            }
+        },
         "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
@@ -2311,6 +2844,22 @@
                 "lists": {},
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.GetTarotResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "总数",
+                    "type": "integer"
+                },
+                "lists": {
+                    "description": "塔罗牌列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tarot"
+                    }
                 }
             }
         },
