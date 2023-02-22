@@ -21,11 +21,13 @@ type Tarot struct {
 	Money         string `gorm:"column:money;not null;type:varchar(190)" json:"money"`                              // 人际财富
 	Health        string `gorm:"column:health;not null;type:varchar(190)" json:"health"`                            // 健康生活
 	Other         string `gorm:"column:other;not null;type:varchar(190)" json:"other"`                              // 其他
-	AnswerOne     string `gorm:"column:answer_one;not null;type:text" json:"answer_one"`                            //回答1
+	AnswerOne     string `gorm:"column:answer_one;not null;type:text" json:"answer_one"`                            // 回答1
 	AnswerTwo     string `gorm:"column:answer_two;not null;type:text" json:"answer_two"`                            // 回答2
 	AnswerThree   string `gorm:"column:answer_three;not null;type:text" json:"answer_three"`                        // 回答3
 	AnswerFour    string `gorm:"column:answer_four;not null;type:text" json:"answer_four"`                          // 回答4
 	AnswerFive    string `gorm:"column:answer_five;not null;type:text" json:"answer_five"`                          // 回答5
+	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`                     // 创建者
+	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`                     // 更新者
 }
 
 //type TarotAnswer struct {
@@ -58,6 +60,7 @@ func AddTarot(data map[string]string) error {
 		AnswerThree:   data["answer_three"],  // 回答3
 		AnswerFour:    data["answer_four"],   // 回答4
 		AnswerFive:    data["answer_five"],   // 回答5
+		CreatedBy:     data["created_by"],
 	}
 	if err := Db.Create(&tarot).Error; err != nil {
 		return err

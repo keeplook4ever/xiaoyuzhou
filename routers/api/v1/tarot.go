@@ -106,6 +106,8 @@ func AddTarot(c *gin.Context) {
 		AnswerThree:   data.AnswerThree,
 		AnswerFour:    data.AnswerFour,
 		AnswerFive:    data.AnswerFive,
+		CreatedBy:     c.GetString("username"),
+		UpdatedBy:     c.GetString("username"),
 	}
 	if err := articleService.Add(); err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)
@@ -164,6 +166,7 @@ func EditTarot(c *gin.Context) {
 		AnswerThree:   data.AnswerThree,
 		AnswerFour:    data.AnswerFour,
 		AnswerFive:    data.AnswerFive,
+		UpdatedBy:     c.GetString("username"),
 	}
 
 	exists, err := tarotS.ExistByID()

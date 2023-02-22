@@ -31,6 +31,8 @@ type TarotInput struct {
 	AnswerFive    string // 回答5
 	PageNum       int
 	PageSize      int
+	CreatedBy     string
+	UpdatedBy     string
 }
 
 func (t *TarotInput) Add() error {
@@ -57,6 +59,8 @@ func (t *TarotInput) Add() error {
 		"answer_three":  t.AnswerThree,
 		"answer_four":   t.AnswerFour,
 		"answer_five":   t.AnswerFive,
+		"created_by":    t.CreatedBy,
+		"updated_by":    t.UpdatedBy,
 	}
 	return models.AddTarot(dbData)
 }
@@ -132,6 +136,9 @@ func (t *TarotInput) Edit() error {
 	}
 	if t.AnswerFive != "" {
 		data["answer_five"] = t.AnswerFive
+	}
+	if t.UpdatedBy != "" {
+		data["updated_by"] = t.UpdatedBy
 	}
 	return models.EditTarot(t.ID, data)
 }
