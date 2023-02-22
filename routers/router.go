@@ -2,7 +2,6 @@ package routers
 
 import (
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"net/http"
 	"xiaoyuzhou/middleware/cors"
 	"xiaoyuzhou/middleware/jwt"
 	"xiaoyuzhou/routers/api/v1"
@@ -11,9 +10,6 @@ import (
 
 	swaggerFiles "github.com/swaggo/files"
 	_ "xiaoyuzhou/docs"
-	"xiaoyuzhou/pkg/export"
-	"xiaoyuzhou/pkg/qrcode"
-	"xiaoyuzhou/pkg/upload"
 )
 
 // InitRouter initialize routing information
@@ -22,10 +18,6 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(cors.Cors())
-
-	r.StaticFS("/api/v1/export", http.Dir(export.GetExcelFullPath()))
-	r.StaticFS("/api/v1/upload/images", http.Dir(upload.GetImageFullPath()))
-	r.StaticFS("/api/v1/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 	r.POST("/api/v1/manager/user/auth", v1.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

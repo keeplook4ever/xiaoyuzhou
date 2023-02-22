@@ -8,24 +8,13 @@ import (
 )
 
 type App struct {
-	JwtSecret string
-	PageSize  int
-	PrefixUrl string
-
+	JwtSecret       string
+	PageSize        int
 	RuntimeRootPath string
-
-	ImageSavePath  string
-	ImageMaxSize   int
-	ImageAllowExts []string
-
-	ExportSavePath string
-	QrCodeSavePath string
-	FontSavePath   string
-
-	LogSavePath string
-	LogSaveName string
-	LogFileExt  string
-	TimeFormat  string
+	LogSavePath     string
+	LogSaveName     string
+	LogFileExt      string
+	TimeFormat      string
 }
 
 var AppSetting = &App{}
@@ -75,7 +64,6 @@ func Setup() {
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
 
-	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
 	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second
 	RedisSetting.IdleTimeout = RedisSetting.IdleTimeout * time.Second
