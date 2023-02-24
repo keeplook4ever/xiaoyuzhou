@@ -6,37 +6,40 @@ import (
 )
 
 type TarotInput struct {
-	ID            int    // 塔罗牌ID
-	ImgUrl        string // 图片链接
-	Language      string // 语言
-	Pos           string // 塔罗正逆位
-	CardName      string // 卡牌名字
-	KeyWord       string // 卡牌解读关键词
-	Constellation string // 对应星座
-	People        string // 对应人物
-	Element       string // 对应元素
-	Enhance       string // 加强牌
-	AnalyzeOne    string // 解析1
-	AnalyzeTwo    string // 解析2
-	PosMeaning    string // 正逆位含义
-	Love          string // 爱情婚姻
-	Work          string // 事业学业
-	Money         string // 人际财富
-	Health        string // 健康生活
-	Other         string // 其他
-	AnswerOne     string // 回答1
-	AnswerTwo     string // 回答2
-	AnswerThree   string // 回答3
-	AnswerFour    string // 回答4
-	AnswerFive    string // 回答5
-	PageNum       int
-	PageSize      int
-	CreatedBy     string
-	UpdatedBy     string
+	ID            int      // 塔罗牌ID
+	ImgUrl        string   // 图片链接
+	Language      string   // 语言
+	Pos           string   // 塔罗正逆位
+	CardName      string   // 卡牌名字
+	KeyWord       string   // 卡牌解读关键词
+	Constellation string   // 对应星座
+	People        string   // 对应人物
+	Element       string   // 对应元素
+	Enhance       string   // 加强牌
+	AnalyzeOne    string   // 解析1
+	AnalyzeTwo    string   // 解析2
+	PosMeaning    string   // 正逆位含义
+	Love          string   // 爱情婚姻
+	Work          string   // 事业学业
+	Money         string   // 人际财富
+	Health        string   // 健康生活
+	Other         string   // 其他
+	LuckyNumber   int      // 幸运数字
+	Saying        string   // 名言
+	AnswerList    []string // 答案列表
+	PageNum       int      // 分页偏移数
+	PageSize      int      // 每页数量
+	CreatedBy     string   // 创建人
+	UpdatedBy     string   // 修改人
 }
 
 func (t *TarotInput) Add() error {
-	dbData := map[string]string{
+	answers := util.StringSlice2String(t.AnswerList)
+	answersValue := ""
+	if answers != nil {
+		answersValue = *answers
+	}
+	dbData := map[string]interface{}{
 		"img_url":       t.ImgUrl,
 		"language":      t.Language,
 		"pos":           t.Pos,
@@ -54,11 +57,9 @@ func (t *TarotInput) Add() error {
 		"money":         t.Money,
 		"health":        t.Health,
 		"other":         t.Other,
-		"answer_one":    t.AnswerOne,
-		"answer_two":    t.AnswerTwo,
-		"answer_three":  t.AnswerThree,
-		"answer_four":   t.AnswerFour,
-		"answer_five":   t.AnswerFive,
+		"answer_list":   answersValue,
+		"lucky_number":  t.LuckyNumber,
+		"saying":        t.Saying,
 		"created_by":    t.CreatedBy,
 		"updated_by":    t.UpdatedBy,
 	}
@@ -122,20 +123,17 @@ func (t *TarotInput) Edit() error {
 	if t.Other != "" {
 		data["other"] = t.Other
 	}
-	if t.AnswerOne != "" {
-		data["answer_one"] = t.AnswerOne
+	if t.AnswerList != nil {
+		answers := util.StringSlice2String(t.AnswerList)
+		if answers != nil {
+			data["answer_list"] = *answers
+		}
 	}
-	if t.AnswerTwo != "" {
-		data["answer_two"] = t.AnswerTwo
+	if t.Saying != "" {
+		data["saying"] = t.Saying
 	}
-	if t.AnswerThree != "" {
-		data["answer_three"] = t.AnswerThree
-	}
-	if t.AnswerFour != "" {
-		data["answer_four"] = t.AnswerFour
-	}
-	if t.AnswerFive != "" {
-		data["answer_five"] = t.AnswerFive
+	if t.LuckyNumber != 0 {
+		data["lucky_number"] = t.LuckyNumber
 	}
 	if t.UpdatedBy != "" {
 		data["updated_by"] = t.UpdatedBy
@@ -143,7 +141,7 @@ func (t *TarotInput) Edit() error {
 	return models.EditTarot(t.ID, data)
 }
 
-func (t *TarotInput) Get() ([]models.Tarot, int64, error) {
+func (t *TarotInput) Get() ([]models.TarotDto, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(t.getMaps(), "and")
 	if err != nil {
 		return nil, 0, err

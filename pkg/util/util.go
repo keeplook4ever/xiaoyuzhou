@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"strconv"
@@ -137,4 +138,25 @@ func StringToIntSlice(str string) (intSlice []int) {
 		intSlice = append(intSlice, val)
 	}
 	return
+}
+
+func StringSlice2String(ori []string) *string {
+	if ori == nil {
+		return nil
+	}
+	tarBytes, err := json.Marshal(ori)
+	if err != nil {
+		return nil
+	}
+	str := string(tarBytes)
+	return &str
+}
+
+func String2StringSlice(ori string) []string {
+	var obj []string
+	err := json.Unmarshal([]byte(ori), &obj)
+	if err != nil {
+		return nil
+	}
+	return obj
 }

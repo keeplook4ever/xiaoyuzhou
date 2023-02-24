@@ -1995,7 +1995,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Tarot": {
+        "models.TarotDto": {
             "type": "object",
             "properties": {
                 "analyze_one": {
@@ -2006,25 +2006,12 @@ const docTemplate = `{
                     "description": "解析2",
                     "type": "string"
                 },
-                "answer_five": {
-                    "description": "回答5",
-                    "type": "string"
-                },
-                "answer_four": {
-                    "description": "回答4",
-                    "type": "string"
-                },
-                "answer_one": {
-                    "description": "回答1",
-                    "type": "string"
-                },
-                "answer_three": {
-                    "description": "回答3",
-                    "type": "string"
-                },
-                "answer_two": {
-                    "description": "回答2",
-                    "type": "string"
+                "answer_list": {
+                    "description": "回答列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "card_name": {
                     "description": "卡牌名字",
@@ -2035,7 +2022,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "integer"
+                },
+                "created_by": {
+                    "description": "创建者",
+                    "type": "string"
                 },
                 "element": {
                     "description": "对应元素",
@@ -2049,9 +2041,6 @@ const docTemplate = `{
                     "description": "健康生活",
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "img_url": {
                     "description": "图片链接",
                     "type": "string"
@@ -2062,17 +2051,15 @@ const docTemplate = `{
                 },
                 "language": {
                     "description": "语言",
-                    "type": "string",
-                    "enum": [
-                        "JP",
-                        "EN",
-                        "CH-S",
-                        "CH-T"
-                    ]
+                    "type": "string"
                 },
                 "love": {
                     "description": "爱情婚姻",
                     "type": "string"
+                },
+                "lucky_number": {
+                    "description": "幸运数字",
+                    "type": "integer"
                 },
                 "money": {
                     "description": "人际财富",
@@ -2088,18 +2075,27 @@ const docTemplate = `{
                 },
                 "pos": {
                     "description": "塔罗正逆位",
-                    "type": "string",
-                    "enum": [
-                        "正位",
-                        "逆位"
-                    ]
+                    "type": "string"
                 },
                 "pos_meaning": {
                     "description": "正逆位含义",
                     "type": "string"
                 },
-                "updated_at": {
+                "saying": {
+                    "description": "名言",
+                    "type": "string"
+                },
+                "tarot_id": {
+                    "description": "塔罗牌id",
                     "type": "integer"
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "更新者",
+                    "type": "string"
                 },
                 "work": {
                     "description": "事业学业",
@@ -2299,11 +2295,7 @@ const docTemplate = `{
             "required": [
                 "analyze_one",
                 "analyze_two",
-                "answer_five",
-                "answer_four",
-                "answer_one",
-                "answer_three",
-                "answer_two",
+                "answer_list",
                 "card_name",
                 "constellation",
                 "element",
@@ -2313,11 +2305,13 @@ const docTemplate = `{
                 "keyword",
                 "language",
                 "love",
+                "lucky_number",
                 "money",
                 "other",
                 "people",
                 "pos",
                 "pos_meaning",
+                "saying",
                 "work"
             ],
             "properties": {
@@ -2329,25 +2323,12 @@ const docTemplate = `{
                     "description": "解析2",
                     "type": "string"
                 },
-                "answer_five": {
-                    "description": "回答5                                      //五个答案",
-                    "type": "string"
-                },
-                "answer_four": {
-                    "description": "回答4",
-                    "type": "string"
-                },
-                "answer_one": {
-                    "description": "回答1",
-                    "type": "string"
-                },
-                "answer_three": {
-                    "description": "回答3",
-                    "type": "string"
-                },
-                "answer_two": {
-                    "description": "回答2",
-                    "type": "string"
+                "answer_list": {
+                    "description": "答案列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "card_name": {
                     "description": "卡牌名字",
@@ -2381,15 +2362,18 @@ const docTemplate = `{
                     "description": "语言",
                     "type": "string",
                     "enum": [
-                        "JP",
-                        "EN",
-                        "CH-S",
-                        "CH-T"
+                        "jp",
+                        "zh",
+                        "en"
                     ]
                 },
                 "love": {
                     "description": "爱情婚姻",
                     "type": "string"
+                },
+                "lucky_number": {
+                    "description": "幸运数字",
+                    "type": "integer"
                 },
                 "money": {
                     "description": "人际财富",
@@ -2404,15 +2388,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pos": {
-                    "description": "塔罗正逆位",
+                    "description": "塔罗正逆位: up正，down逆",
                     "type": "string",
                     "enum": [
-                        "正位",
-                        "逆位"
+                        "up",
+                        "down"
                     ]
                 },
                 "pos_meaning": {
                     "description": "正逆位含义",
+                    "type": "string"
+                },
+                "saying": {
+                    "description": "名言",
                     "type": "string"
                 },
                 "work": {
@@ -2645,13 +2633,6 @@ const docTemplate = `{
         },
         "v1.EditTarotForm": {
             "type": "object",
-            "required": [
-                "answer_five",
-                "answer_four",
-                "answer_one",
-                "answer_three",
-                "answer_two"
-            ],
             "properties": {
                 "analyze_one": {
                     "description": "解析1",
@@ -2661,25 +2642,12 @@ const docTemplate = `{
                     "description": "解析2",
                     "type": "string"
                 },
-                "answer_five": {
-                    "description": "回答5",
-                    "type": "string"
-                },
-                "answer_four": {
-                    "description": "回答4",
-                    "type": "string"
-                },
-                "answer_one": {
-                    "description": "回答1",
-                    "type": "string"
-                },
-                "answer_three": {
-                    "description": "回答3",
-                    "type": "string"
-                },
-                "answer_two": {
-                    "description": "回答2",
-                    "type": "string"
+                "answer_list": {
+                    "description": "答案列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "card_name": {
                     "description": "卡牌名字",
@@ -2717,15 +2685,18 @@ const docTemplate = `{
                     "description": "语言",
                     "type": "string",
                     "enum": [
-                        "JP",
-                        "EN",
-                        "CH-S",
-                        "CH-T"
+                        "jp",
+                        "zh",
+                        "en"
                     ]
                 },
                 "love": {
                     "description": "爱情婚姻",
                     "type": "string"
+                },
+                "lucky_number": {
+                    "description": "幸运数字",
+                    "type": "integer"
                 },
                 "money": {
                     "description": "人际财富",
@@ -2740,15 +2711,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pos": {
-                    "description": "塔罗正逆位",
+                    "description": "塔罗正逆位 up正，down逆",
                     "type": "string",
                     "enum": [
-                        "正位",
-                        "逆位"
+                        "up",
+                        "down"
                     ]
                 },
                 "pos_meaning": {
                     "description": "正逆位含义",
+                    "type": "string"
+                },
+                "saying": {
+                    "description": "名言",
                     "type": "string"
                 },
                 "updated_by": {
@@ -2866,7 +2841,7 @@ const docTemplate = `{
                     "description": "塔罗牌列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Tarot"
+                        "$ref": "#/definitions/models.TarotDto"
                     }
                 }
             }
