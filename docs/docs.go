@@ -2059,7 +2059,7 @@ const docTemplate = `{
                 },
                 "lucky_number": {
                     "description": "幸运数字",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "money": {
                     "description": "人际财富",
@@ -2373,7 +2373,7 @@ const docTemplate = `{
                 },
                 "lucky_number": {
                     "description": "幸运数字",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "money": {
                     "description": "人际财富",
@@ -2696,7 +2696,7 @@ const docTemplate = `{
                 },
                 "lucky_number": {
                     "description": "幸运数字",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "money": {
                     "description": "人际财富",

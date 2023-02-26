@@ -25,7 +25,7 @@ type Tarot struct {
 	Health        string `gorm:"column:health;not null;type:varchar(190)" json:"health"`                      // 健康生活
 	Other         string `gorm:"column:other;not null;type:varchar(190)" json:"other"`                        // 其他
 	AnswerList    string `gorm:"column:answer_list;not null;type:text" json:"answer_list"`                    // 回答列表
-	LuckyNumber   int    `gorm:"column:lucky_number;not null;type:tinyint(10);default:0" json:"lucky_number"` // 幸运数字
+	LuckyNumber   string    `gorm:"column:lucky_number;not null;type:varchar(50)" json:"lucky_number"` // 幸运数字
 	Saying        string `gorm:"column:saying;not null;type:varchar(191)" json:"saying"`                      // 名言
 	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`               // 创建者
 	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`               // 更新者
@@ -51,7 +51,7 @@ type TarotDto struct {
 	Health        string   `json:"health"`        // 健康生活
 	Other         string   `json:"other"`         // 其他
 	AnswerList    []string `json:"answer_list"`   // 回答列表
-	LuckyNumber   int      `json:"lucky_number"`  // 幸运数字
+	LuckyNumber   string      `json:"lucky_number"`  // 幸运数字
 	Saying        string   `json:"saying"`        // 名言
 	CreatedBy     string   `json:"created_by"`    // 创建者
 	UpdatedBy     string   `json:"updated_by"`    // 更新者
@@ -108,7 +108,7 @@ func AddTarot(data map[string]interface{}) error {
 		Money:         data["money"].(string),         // 人际财富
 		Health:        data["health"].(string),        // 健康生活
 		Other:         data["other"].(string),         // 其他
-		LuckyNumber:   data["lucky_number"].(int),     // 幸运数字
+		LuckyNumber:   data["lucky_number"].(string),     // 幸运数字
 		Saying:        data["saying"].(string),        // 名言
 		AnswerList:    data["answer_list"].(string),   // 回答列表
 		CreatedBy:     data["created_by"].(string),    // 创建者

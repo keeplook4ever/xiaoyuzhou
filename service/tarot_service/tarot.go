@@ -24,7 +24,7 @@ type TarotInput struct {
 	Money         string   // 人际财富
 	Health        string   // 健康生活
 	Other         string   // 其他
-	LuckyNumber   int      // 幸运数字
+	LuckyNumber   string      // 幸运数字
 	Saying        string   // 名言
 	AnswerList    []string // 答案列表
 	PageNum       int      // 分页偏移数
@@ -132,7 +132,7 @@ func (t *TarotInput) Edit() error {
 	if t.Saying != "" {
 		data["saying"] = t.Saying
 	}
-	if t.LuckyNumber != 0 {
+	if t.LuckyNumber != "" {
 		data["lucky_number"] = t.LuckyNumber
 	}
 	if t.UpdatedBy != "" {

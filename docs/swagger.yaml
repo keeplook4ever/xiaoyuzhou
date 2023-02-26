@@ -223,7 +223,7 @@ definitions:
         type: string
       lucky_number:
         description: 幸运数字
-        type: integer
+        type: string
       money:
         description: 人际财富
         type: string
@@ -435,7 +435,7 @@ definitions:
         type: string
       lucky_number:
         description: 幸运数字
-        type: integer
+        type: string
       money:
         description: 人际财富
         type: string
@@ -687,7 +687,7 @@ definitions:
         type: string
       lucky_number:
         description: 幸运数字
-        type: integer
+        type: string
       money:
         description: 人际财富
         type: string

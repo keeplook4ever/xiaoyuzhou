@@ -29,7 +29,7 @@ type AddTarotForm struct {
 	Money         string   `json:"money" binding:"required"`                     // 人际财富
 	Health        string   `json:"health" binding:"required"`                    // 健康生活
 	Other         string   `json:"other" binding:"required"`                     // 其他
-	LuckyNumber   int      `json:"lucky_number" binding:"required"`              // 幸运数字
+	LuckyNumber   string      `json:"lucky_number" binding:"required"`              // 幸运数字
 	Saying        string   `json:"saying" binding:"required"`                    // 名言
 	AnswerList    []string `json:"answer_list" binding:"required"`               // 答案列表
 }
@@ -53,7 +53,7 @@ type EditTarotForm struct {
 	Money         string   `json:"money"`                     // 人际财富
 	Health        string   `json:"health"`                    // 健康生活
 	Other         string   `json:"other"`                     // 其他
-	LuckyNumber   int      `json:"lucky_number"`              // 幸运数字
+	LuckyNumber   string      `json:"lucky_number"`              // 幸运数字
 	Saying        string   `json:"saying"`                    // 名言
 	AnswerList    []string `json:"answer_list"`               // 答案列表
 	UpdatedBy     string   `json:"updated_by"`                // 修改人
