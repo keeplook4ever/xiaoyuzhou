@@ -1,7 +1,10 @@
 package models
 
 import (
+	"errors"
 	"gorm.io/gorm"
+	"math/rand"
+	"time"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -159,4 +162,24 @@ func GetTarots(pageNum int, pageSize int, cond string, vals []interface{}) ([]Ta
 		resp = append(resp, v.ToTarotDto())
 	}
 	return resp, count, nil
+}
+
+// GetOneRandTarot 获取一张随机塔罗
+func GetOneRandTarot() (*TarotDto, error) {
+	var tarots []TarotDto
+	tarots, num, err := GetTarots(0, 10000, "", nil)
+	if err != nil {
+		return nil, err
+	}
+	if num == 0 {
+		return nil, errors.New("No tarot")
+	}
+	rand.Seed(time.Now().Unix())
+	resp := tarots[rand.Intn(int(num))]
+	return &resp, nil
+}
+
+
+func GetThreeRandTarot() {
+
 }

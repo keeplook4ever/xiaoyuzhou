@@ -147,6 +147,14 @@ func InitRouter() *gin.Engine {
 
 		//获取塔罗牌
 		apiManagerV1.GET("/tarot", v1.GetTarot)
+
+		//创建塔罗牌价格
+		apiManagerV1.POST("/tarot/price", v1.SetPrice)
+		//获取塔罗牌价格
+		apiManagerV1.GET("/tarot/price", v1.GetPrice)
+		//修改塔罗牌价格
+		apiManagerV1.PUT("/tarot/price", v1.UpdatePrice)
+
 	}
 
 	return r

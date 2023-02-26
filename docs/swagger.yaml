@@ -175,6 +175,39 @@ definitions:
         description: 今日适宜
         type: string
     type: object
+  models.Price:
+    properties:
+      created_at:
+        type: integer
+      created_by:
+        description: 创建者
+        type: string
+      id:
+        type: integer
+      single_orig:
+        description: 单个原价
+        type: number
+      single_sell_higher:
+        description: 单个较高售价
+        type: number
+      single_sell_lower:
+        description: 单个较低售价
+        type: number
+      three_orig:
+        description: 三个原价
+        type: number
+      three_sell_higher:
+        description: 三个较高售价
+        type: number
+      three_sell_lower:
+        description: 三个较低售价
+        type: number
+      updated_at:
+        type: integer
+      updated_by:
+        description: 更新者
+        type: string
+    type: object
   models.TarotDto:
     properties:
       analyze_one:
@@ -797,6 +830,34 @@ definitions:
           $ref: '#/definitions/models.UserDto'
         type: array
     type: object
+  v1.SetPriceForm:
+    properties:
+      single_orig:
+        description: 单个原价
+        type: number
+      single_sell_higher:
+        description: 单个较高售价
+        type: number
+      single_sell_lower:
+        description: 单个较低售价
+        type: number
+      three_orig:
+        description: 三个原价
+        type: number
+      three_sell_higher:
+        description: 三个较高售价
+        type: number
+      three_sell_lower:
+        description: 三个较低售价
+        type: number
+    required:
+    - single_orig
+    - single_sell_higher
+    - single_sell_lower
+    - three_orig
+    - three_sell_higher
+    - three_sell_lower
+    type: object
   v1.StarStatusResp:
     properties:
       status:
@@ -805,6 +866,27 @@ definitions:
         - 1
         - 0
         type: integer
+    type: object
+  v1.UpdatePriceForm:
+    properties:
+      single_orig:
+        description: 单个原价
+        type: number
+      single_sell_higher:
+        description: 单个较高售价
+        type: number
+      single_sell_lower:
+        description: 单个较低售价
+        type: number
+      three_orig:
+        description: 三个原价
+        type: number
+      three_sell_higher:
+        description: 三个较高售价
+        type: number
+      three_sell_lower:
+        description: 三个较低售价
+        type: number
     type: object
   v1.auth:
     properties:
@@ -1574,6 +1656,66 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改塔罗牌内容
+      tags:
+      - Manager
+  /manager/tarot/price:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Price'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取价格
+      tags:
+      - Manager
+    post:
+      parameters:
+      - description: 参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SetPriceForm'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 设置价格
+      tags:
+      - Manager
+    put:
+      parameters:
+      - description: 参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdatePriceForm'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改价格
       tags:
       - Manager
   /manager/user:

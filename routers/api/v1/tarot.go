@@ -222,3 +222,4 @@ func GetTarot(c *gin.Context) {
 	resp.Lists = tarots
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
+

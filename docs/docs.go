@@ -1170,6 +1170,105 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/tarot/price": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取价格",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Price"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改价格",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdatePriceForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "设置价格",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SetPriceForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/tarot/{id}": {
             "put": {
                 "security": [
@@ -1991,6 +2090,52 @@ const docTemplate = `{
                 },
                 "todo": {
                     "description": "今日适宜",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Price": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "description": "创建者",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "single_orig": {
+                    "description": "单个原价",
+                    "type": "number"
+                },
+                "single_sell_higher": {
+                    "description": "单个较高售价",
+                    "type": "number"
+                },
+                "single_sell_lower": {
+                    "description": "单个较低售价",
+                    "type": "number"
+                },
+                "three_orig": {
+                    "description": "三个原价",
+                    "type": "number"
+                },
+                "three_sell_higher": {
+                    "description": "三个较高售价",
+                    "type": "number"
+                },
+                "three_sell_lower": {
+                    "description": "三个较低售价",
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "更新者",
                     "type": "string"
                 }
             }
@@ -2860,6 +3005,43 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.SetPriceForm": {
+            "type": "object",
+            "required": [
+                "single_orig",
+                "single_sell_higher",
+                "single_sell_lower",
+                "three_orig",
+                "three_sell_higher",
+                "three_sell_lower"
+            ],
+            "properties": {
+                "single_orig": {
+                    "description": "单个原价",
+                    "type": "number"
+                },
+                "single_sell_higher": {
+                    "description": "单个较高售价",
+                    "type": "number"
+                },
+                "single_sell_lower": {
+                    "description": "单个较低售价",
+                    "type": "number"
+                },
+                "three_orig": {
+                    "description": "三个原价",
+                    "type": "number"
+                },
+                "three_sell_higher": {
+                    "description": "三个较高售价",
+                    "type": "number"
+                },
+                "three_sell_lower": {
+                    "description": "三个较低售价",
+                    "type": "number"
+                }
+            }
+        },
         "v1.StarStatusResp": {
             "type": "object",
             "properties": {
@@ -2870,6 +3052,35 @@ const docTemplate = `{
                         1,
                         0
                     ]
+                }
+            }
+        },
+        "v1.UpdatePriceForm": {
+            "type": "object",
+            "properties": {
+                "single_orig": {
+                    "description": "单个原价",
+                    "type": "number"
+                },
+                "single_sell_higher": {
+                    "description": "单个较高售价",
+                    "type": "number"
+                },
+                "single_sell_lower": {
+                    "description": "单个较低售价",
+                    "type": "number"
+                },
+                "three_orig": {
+                    "description": "三个原价",
+                    "type": "number"
+                },
+                "three_sell_higher": {
+                    "description": "三个较高售价",
+                    "type": "number"
+                },
+                "three_sell_lower": {
+                    "description": "三个较低售价",
+                    "type": "number"
                 }
             }
         },

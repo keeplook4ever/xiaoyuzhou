@@ -178,3 +178,4 @@ func (t *TarotInput) getMaps() map[string]interface{} {
 	}
 	return maps
 }
+
