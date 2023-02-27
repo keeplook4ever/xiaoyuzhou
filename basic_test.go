@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
+	"xiaoyuzhou/pkg/util"
 )
 
 func Test_Basic(t *testing.T) {
@@ -20,4 +22,13 @@ func Test_Basic(t *testing.T) {
 	}
 	fmt.Println(obj, reflect.TypeOf(obj))
 
+}
+
+func TestSlice(t *testing.T) {
+	or := "[\"1\",\"2\",3]"
+
+	str := strings.Trim(or, "[]\"'")
+	t.Log(str)
+	res := util.StringToIntSlice(or)
+	t.Log(res)
 }

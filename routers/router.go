@@ -31,6 +31,11 @@ func InitRouter() *gin.Engine {
 		apiPlayerV1.GET("/lottery", v1.GetLotteryForUser)
 
 		{
+			// 塔罗抽取接口：返回塔罗图片和名字
+			apiPlayerV1.GET("/tarot/one", v1.GetTarotOne)
+
+			// 获取单个塔罗答案接口：根据订单返回
+			apiPlayerV1.GET("/tarot/one/answer", v1.GetTarotOneAnswer)
 
 		}
 

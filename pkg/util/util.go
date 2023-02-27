@@ -123,6 +123,7 @@ func StringToIntSlice(str string) (intSlice []int) {
 	if str == "" {
 		return
 	}
+	str = strings.Trim(str, "[]")
 	strList := strings.Split(str, ",")
 	if len(strList) == 0 {
 		return
