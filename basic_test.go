@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -22,6 +23,8 @@ func Test_Basic(t *testing.T) {
 	}
 	fmt.Println(obj, reflect.TypeOf(obj))
 
+	ts15 := int(time.Now().UnixMilli())
+	fmt.Println(ts15)
 }
 
 func TestSlice(t *testing.T) {

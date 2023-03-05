@@ -226,30 +226,45 @@ func GetTarot(c *gin.Context) {
 
 // GetTarotOne
 // @Summary 用户抽取塔罗牌: 1张
-// @Param uid string query true "用户ID"
+// @Param _ body GetTarotOneForm true "抽取一张塔罗牌"
 // @Success 200 {object} GetTarotOneRes
 // @Failure 500 {object} app.Response
-// @Router /player/tarot/one [get]
+// @Router /player/tarot/one [post]
 // @Tags Player
 func GetTarotOne(c *gin.Context) {
 	appG := app.Gin{C: c}
-	tarot, err := tarot_service.GetRandomOneTarot(c.Query("uid"))
+	var formD GetTarotOneForm
+	if err := c.ShouldBindJSON(&formD); err != nil {
+		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
+		return
+	}
+
+	tarot, uuid, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return
 	}
 	var resp GetTarotOneRes
+	resp.UUid = uuid
 	resp.TarotID = tarot.TarotId
 	resp.Name = tarot.CardName
 	resp.ImgUrl = tarot.ImgUrl
+
+	data, err := tarot_service.GetPrice()
+	if err != nil {
+		appG.Response(http.StatusOK, "获取价格失败", nil)
+		return
+	}
+	resp.Price = *data
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
 
 // GetTarotOneAnswer
 // @Summary 获取用户抽取单张塔罗牌的解答
-// @Param uid string query true "用户ID"
-// @Param order_id string query true "订单ID"
-// @Success 200 {object} models.TarotDto
+// @Param uid query string true "用户ID"
+// @Param order_id query string true "订单ID"
+// @Param uuid query string true "唯一id"
+// @Success 200 {object} GetTarotOneAnswerResp
 // @Failure 500 {object} app.Response
 // @Router /player/tarot/one/answer [get]
 // @Tags Player
@@ -269,11 +284,34 @@ func GetTarotOneAnswer(c *gin.Context) {
 		appG.Response(http.StatusOK, "获取塔罗失败", nil)
 		return
 	}
-	appG.Response(http.StatusOK, e.SUCCESS, tarot)
+
+	var resp GetTarotOneAnswerResp
+	// 获取用户输入的问题
+	question, err := tarot_service.GetQuestionByUser(c.Query("uid"), c.Query("uuid"))
+	if err != nil {
+		appG.Response(http.StatusOK, "获取问题失败", nil)
+		return
+	}
+	resp.Tarot = *tarot
+	resp.Question = question
+
+	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
 
 type GetTarotOneRes struct {
-	TarotID uint   `json:"tarot_id"` // 塔罗牌id
-	Name    string `json:"name"`     // 塔罗牌名字
-	ImgUrl  string `json:"img_url"`  // 塔罗牌图片链接
+	TarotID uint         `json:"tarot_id"` // 塔罗牌id
+	Name    string       `json:"name"`     // 塔罗牌名字
+	ImgUrl  string       `json:"img_url"`  // 塔罗牌图片链接
+	Price   models.Price `json:"price"`    // 价格
+	UUid    string       `json:"uuid"`     // 唯一标识问题
+}
+
+type GetTarotOneForm struct {
+	Uid      string `json:"uid" binding:"required"`      // 用户uid
+	Question string `json:"question" binding:"required"` // 用户问题
+}
+
+type GetTarotOneAnswerResp struct {
+	Tarot    models.TarotDto `json:"tarot"`    // 塔罗详情
+	Question string          `json:"question"` // 用户提的问题
 }

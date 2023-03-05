@@ -32,11 +32,13 @@ func InitRouter() *gin.Engine {
 
 		{
 			// 塔罗抽取接口：返回塔罗图片和名字
-			apiPlayerV1.GET("/tarot/one", v1.GetTarotOne)
+			apiPlayerV1.POST("/tarot/one", v1.GetTarotOne)
 
 			// 获取单个塔罗答案接口：根据订单返回
 			apiPlayerV1.GET("/tarot/one/answer", v1.GetTarotOneAnswer)
 
+			// 添加webhook监听paypal事件
+			apiPlayerV1.GET("/tarot/webhook/paypal", v1.ReceiveOrderEventsFromPayPal)
 		}
 
 		// 文章相关

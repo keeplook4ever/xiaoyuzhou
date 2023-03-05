@@ -12,12 +12,14 @@ func SetPrice(data map[string]interface{}) error {
 
 }
 
-
 func UpdatePrice(data map[string]interface{}) error {
 	return models.UpdatePrice(data)
 }
 
-
 func GetPrice() (*models.Price, error) {
 	return models.GetPrice()
+}
+
+func GetPaymentPrice(cardType, highOrLow string) float32 {
+	return models.GetPaymentPrice(cardType, highOrLow)
 }

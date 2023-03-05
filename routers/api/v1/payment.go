@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/paypal"
@@ -11,6 +12,9 @@ import (
 	"time"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
+	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/service/order_service"
+	"xiaoyuzhou/service/tarot_service"
 )
 
 const (
@@ -23,14 +27,15 @@ type PayPalOrderResp struct {
 }
 
 type CreatePayPalOrderForm struct {
-	CurrencyCode string `json:"currency_code" binding:"required"` // "货币代码"
-	Amount       int    `json:"amount" binding:"required"`        // "金额"
-	Uid          string `json:"uid" binding:"required"`           // "用户ID"
-	ReturnURL    string `json:"return_url" binding:"required"`    // "支付成功返回URL"
-	CancelURL    string `json:"cancel_url"  binding:"required"`   // "取消支付URL"
+	CurrencyCode  string `json:"currency_code" binding:"required"`                    // 货币代码
+	CardType      string `json:"card_type" binding:"required" enums:"one,three"`      // 卡牌类型 one:单张，three: 多张
+	Uid           string `json:"uid" binding:"required"`                              // 用户ID
+	ReturnURL     string `json:"return_url" binding:"required"`                       // 支付成功返回URL
+	CancelURL     string `json:"cancel_url"  binding:"required"`                      // 取消支付URL
+	TarotIdList   []int  `json:"tarot_id_list" binding:"required"`                    // 塔罗牌id列表
+	HigherOrLower string `json:"higher_or_lower" binding:"required" enums:"high,low"` // 高价格还是低价格
+	Question      string `json:"question" binding:"required"`                         // 用户问题
 }
-
-// 账单地址：
 
 // CreatePayPalOrder
 // @Summary 创建PapPal支付订单
@@ -48,6 +53,7 @@ func CreatePayPalOrder(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
 		return
 	}
+
 	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
 	if err != nil {
 		xlog.Error(err)
@@ -65,12 +71,17 @@ func CreatePayPalOrder(c *gin.Context) {
 	xlog.Debugf("CacelURL: %s", formD.CancelURL)
 	// Create Orders example
 	var pus []*paypal.PurchaseUnit
+
+	// 获取支付价格
+	amount := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
+
 	var item = &paypal.PurchaseUnit{
 		//ReferenceId: "TX12333331231232",
 		//TODO:
 		Amount: &paypal.Amount{
 			CurrencyCode: formD.CurrencyCode,
-			Value:        strconv.Itoa(formD.Amount),
+			// 金额从数据库查
+			Value: fmt.Sprintf("%f", amount),
 		},
 	}
 	pus = append(pus, item)
@@ -79,7 +90,7 @@ func CreatePayPalOrder(c *gin.Context) {
 	bm.Set("intent", "CAPTURE").
 		Set("purchase_units", pus).
 		SetBodyMap("application_context", func(b gopay.BodyMap) {
-			b.Set("brand_name", "xiaoyuzhou").
+			b.Set("brand_name", "小小の宇宙").
 				//Set("locale", "en-PT").
 				Set("return_url", formD.ReturnURL).
 				Set("cancel_url", formD.CancelURL)
@@ -100,13 +111,19 @@ func CreatePayPalOrder(c *gin.Context) {
 
 	xlog.Debugf("Response: %v", ppRsp.Response)
 
-	//TODO：将订单落库
-
-	ts := strconv.Itoa(int(time.Now().Unix()))
+	// 13位时间戳
+	ts15 := int(time.Now().UnixMilli())
+	ts := strconv.Itoa(ts15)
 	PayPalOrderId := "TA" + "-" + ppRsp.Response.Id + "-" + ts
-	//TODO: 存入数据库
-	xlog.Debugf("OrderID: %s", PayPalOrderId)
 
+	//将订单落库
+	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
+	if err != nil {
+		appG.Response(http.StatusOK, "订单落库失败", nil)
+		return
+	}
+
+	xlog.Debugf("OrderID: %s", PayPalOrderId)
 	appG.Response(http.StatusOK, e.SUCCESS, ppRsp.Response)
 }
 
@@ -184,4 +201,15 @@ func GetPayPalOrderDetail(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
 
+}
+
+// ReceiveOrderEventsFromPayPal
+// 接收paypal订单事件-webhook接口
+func ReceiveOrderEventsFromPayPal(c *gin.Context) {
+	//
+	data := c.Request.Body
+	xlog.Debugf("webhook body: %v", data)
+	logging.Debugf("webhook body: %v", data)
+	appG := app.Gin{C: c}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }

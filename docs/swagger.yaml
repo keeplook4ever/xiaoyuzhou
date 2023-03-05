@@ -517,26 +517,46 @@ definitions:
     type: object
   v1.CreatePayPalOrderForm:
     properties:
-      amount:
-        description: '"金额"'
-        type: integer
       cancel_url:
-        description: '"取消支付URL"'
+        description: 取消支付URL
+        type: string
+      card_type:
+        description: '卡牌类型 one:单张，three: 多张'
+        enum:
+        - one
+        - three
         type: string
       currency_code:
-        description: '"货币代码"'
+        description: 货币代码
+        type: string
+      higher_or_lower:
+        description: 高价格还是低价格
+        enum:
+        - high
+        - low
+        type: string
+      question:
+        description: 用户问题
         type: string
       return_url:
-        description: '"支付成功返回URL"'
+        description: 支付成功返回URL
         type: string
+      tarot_id_list:
+        description: 塔罗牌id列表
+        items:
+          type: integer
+        type: array
       uid:
-        description: '"用户ID"'
+        description: 用户ID
         type: string
     required:
-    - amount
     - cancel_url
+    - card_type
     - currency_code
+    - higher_or_lower
+    - question
     - return_url
+    - tarot_id_list
     - uid
     type: object
   v1.DeleteLuckyForm:
@@ -808,6 +828,47 @@ definitions:
         type: integer
       lists: {}
       type:
+        type: string
+    type: object
+  v1.GetTarotOneAnswerResp:
+    properties:
+      question:
+        description: 用户提的问题
+        type: string
+      tarot:
+        allOf:
+        - $ref: '#/definitions/models.TarotDto'
+        description: 塔罗详情
+    type: object
+  v1.GetTarotOneForm:
+    properties:
+      question:
+        description: 用户问题
+        type: string
+      uid:
+        description: 用户uid
+        type: string
+    required:
+    - question
+    - uid
+    type: object
+  v1.GetTarotOneRes:
+    properties:
+      img_url:
+        description: 塔罗牌图片链接
+        type: string
+      name:
+        description: 塔罗牌名字
+        type: string
+      price:
+        allOf:
+        - $ref: '#/definitions/models.Price'
+        description: 价格
+      tarot_id:
+        description: 塔罗牌id
+        type: integer
+      uuid:
+        description: 唯一标识问题
         type: string
     type: object
   v1.GetTarotResponse:
@@ -2046,6 +2107,57 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: 获取PayPal订单详情
+      tags:
+      - Player
+  /player/tarot/one:
+    post:
+      parameters:
+      - description: 抽取一张塔罗牌
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.GetTarotOneForm'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetTarotOneRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: '用户抽取塔罗牌: 1张'
+      tags:
+      - Player
+  /player/tarot/one/answer:
+    get:
+      parameters:
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 订单ID
+        in: query
+        name: order_id
+        required: true
+        type: string
+      - description: 唯一id
+        in: query
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetTarotOneAnswerResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取用户抽取单张塔罗牌的解答
       tags:
       - Player
 securityDefinitions:

@@ -60,3 +60,28 @@ func GetPrice() (*Price, error) {
 	}
 	return &res, nil
 }
+
+func GetPaymentPrice(cardType, highOrLow string) float32 {
+	priceTotal, err := GetPrice()
+	if err != nil {
+		return 553.45 // 获取数据库失败后的默认价格：单张高价
+	}
+
+	switch cardType {
+	case "one":
+		switch highOrLow {
+		case "high":
+			return priceTotal.SingleSellHigher
+		case "low":
+			return priceTotal.SingleSellLower
+		}
+	case "three":
+		switch highOrLow {
+		case "high":
+			return priceTotal.ThreeSellHigher
+		case "low":
+			return priceTotal.ThreeSellLower
+		}
+	}
+	return priceTotal.SingleSellHigher
+}
