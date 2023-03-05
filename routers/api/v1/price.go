@@ -8,26 +8,23 @@ import (
 	"xiaoyuzhou/service/tarot_service"
 )
 
-
-
 type SetPriceForm struct {
-	SingleOrig  float32  `json:"single_orig" binding:"required"` // 单个原价
-	SingleSellHigher  float32 `json:"single_sell_higher" binding:"required"` // 单个较高售价
-	SingleSellLower float32  `json:"single_sell_lower" binding:"required"` // 单个较低售价
-	ThreeOrig float32 `json:"three_orig" binding:"required"` // 三个原价
-	ThreeSellHigher float32 `json:"three_sell_higher" binding:"required"` // 三个较高售价
-	ThreeSellLower float32 	`json:"three_sell_lower" binding:"required"` // 三个较低售价
+	SingleOrig       float32 `json:"single_orig" binding:"required"`        // 单个原价
+	SingleSellHigher float32 `json:"single_sell_higher" binding:"required"` // 单个较高售价
+	SingleSellLower  float32 `json:"single_sell_lower" binding:"required"`  // 单个较低售价
+	ThreeOrig        float32 `json:"three_orig" binding:"required"`         // 三个原价
+	ThreeSellHigher  float32 `json:"three_sell_higher" binding:"required"`  // 三个较高售价
+	ThreeSellLower   float32 `json:"three_sell_lower" binding:"required"`   // 三个较低售价
 }
 
 type UpdatePriceForm struct {
-	SingleOrig  float32  `json:"single_orig"` // 单个原价
-	SingleSellHigher  float32 `json:"single_sell_higher"` // 单个较高售价
-	SingleSellLower float32  `json:"single_sell_lower"` // 单个较低售价
-	ThreeOrig float32 `json:"three_orig"` // 三个原价
-	ThreeSellHigher float32 `json:"three_sell_higher"` // 三个较高售价
-	ThreeSellLower float32 	`json:"three_sell_lower"` // 三个较低售价
+	SingleOrig       float32 `json:"single_orig"`        // 单个原价
+	SingleSellHigher float32 `json:"single_sell_higher"` // 单个较高售价
+	SingleSellLower  float32 `json:"single_sell_lower"`  // 单个较低售价
+	ThreeOrig        float32 `json:"three_orig"`         // 三个原价
+	ThreeSellHigher  float32 `json:"three_sell_higher"`  // 三个较高售价
+	ThreeSellLower   float32 `json:"three_sell_lower"`   // 三个较低售价
 }
-
 
 // SetPrice
 // @Summary 设置价格
@@ -46,14 +43,14 @@ func SetPrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
-		"single_orig": data.SingleOrig,
+		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
-		"single_sell_lower": data.SingleSellLower,
-		"three_orig": data.SingleOrig,
-		"three_sell_higher": data.ThreeSellHigher,
-		"three_sell_lower": data.ThreeSellLower,
-		"created_by": c.GetString("username"),
-		"updated_by": c.GetString("username"),
+		"single_sell_lower":  data.SingleSellLower,
+		"three_orig":         data.SingleOrig,
+		"three_sell_higher":  data.ThreeSellHigher,
+		"three_sell_lower":   data.ThreeSellLower,
+		"created_by":         c.GetString("username"),
+		"updated_by":         c.GetString("username"),
 	}
 	if err := tarot_service.SetPrice(priceData); err != nil {
 		appG.Response(http.StatusOK, "设置价格失败", nil)
@@ -61,7 +58,6 @@ func SetPrice(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
-
 
 // GetPrice
 // @Summary 获取价格
@@ -97,13 +93,13 @@ func UpdatePrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
-		"single_orig": data.SingleOrig,
+		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
-		"single_sell_lower": data.SingleSellLower,
-		"three_orig": data.SingleOrig,
-		"three_sell_higher": data.ThreeSellHigher,
-		"three_sell_lower": data.ThreeSellLower,
-		"updated_by": c.GetString("username"),
+		"single_sell_lower":  data.SingleSellLower,
+		"three_orig":         data.ThreeOrig,
+		"three_sell_higher":  data.ThreeSellHigher,
+		"three_sell_lower":   data.ThreeSellLower,
+		"updated_by":         c.GetString("username"),
 	}
 	if err := tarot_service.UpdatePrice(priceData); err != nil {
 		appG.Response(http.StatusOK, "设置价格失败", nil)
