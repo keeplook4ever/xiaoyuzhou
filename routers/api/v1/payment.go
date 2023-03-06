@@ -73,15 +73,15 @@ func CreatePayPalOrder(c *gin.Context) {
 	var pus []*paypal.PurchaseUnit
 
 	// 获取支付价格
-	amount := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
-
+	a := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
+	fmt.Println(a)
 	var item = &paypal.PurchaseUnit{
 		//ReferenceId: "TX12333331231232",
 		//TODO:
 		Amount: &paypal.Amount{
 			CurrencyCode: formD.CurrencyCode,
-			// 金额从数据库查
-			Value: fmt.Sprintf("%f", amount),
+			// 金额从数据库查, 不支持小数
+			Value: "33",
 		},
 	}
 	pus = append(pus, item)
@@ -117,7 +117,7 @@ func CreatePayPalOrder(c *gin.Context) {
 	PayPalOrderId := "TA" + "-" + ppRsp.Response.Id + "-" + ts
 
 	//将订单落库
-	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
+	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, a, formD.TarotIdList, formD.Question)
 	if err != nil {
 		appG.Response(http.StatusOK, "订单落库失败", nil)
 		return

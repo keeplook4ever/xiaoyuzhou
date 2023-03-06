@@ -38,7 +38,7 @@ func InitRouter() *gin.Engine {
 			apiPlayerV1.GET("/tarot/one/answer", v1.GetTarotOneAnswer)
 
 			// 添加webhook监听paypal事件
-			apiPlayerV1.GET("/tarot/webhook/paypal", v1.ReceiveOrderEventsFromPayPal)
+			apiPlayerV1.POST("/tarot/webhook/paypal", v1.ReceiveOrderEventsFromPayPal)
 		}
 
 		// 文章相关
