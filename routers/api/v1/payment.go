@@ -2,11 +2,13 @@ package v1
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/paypal"
 	"github.com/go-pay/gopay/pkg/xlog"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -27,7 +29,6 @@ type PayPalOrderResp struct {
 }
 
 type CreatePayPalOrderForm struct {
-	CurrencyCode  string `json:"currency_code" binding:"required"`                    // 货币代码
 	CardType      string `json:"card_type" binding:"required" enums:"one,three"`      // 卡牌类型 one:单张，three: 多张
 	Uid           string `json:"uid" binding:"required"`                              // 用户ID
 	ReturnURL     string `json:"return_url" binding:"required"`                       // 支付成功返回URL
@@ -73,15 +74,14 @@ func CreatePayPalOrder(c *gin.Context) {
 	var pus []*paypal.PurchaseUnit
 
 	// 获取支付价格
-	a := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
-	fmt.Println(a)
+	amount := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
 	var item = &paypal.PurchaseUnit{
 		//ReferenceId: "TX12333331231232",
 		//TODO:
 		Amount: &paypal.Amount{
-			CurrencyCode: formD.CurrencyCode,
+			CurrencyCode: "USD",
 			// 金额从数据库查, 不支持小数
-			Value: "33",
+			Value: fmt.Sprintf("%.2f", amount),
 		},
 	}
 	pus = append(pus, item)
@@ -112,12 +112,12 @@ func CreatePayPalOrder(c *gin.Context) {
 	xlog.Debugf("Response: %v", ppRsp.Response)
 
 	// 13位时间戳
-	ts15 := int(time.Now().UnixMilli())
-	ts := strconv.Itoa(ts15)
+	ts13 := int(time.Now().UnixMilli())
+	ts := strconv.Itoa(ts13)
 	PayPalOrderId := "TA" + "-" + ppRsp.Response.Id + "-" + ts
 
 	//将订单落库
-	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, a, formD.TarotIdList, formD.Question)
+	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
 	if err != nil {
 		appG.Response(http.StatusOK, "订单落库失败", nil)
 		return
@@ -205,11 +205,50 @@ func GetPayPalOrderDetail(c *gin.Context) {
 
 // ReceiveOrderEventsFromPayPal
 // 接收paypal订单事件-webhook接口
+// /api/v1/player//tarot/webhook/paypal
 func ReceiveOrderEventsFromPayPal(c *gin.Context) {
-	//
-	data := c.Request.Body
-	xlog.Debugf("webhook body: %v", data)
-	logging.Debugf("webhook body: %v", data)
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		logging.Debugf("read Webhook error: %v", err)
+		return
+	}
+	var paypalWk WebHookOfPayPalCompletedStruct
+	err = json.Unmarshal(body, &paypalWk)
+	if err != nil {
+		logging.Debugf("Unmarshal Webhook error: %v", err)
+		return
+	}
+	xlog.Debugf("webhook body: %v, struct: %v", body, paypalWk)
+	logging.Debugf("webhook body: %v", body)
+
+	logging.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
+	xlog.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
+
 	appG := app.Gin{C: c}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+type WebHookOfPayPalCompletedStruct struct {
+	ID              string            `json:"id"`
+	CreateTime      string            `json:"create_time"`
+	ResourceType    string            `json:"resource_type"`
+	EventType       string            `json:"event_type"`
+	Summary         string            `json:"summary"`
+	Resource        ResourceOfWebhook `json:"resource"`
+	Links           []interface{}     `json:"links"`
+	EventVersion    string            `json:"event_version"`
+	Zts             int               `json:"zts"`
+	ResourceVersion string            `json:"resource_version"`
+}
+
+type ResourceOfWebhook struct {
+	UpdateTime    string                `json:"update_time"`
+	CreateTime    string                `json:"create_time"`
+	PurchaseUnits []paypal.PurchaseUnit `json:"purchase_units"`
+	Links         []paypal.Link         `json:"links"`
+	Id            string                `json:"id"`
+	GrossAmount   paypal.Amount         `json:"gross_amount"`
+	Intent        string                `json:"intent"`
+	Payer         paypal.Payer          `json:"payer"`
+	Status        string                `json:"status"`
 }

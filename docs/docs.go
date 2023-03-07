@@ -1886,13 +1886,6 @@ const docTemplate = `{
                         "name": "order_id",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "唯一id",
-                        "name": "uuid",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2637,7 +2630,6 @@ const docTemplate = `{
             "required": [
                 "cancel_url",
                 "card_type",
-                "currency_code",
                 "higher_or_lower",
                 "question",
                 "return_url",
@@ -2656,10 +2648,6 @@ const docTemplate = `{
                         "one",
                         "three"
                     ]
-                },
-                "currency_code": {
-                    "description": "货币代码",
-                    "type": "string"
                 },
                 "higher_or_lower": {
                     "description": "高价格还是低价格",
@@ -3132,13 +3120,13 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "question": {
+                    "description": "用户抽取塔罗输入的问题",
+                    "type": "string"
+                },
                 "tarot_id": {
                     "description": "塔罗牌id",
                     "type": "integer"
-                },
-                "uuid": {
-                    "description": "唯一标识问题",
-                    "type": "string"
                 }
             }
         },

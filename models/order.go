@@ -34,16 +34,16 @@ func CheckOrderIfValid(orderId, uid string) (bool, error) {
 }
 
 // GetOneTarotFromOrder 根据订单号获取对应的塔罗牌
-func GetOneTarotFromOrder(orderId string) (*TarotDto, error) {
+func GetOneTarotFromOrder(orderId string) (*TarotDto, string, error) {
 	var tarot Tarot
-	var tIdList string
-	if err := Db.Model(&Order{}).Where("order_id = ?", orderId).Pluck("tarot_list", tIdList).Error; err != nil {
-		return nil, err
+	var od Order
+	if err := Db.Model(&Order{}).Where("order_id = ?", orderId).Find(&od).Error; err != nil {
+		return nil, "", err
 	}
-	tLSlice := util.StringToIntSlice(tIdList)
+	tLSlice := util.StringToIntSlice(od.TarotList)
 
 	if err := Db.Model(&Tarot{}).Where("id in ?", tLSlice).Find(&tarot).Error; err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	resp := tarot.ToTarotDto()
 
@@ -53,7 +53,7 @@ func GetOneTarotFromOrder(orderId string) (*TarotDto, error) {
 	answers := make([]string, 0)
 	answers = append(answers, resp.AnswerList[rand.Intn(len(resp.AnswerList))])
 	resp.AnswerList = answers
-	return &resp, nil
+	return &resp, od.Ques, nil
 }
 
 func CreateOrder(OrderId string, PayMethod string, uid string, amount float32, tarotIdlist []int, question string) error {

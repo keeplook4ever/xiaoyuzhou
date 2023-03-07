@@ -239,13 +239,13 @@ func GetTarotOne(c *gin.Context) {
 		return
 	}
 
-	tarot, uuid, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question)
+	tarot, err := tarot_service.GetRandomOneTarot()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return
 	}
 	var resp GetTarotOneRes
-	resp.UUid = uuid
+	resp.Question = formD.Question
 	resp.TarotID = tarot.TarotId
 	resp.Name = tarot.CardName
 	resp.ImgUrl = tarot.ImgUrl
@@ -263,7 +263,6 @@ func GetTarotOne(c *gin.Context) {
 // @Summary 获取用户抽取单张塔罗牌的解答
 // @Param uid query string true "用户ID"
 // @Param order_id query string true "订单ID"
-// @Param uuid query string true "唯一id"
 // @Success 200 {object} GetTarotOneAnswerResp
 // @Failure 500 {object} app.Response
 // @Router /player/tarot/one/answer [get]
@@ -279,19 +278,15 @@ func GetTarotOneAnswer(c *gin.Context) {
 		appG.Response(http.StatusOK, "订单未支付", nil)
 		return
 	}
-	tarot, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"), c.Query("uid"))
+	// 根据订单号、用户id查对应抽取塔罗牌的答案
+	tarot, question, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"), c.Query("uid"))
 	if err != nil {
 		appG.Response(http.StatusOK, "获取塔罗失败", nil)
 		return
 	}
 
 	var resp GetTarotOneAnswerResp
-	// 获取用户输入的问题
-	question, err := tarot_service.GetQuestionByUser(c.Query("uid"), c.Query("uuid"))
-	if err != nil {
-		appG.Response(http.StatusOK, "获取问题失败", nil)
-		return
-	}
+
 	resp.Tarot = *tarot
 	resp.Question = question
 
@@ -299,11 +294,11 @@ func GetTarotOneAnswer(c *gin.Context) {
 }
 
 type GetTarotOneRes struct {
-	TarotID uint         `json:"tarot_id"` // 塔罗牌id
-	Name    string       `json:"name"`     // 塔罗牌名字
-	ImgUrl  string       `json:"img_url"`  // 塔罗牌图片链接
-	Price   models.Price `json:"price"`    // 价格
-	UUid    string       `json:"uuid"`     // 唯一标识问题
+	TarotID  uint         `json:"tarot_id"` // 塔罗牌id
+	Name     string       `json:"name"`     // 塔罗牌名字
+	ImgUrl   string       `json:"img_url"`  // 塔罗牌图片链接
+	Price    models.Price `json:"price"`    // 价格
+	Question string       `json:"question"` // 用户抽取塔罗输入的问题
 }
 
 type GetTarotOneForm struct {
