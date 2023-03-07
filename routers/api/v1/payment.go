@@ -218,11 +218,9 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 		logging.Debugf("Unmarshal Webhook error: %v", err)
 		return
 	}
-	xlog.Debugf("webhook body: %v, struct: %v", body, paypalWk)
-	logging.Debugf("webhook body: %v", body)
-
-	logging.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
-	xlog.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
+	logging.Debugf("webhook detail: %v", paypalWk)
+	//logging.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
+	//xlog.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
 
 	appG := app.Gin{C: c}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
