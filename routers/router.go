@@ -71,8 +71,11 @@ func InitRouter() *gin.Engine {
 			//创建PayPal支付订单
 			paypalV1.POST("/checkout/orders", v1.CreatePayPalOrder)
 
+			//确认支付订单
+			paypalV1.POST("/confirm/orders/:order_id", v1.ConfirmPayment)
+
 			//捕获PayPal订单
-			paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
+			//paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
 
 			//获取PayPal订单详情
 			paypalV1.GET("/checkout/orders/:order_id", v1.GetPayPalOrderDetail)

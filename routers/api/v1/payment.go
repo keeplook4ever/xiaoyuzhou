@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-pay/gopay"
@@ -127,17 +128,19 @@ func CreatePayPalOrder(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, ppRsp.Response)
 }
 
-// CapturePayPalOrder
-// @Summary 捕获PapPal支付订单
+// ConfirmPayment
+// @Summary 确认支付
 // @Accept json
 // @Produce  json
 // @Param order_id path string true "订单号"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /player/paypal/capture/orders/{order_id} [post]
+// @Router /player/paypal/confirm/orders/{order_id} [post]
 // @Tags Player
-func CapturePayPalOrder(c *gin.Context) {
-	appG := app.Gin{C: c}
+func ConfirmPayment(c *gin.Context) {
+	appG := app.Gin{
+		C: c,
+	}
 	orderId := c.Param("order_id")
 	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
 	if err != nil {
@@ -148,22 +151,62 @@ func CapturePayPalOrder(c *gin.Context) {
 	// 打开Debug开关，输出日志
 	client.DebugSwitch = gopay.DebugOn
 	ctx := context.Background()
-	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
-	if err != nil {
+	ppRspc, err := client.OrderConfirm(ctx, orderId, nil)
+	if err != nil || ppRspc.Code != paypal.Success {
 		xlog.Error(err)
-		appG.Response(http.StatusOK, "捕获订单失败", nil)
+		appG.Response(http.StatusOK, "支付订单失败", nil)
 		return
 	}
-	if ppRspc.Code != paypal.Success {
-		// TODO ？？
-
-		appG.Response(http.StatusOK, "捕获订单失败", nil)
-		return
-	}
-
-	// TODO：判断订单状态 COMPLETED 代表完成
 	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
 }
+
+// CapturePayPalOrder
+// @Summary 捕获PapPal支付订单
+// @Accept json
+// @Produce  json
+// @Param order_id path string true "订单号"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /player/paypal/capture/orders/{order_id} [post]
+// @Tags Player
+//func CapturePayPalOrder(c *gin.Context) {
+//	appG := app.Gin{C: c}
+//	orderId := c.Param("order_id")
+//	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+//	if err != nil {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "初始化client失败", nil)
+//		return
+//	}
+//	// 打开Debug开关，输出日志
+//	client.DebugSwitch = gopay.DebugOn
+//	ctx := context.Background()
+//	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
+//	if err != nil {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "捕获订单失败", nil)
+//		return
+//	}
+//	if ppRspc.Code != paypal.Success {
+//		// TODO ？？
+//
+//		appG.Response(http.StatusOK, "捕获订单失败", nil)
+//		return
+//	}
+//
+//	// TODO：判断订单状态 COMPLETED 代表完成
+//
+//	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
+//	if transaction.Status == "COMPLETED" {
+//		xlog.Debugf("交易单号：%s", transaction.Id)
+//	}
+//	if transaction.Id != orderId {
+//		xlog.Debugf("------")
+//		return
+//	}
+//	xlog.Debug("Bingoo!")
+//	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
+//}
 
 // GetPayPalOrderDetail
 // @Summary 获取PayPal订单详情
@@ -212,18 +255,81 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 		logging.Debugf("read Webhook error: %v", err)
 		return
 	}
-	var paypalWk WebHookOfPayPalCompletedStruct
+	var paypalWk WebHookOfPayPalApprovedStruct
 	err = json.Unmarshal(body, &paypalWk)
 	if err != nil {
 		logging.Debugf("Unmarshal Webhook error: %v", err)
 		return
 	}
 	logging.Debugf("webhook detail: %v", paypalWk)
-	//logging.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
-	//xlog.Debugf("ID :%s, PaymentsCapture ID: %s, PaymentsCapture Status: %s", paypalWk.ID, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Id, paypalWk.Resource.PurchaseUnits[0].Payments.Captures[0].Status)
+	logging.Debugf("paypalWk.Resource: %v", paypalWk.Resource)
+	logging.Debugf("paypalWk.Resource.Id: %v", paypalWk.Resource.Id)
+	logging.Debugf("paypalWk.Resource.Intent : %v", paypalWk.Resource.Intent)
+	logging.Debugf("paypalWk.Resource.Status: %v", paypalWk.Resource.Status)
+	logging.Debugf("paypalWk.Resource.Links: %v", paypalWk.Resource.Links)
 
 	appG := app.Gin{C: c}
+	orderId := paypalWk.Resource.Id
+
+	err = CaptureOrder(orderId)
+	if err != nil {
+		appG.Response(http.StatusOK, "确认订单失败", nil)
+		return
+	}
+	logging.Debugf("OrderID :%s 支付成功!", orderId)
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+func CaptureOrder(orderId string) (err error) {
+	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+	if err != nil {
+		xlog.Error(err)
+		logging.Debugf("Error %v", err)
+		return
+	}
+	// 打开Debug开关，输出日志
+	client.DebugSwitch = gopay.DebugOn
+	ctx := context.Background()
+	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
+	if err != nil {
+		xlog.Error(err)
+		logging.Debugf("Error %v", err)
+		return
+	}
+	if ppRspc.Code != paypal.Success {
+		// TODO ？？
+		logging.Debugf("Retuen Code %v", ppRspc.Code)
+		return
+	}
+
+	// TODO：判断订单状态 COMPLETED 代表完成
+
+	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
+	if transaction.Status != "COMPLETED" {
+		logging.Debugf("交易单号：%s", transaction.Id)
+		return errors.New(fmt.Sprintf("Status is: %s", transaction.Status))
+	}
+	// 记录订单交易单号
+	// TODO 更新订单状态为已支付，并在订单表中记录交易单号
+
+	err = order_service.UpdateOrderStatus(orderId, transaction.Status, transaction.Id)
+	if err != nil {
+		logging.Debugf("更新订单状态失败：%v", err)
+		return
+	}
+	return nil
+}
+
+type WebHookOfPayPalApprovedStruct struct {
+	ID              string            `json:"id"`
+	CreateTime      string            `json:"create_time"`
+	ResourceType    string            `json:"resource_type"`
+	EventType       string            `json:"event_type"`
+	Summary         string            `json:"summary"`
+	Resource        ResourceOfWebhook `json:"resource"`
+	Links           []interface{}     `json:"links"`
+	EventVersion    string            `json:"event_version"`
+	ResourceVersion string            `json:"resource_version"`
 }
 
 type WebHookOfPayPalCompletedStruct struct {
@@ -240,13 +346,43 @@ type WebHookOfPayPalCompletedStruct struct {
 }
 
 type ResourceOfWebhook struct {
-	UpdateTime    string                `json:"update_time"`
-	CreateTime    string                `json:"create_time"`
-	PurchaseUnits []paypal.PurchaseUnit `json:"purchase_units"`
-	Links         []paypal.Link         `json:"links"`
-	Id            string                `json:"id"`
-	GrossAmount   paypal.Amount         `json:"gross_amount"`
-	Intent        string                `json:"intent"`
-	Payer         paypal.Payer          `json:"payer"`
-	Status        string                `json:"status"`
+	UpdateTime    string                  `json:"update_time"`
+	CreateTime    string                  `json:"create_time"`
+	PurchaseUnits []PurchaseUnitOfWebhook `json:"purchase_units"`
+	Links         []paypal.Link           `json:"links"`
+	Id            string                  `json:"id"`
+	GrossAmount   paypal.Amount           `json:"gross_amount"`
+	Intent        string                  `json:"intent"`
+	Payer         paypal.Payer            `json:"payer"`
+	Status        string                  `json:"status"`
+}
+
+type PurchaseUnitOfWebhook struct {
+	ReferenceId string             `json:"reference_id,omitempty"`
+	Amount      *paypal.Amount     `json:"amount,omitempty"`
+	Payee       *PayeeOfWebhook    `json:"payee,omitempty"`
+	Shipping    *ShippingOfWebhook `json:"shipping,omitempty"`
+	//Payments    *PaymentsOfWebhook `json:"payments,omitempty"`
+}
+
+type PayeeOfWebhook struct {
+	EmailAddress string `json:"email_address,omitempty"`
+}
+
+type ShippingOfWebhook struct {
+	Method  string `json:"method"`
+	Address *AddressOfWebhook
+}
+
+type AddressOfWebhook struct {
+	AddressLine1 string `json:"address_line_1"`
+	AddressLine2 string `json:"address_line_2"`
+	AdminArea1   string `json:"admin_area_1"`
+	AdminArea2   string `json:"admin_area_2"`
+	PostalCode   string `json:"postal_code"`
+	CountryCode  string `json:"country_code"`
+}
+
+type PaymentsOfWebhook struct {
+	Captures []*paypal.Capture `json:"captures,omitempty"`
 }

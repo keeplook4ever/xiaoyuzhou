@@ -1720,43 +1720,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/paypal/capture/orders/{order_id}": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Player"
-                ],
-                "summary": "捕获PapPal支付订单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "订单号",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/player/paypal/checkout/orders": {
             "post": {
                 "consumes": [
@@ -1808,6 +1771,43 @@ const docTemplate = `{
                     "Player"
                 ],
                 "summary": "获取PayPal订单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/player/paypal/confirm/orders/{order_id}": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "确认支付",
                 "parameters": [
                     {
                         "type": "string",
