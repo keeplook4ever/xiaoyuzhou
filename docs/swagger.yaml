@@ -2032,6 +2032,30 @@ paths:
       summary: 获取日签
       tags:
       - Player
+  /player/paypal/capture/orders/{order_id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 订单号
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 捕获PapPal支付订单
+      tags:
+      - Player
   /player/paypal/checkout/orders:
     post:
       consumes:

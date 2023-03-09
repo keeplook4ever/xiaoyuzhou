@@ -169,44 +169,42 @@ func ConfirmPayment(c *gin.Context) {
 // @Failure 500 {object} app.Response
 // @Router /player/paypal/capture/orders/{order_id} [post]
 // @Tags Player
-//func CapturePayPalOrder(c *gin.Context) {
-//	appG := app.Gin{C: c}
-//	orderId := c.Param("order_id")
-//	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
-//	if err != nil {
-//		xlog.Error(err)
-//		appG.Response(http.StatusOK, "初始化client失败", nil)
-//		return
-//	}
-//	// 打开Debug开关，输出日志
-//	client.DebugSwitch = gopay.DebugOn
-//	ctx := context.Background()
-//	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
-//	if err != nil {
-//		xlog.Error(err)
-//		appG.Response(http.StatusOK, "捕获订单失败", nil)
-//		return
-//	}
-//	if ppRspc.Code != paypal.Success {
-//		// TODO ？？
-//
-//		appG.Response(http.StatusOK, "捕获订单失败", nil)
-//		return
-//	}
-//
-//	// TODO：判断订单状态 COMPLETED 代表完成
-//
-//	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
-//	if transaction.Status == "COMPLETED" {
-//		xlog.Debugf("交易单号：%s", transaction.Id)
-//	}
-//	if transaction.Id != orderId {
-//		xlog.Debugf("------")
-//		return
-//	}
-//	xlog.Debug("Bingoo!")
-//	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
-//}
+func CapturePayPalOrder(c *gin.Context) {
+	appG := app.Gin{C: c}
+	orderId := c.Param("order_id")
+	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+	if err != nil {
+		xlog.Error(err)
+		appG.Response(http.StatusOK, "初始化client失败", nil)
+		return
+	}
+	// 打开Debug开关，输出日志
+	client.DebugSwitch = gopay.DebugOn
+	ctx := context.Background()
+	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
+	if err != nil {
+		xlog.Error(err)
+		appG.Response(http.StatusOK, "捕获订单失败", nil)
+		return
+	}
+	if ppRspc.Code != paypal.Success {
+		// TODO ？？
+
+		appG.Response(http.StatusOK, "捕获订单失败", nil)
+		return
+	}
+
+	// TODO：判断订单状态 COMPLETED 代表完成
+
+	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
+	if transaction.Status == "COMPLETED" {
+		xlog.Debugf("交易单号：%s", transaction.Id)
+	}
+	xlog.Debugf("transactionID: %s", transaction.Id)
+
+	xlog.Debugf("OrderID: %s", orderId)
+	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
+}
 
 // GetPayPalOrderDetail
 // @Summary 获取PayPal订单详情
@@ -261,8 +259,6 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 		logging.Debugf("Unmarshal Webhook error: %v", err)
 		return
 	}
-	logging.Debugf("webhook detail: %v", paypalWk)
-	logging.Debugf("paypalWk.Resource: %v", paypalWk.Resource)
 	logging.Debugf("paypalWk.Resource.Id: %v", paypalWk.Resource.Id)
 	logging.Debugf("paypalWk.Resource.Intent : %v", paypalWk.Resource.Intent)
 	logging.Debugf("paypalWk.Resource.Status: %v", paypalWk.Resource.Status)
@@ -270,9 +266,10 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 
 	appG := app.Gin{C: c}
 	orderId := paypalWk.Resource.Id
-
+	logging.Debugf("OrderID: %s", orderId)
 	err = CaptureOrder(orderId)
 	if err != nil {
+		logging.Debugf("Order: %s Failed", orderId)
 		appG.Response(http.StatusOK, "确认订单失败", nil)
 		return
 	}
@@ -283,7 +280,6 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 func CaptureOrder(orderId string) (err error) {
 	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
 	if err != nil {
-		xlog.Error(err)
 		logging.Debugf("Error %v", err)
 		return
 	}
@@ -292,14 +288,13 @@ func CaptureOrder(orderId string) (err error) {
 	ctx := context.Background()
 	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
 	if err != nil {
-		xlog.Error(err)
 		logging.Debugf("Error %v", err)
 		return
 	}
 	if ppRspc.Code != paypal.Success {
 		// TODO ？？
 		logging.Debugf("Retuen Code %v", ppRspc.Code)
-		return
+		return errors.New(fmt.Sprintf("Retuen Code is %d", ppRspc.Code))
 	}
 
 	// TODO：判断订单状态 COMPLETED 代表完成
@@ -311,12 +306,13 @@ func CaptureOrder(orderId string) (err error) {
 	}
 	// 记录订单交易单号
 	// TODO 更新订单状态为已支付，并在订单表中记录交易单号
-
+	logging.Debugf("交易单号：%s, Status: %s", transaction.Id, transaction.Status)
 	err = order_service.UpdateOrderStatus(orderId, transaction.Status, transaction.Id)
 	if err != nil {
 		logging.Debugf("更新订单状态失败：%v", err)
 		return
 	}
+	logging.Debugf("订单 %s 更新成功", orderId)
 	return nil
 }
 
