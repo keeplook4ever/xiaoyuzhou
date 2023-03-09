@@ -2163,6 +2163,11 @@ paths:
         name: order_id
         required: true
         type: string
+      - description: 支付方法
+        in: query
+        name: pay_method
+        required: true
+        type: string
       responses:
         "200":
           description: OK

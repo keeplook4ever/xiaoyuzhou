@@ -21,17 +21,10 @@ func GetRandomOneTarot() (*models.TarotDto, error) {
 	return randTarot, nil
 }
 
-// GetOneTarotByOrderAndUser 根据订单号和用户ID获取抽取的塔罗牌的解答
-func GetOneTarotByOrderAndUser(orderId, uid string) (*models.TarotDto, string, error) {
-	//ok, err := models.CheckOrderIfValid(orderId, uid)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if !ok {
-	//	return nil, errors.New("订单合法性校验失败")
-	//}
+// GetOneTarotByOrderAndUser 根据订单号获取抽取的塔罗牌的解答
+func GetOneTarotByOrderAndUser(OriOrderId string) (*models.TarotDto, string, error) {
 	// 根据订单号找到对应塔罗牌列表
-	tarot, question, err := models.GetOneTarotFromOrder(orderId)
+	tarot, question, err := models.GetOneTarotFromOrder(OriOrderId)
 
 	if err != nil {
 		return nil, "", err

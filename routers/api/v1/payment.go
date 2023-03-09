@@ -116,9 +116,9 @@ func CreatePayPalOrder(c *gin.Context) {
 	ts13 := int(time.Now().UnixMilli())
 	ts := strconv.Itoa(ts13)
 	PayPalOrderId := "TA" + "-" + ppRsp.Response.Id + "-" + ts
-
+	OriOrderId := ppRsp.Response.Id // 原始paypal订单号，后面更新订单状态需要用到
 	//将订单落库
-	err = order_service.CreateOrderRecord(PayPalOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
+	err = order_service.CreateOrderRecord(PayPalOrderId, OriOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
 	if err != nil {
 		appG.Response(http.StatusOK, "订单落库失败", nil)
 		return
@@ -197,7 +197,9 @@ func CapturePayPalOrder(c *gin.Context) {
 	// TODO：判断订单状态 COMPLETED 代表完成
 
 	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
-	if transaction.Status == "COMPLETED" {
+	orderIdReturn := ppRspc.Response.Id
+	orderStatus := ppRspc.Response.Status
+	if transaction.Status == "COMPLETED" && orderStatus == "COMPLETED" && orderIdReturn == orderId {
 		xlog.Debugf("交易单号：%s", transaction.Id)
 	}
 	xlog.Debugf("transactionID: %s", transaction.Id)
@@ -262,22 +264,22 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 	logging.Debugf("paypalWk.Resource.Id: %v", paypalWk.Resource.Id)
 	logging.Debugf("paypalWk.Resource.Intent : %v", paypalWk.Resource.Intent)
 	logging.Debugf("paypalWk.Resource.Status: %v", paypalWk.Resource.Status)
-	logging.Debugf("paypalWk.Resource.Links: %v", paypalWk.Resource.Links)
 
 	appG := app.Gin{C: c}
-	orderId := paypalWk.Resource.Id
-	logging.Debugf("OrderID: %s", orderId)
-	err = CaptureOrder(orderId)
+	OriOrderId := paypalWk.Resource.Id
+	logging.Debugf("OrderID: %s", OriOrderId)
+	err = CaptureOrder(OriOrderId)
 	if err != nil {
-		logging.Debugf("Order: %s Failed", orderId)
+		logging.Debugf("Order: %s Failed", OriOrderId)
 		appG.Response(http.StatusOK, "确认订单失败", nil)
 		return
 	}
-	logging.Debugf("OrderID :%s 支付成功!", orderId)
+	logging.Debugf("OrderID :%s 支付成功!", OriOrderId)
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
-func CaptureOrder(orderId string) (err error) {
+func CaptureOrder(OriOrderId string) (err error) {
+	logging.Debugf("Start Capture Order: %s", OriOrderId)
 	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
 	if err != nil {
 		logging.Debugf("Error %v", err)
@@ -286,33 +288,36 @@ func CaptureOrder(orderId string) (err error) {
 	// 打开Debug开关，输出日志
 	client.DebugSwitch = gopay.DebugOn
 	ctx := context.Background()
-	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
+	ppRspc, err := client.OrderCapture(ctx, OriOrderId, nil)
 	if err != nil {
 		logging.Debugf("Error %v", err)
 		return
 	}
 	if ppRspc.Code != paypal.Success {
 		// TODO ？？
-		logging.Debugf("Retuen Code %v", ppRspc.Code)
+		logging.Debugf("Return Code %v", ppRspc.Code)
 		return errors.New(fmt.Sprintf("Retuen Code is %d", ppRspc.Code))
 	}
 
 	// TODO：判断订单状态 COMPLETED 代表完成
 
 	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
-	if transaction.Status != "COMPLETED" {
+	orderIdReturn := ppRspc.Response.Id
+	orderStatus := ppRspc.Response.Status
+	if !(transaction.Status == "COMPLETED" && orderStatus == "COMPLETED" && orderIdReturn == OriOrderId) {
 		logging.Debugf("交易单号：%s", transaction.Id)
 		return errors.New(fmt.Sprintf("Status is: %s", transaction.Status))
 	}
+
 	// 记录订单交易单号
 	// TODO 更新订单状态为已支付，并在订单表中记录交易单号
-	logging.Debugf("交易单号：%s, Status: %s", transaction.Id, transaction.Status)
-	err = order_service.UpdateOrderStatus(orderId, transaction.Status, transaction.Id)
+	logging.Debugf("订单号：%s, 交易单号：%s, Status: %s", orderIdReturn, transaction.Id, orderStatus)
+	err = order_service.UpdateOrderStatus(orderIdReturn, transaction.Status, transaction.Id)
 	if err != nil {
 		logging.Debugf("更新订单状态失败：%v", err)
 		return
 	}
-	logging.Debugf("订单 %s 更新成功", orderId)
+	logging.Debugf("订单 %s 更新成功", OriOrderId)
 	return nil
 }
 

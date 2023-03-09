@@ -263,13 +263,14 @@ func GetTarotOne(c *gin.Context) {
 // @Summary 获取用户抽取单张塔罗牌的解答
 // @Param uid query string true "用户ID"
 // @Param order_id query string true "订单ID"
+// @Param pay_method query string true "支付方法"
 // @Success 200 {object} GetTarotOneAnswerResp
 // @Failure 500 {object} app.Response
 // @Router /player/tarot/one/answer [get]
 // @Tags Player
 func GetTarotOneAnswer(c *gin.Context) {
 	appG := app.Gin{C: c}
-	payed, err := order_service.CheckOrderIfPayed(c.Query("order_id"))
+	payed, err := order_service.CheckOrderIfPayed(c.Query("order_id"), c.Query("pay_method"), c.Query("uid"))
 	if err != nil {
 		appG.Response(http.StatusOK, "订单校验失败", nil)
 		return
@@ -278,8 +279,8 @@ func GetTarotOneAnswer(c *gin.Context) {
 		appG.Response(http.StatusOK, "订单未支付", nil)
 		return
 	}
-	// 根据订单号、用户id查对应抽取塔罗牌的答案
-	tarot, question, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"), c.Query("uid"))
+	// 根据订单号查对应抽取塔罗牌的答案, 这里的订单号是原始订单号
+	tarot, question, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"))
 	if err != nil {
 		appG.Response(http.StatusOK, "获取塔罗失败", nil)
 		return

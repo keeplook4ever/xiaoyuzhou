@@ -1923,6 +1923,13 @@ const docTemplate = `{
                         "name": "order_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "支付方法",
+                        "name": "pay_method",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
