@@ -189,7 +189,7 @@ func CapturePayPalOrder(c *gin.Context) {
 	}
 	if ppRspc.Code != paypal.Success {
 		// TODO ？？
-
+		xlog.Error(ppRspc.Code)
 		appG.Response(http.StatusOK, "捕获订单失败", nil)
 		return
 	}
