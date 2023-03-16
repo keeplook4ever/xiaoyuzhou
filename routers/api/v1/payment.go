@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-pay/gopay"
@@ -11,8 +10,6 @@ import (
 	"github.com/go-pay/gopay/pkg/xlog"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	"time"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/logging"
@@ -30,13 +27,17 @@ type PayPalOrderResp struct {
 }
 
 type CreatePayPalOrderForm struct {
-	CardType      string `json:"card_type" binding:"required" enums:"one,three"`      // 卡牌类型 one:单张，three: 多张
-	Uid           string `json:"uid" binding:"required"`                              // 用户ID
-	ReturnURL     string `json:"return_url" binding:"required"`                       // 支付成功返回URL
-	CancelURL     string `json:"cancel_url"  binding:"required"`                      // 取消支付URL
-	TarotIdList   []int  `json:"tarot_id_list" binding:"required"`                    // 塔罗牌id列表
-	HigherOrLower string `json:"higher_or_lower" binding:"required" enums:"high,low"` // 高价格还是低价格
-	Question      string `json:"question" binding:"required"`                         // 用户问题
+	OrderId string `json:"order_id" binding:"required"` // 订单ID
+	//CardType      string `json:"card_type" binding:"required" enums:"one,three"`      // 卡牌类型 one:单张，three: 多张
+	//Uid           string `json:"uid" binding:"required"`                              // 用户ID
+	ReturnURL string `json:"return_url" binding:"required"`  // 支付成功返回URL
+	CancelURL string `json:"cancel_url"  binding:"required"` // 取消支付URL
+	//TarotIdList   []int  `json:"tarot_id_list" binding:"required"`                    // 塔罗牌id列表
+	//HigherOrLower string `json:"higher_or_lower" binding:"required" enums:"high,low"` // 高价格还是低价格
+	//Question      string `json:"question" binding:"required"`                         // 用户问题
+	// 场景：
+	Scene    string `json:"scene" binding:"required" enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"` // 支付场景：ta_one_high 塔罗单张高价
+	Location string `json:"location" binding:"required" enums:"jp,zh,en,tc"`                                    // 地区:  tc:台湾
 }
 
 // CreatePayPalOrder
@@ -68,14 +69,13 @@ func CreatePayPalOrder(c *gin.Context) {
 	xlog.Debugf("Appid: %s", client.Appid)
 	xlog.Debugf("AccessToken: %s", client.AccessToken)
 	xlog.Debugf("ExpiresIn: %d", client.ExpiresIn)
-	xlog.Debugf("Uid: %s", formD.Uid)
 	xlog.Debugf("ReturnURL: %s", formD.ReturnURL)
 	xlog.Debugf("CacelURL: %s", formD.CancelURL)
 	// Create Orders example
 	var pus []*paypal.PurchaseUnit
 
 	// 获取支付价格
-	amount := tarot_service.GetPaymentPrice(formD.CardType, formD.HigherOrLower)
+	amount := tarot_service.GetPaymentPrice(formD.Scene, formD.Location)
 	var item = &paypal.PurchaseUnit{
 		//ReferenceId: "TX12333331231232",
 		//TODO:
@@ -112,19 +112,15 @@ func CreatePayPalOrder(c *gin.Context) {
 
 	xlog.Debugf("Response: %v", ppRsp.Response)
 
-	// 13位时间戳
-	ts13 := int(time.Now().UnixMilli())
-	ts := strconv.Itoa(ts13)
-	PayPalOrderId := "TA" + "-" + ppRsp.Response.Id + "-" + ts
 	OriOrderId := ppRsp.Response.Id // 原始paypal订单号，后面更新订单状态需要用到
 	//将订单落库
-	err = order_service.CreateOrderRecord(PayPalOrderId, OriOrderId, "paypal", formD.Uid, amount, formD.TarotIdList, formD.Question)
+	err = order_service.AddPaymentInfoToOrder(formD.OrderId, OriOrderId, "paypal", amount)
 	if err != nil {
 		appG.Response(http.StatusOK, "订单落库失败", nil)
 		return
 	}
 
-	xlog.Debugf("OrderID: %s", PayPalOrderId)
+	xlog.Debugf("OrderID: %s", formD.OrderId)
 	appG.Response(http.StatusOK, e.SUCCESS, ppRsp.Response)
 }
 
@@ -137,28 +133,28 @@ func CreatePayPalOrder(c *gin.Context) {
 // @Failure 500 {object} app.Response
 // @Router /player/paypal/confirm/orders/{order_id} [post]
 // @Tags Player
-func ConfirmPayment(c *gin.Context) {
-	appG := app.Gin{
-		C: c,
-	}
-	orderId := c.Param("order_id")
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
-	if err != nil {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "初始化client失败", nil)
-		return
-	}
-	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
-	ctx := context.Background()
-	ppRspc, err := client.OrderConfirm(ctx, orderId, nil)
-	if err != nil || ppRspc.Code != paypal.Success {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "支付订单失败", nil)
-		return
-	}
-	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
-}
+//func ConfirmPayment(c *gin.Context) {
+//	appG := app.Gin{
+//		C: c,
+//	}
+//	orderId := c.Param("order_id")
+//	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+//	if err != nil {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "初始化client失败", nil)
+//		return
+//	}
+//	// 打开Debug开关，输出日志
+//	client.DebugSwitch = gopay.DebugOn
+//	ctx := context.Background()
+//	ppRspc, err := client.OrderConfirm(ctx, orderId, nil)
+//	if err != nil || ppRspc.Code != paypal.Success {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "支付订单失败", nil)
+//		return
+//	}
+//	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
+//}
 
 // CapturePayPalOrder
 // @Summary 捕获PapPal支付订单
@@ -169,86 +165,74 @@ func ConfirmPayment(c *gin.Context) {
 // @Failure 500 {object} app.Response
 // @Router /player/paypal/capture/orders/{order_id} [post]
 // @Tags Player
-func CapturePayPalOrder(c *gin.Context) {
-	appG := app.Gin{C: c}
-	orderId := c.Param("order_id")
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
-	if err != nil {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "初始化client失败", nil)
-		return
-	}
-	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
-	ctx := context.Background()
-	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
-	if err != nil {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "捕获订单失败", nil)
-		return
-	}
-	if ppRspc.Code != paypal.Success {
-		// TODO ？？
-		xlog.Error(ppRspc.Code)
-		appG.Response(http.StatusOK, "捕获订单失败", nil)
-		return
-	}
+//func CapturePayPalOrder(c *gin.Context) {
+//	appG := app.Gin{C: c}
+//	orderId := c.Param("order_id")
+//	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+//	if err != nil {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "初始化client失败", nil)
+//		return
+//	}
+//	// 打开Debug开关，输出日志
+//	client.DebugSwitch = gopay.DebugOn
+//	ctx := context.Background()
+//	ppRspc, err := client.OrderCapture(ctx, orderId, nil)
+//	if err != nil {
+//		xlog.Error(err)
+//		appG.Response(http.StatusOK, "捕获订单失败", nil)
+//		return
+//	}
+//	if ppRspc.Code != paypal.Success {
+//		// TODO ？？
+//		xlog.Error(ppRspc.Code)
+//		appG.Response(http.StatusOK, "捕获订单失败", nil)
+//		return
+//	}
+//
+//	// TODO：判断订单状态 COMPLETED 代表完成
+//
+//	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
+//	orderIdReturn := ppRspc.Response.Id
+//	orderStatus := ppRspc.Response.Status
+//	if transaction.Status == "COMPLETED" && orderStatus == "COMPLETED" && orderIdReturn == orderId {
+//		xlog.Debugf("交易单号：%s", transaction.Id)
+//	}
+//	xlog.Debugf("transactionID: %s", transaction.Id)
+//
+//	xlog.Debugf("OrderID: %s", orderId)
+//	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
+//}
 
-	// TODO：判断订单状态 COMPLETED 代表完成
-
-	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
-	orderIdReturn := ppRspc.Response.Id
-	orderStatus := ppRspc.Response.Status
-	if transaction.Status == "COMPLETED" && orderStatus == "COMPLETED" && orderIdReturn == orderId {
-		xlog.Debugf("交易单号：%s", transaction.Id)
-	}
-	xlog.Debugf("transactionID: %s", transaction.Id)
-
-	xlog.Debugf("OrderID: %s", orderId)
-	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
-}
-
-// GetPayPalOrderDetail
-// @Summary 获取PayPal订单详情
+// GetOrderStatus
+// @Summary 获取订单支付状态
 // @Accept json
 // @Produce  json
 // @Param order_id path string true "订单号"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /player/paypal/checkout/orders/{order_id} [get]
+// @Router /player/checkout/orders/{order_id} [get]
 // @Tags Player
-func GetPayPalOrderDetail(c *gin.Context) {
+func GetOrderStatus(c *gin.Context) {
 	appG := app.Gin{C: c}
 	orderId := c.Param("order_id")
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+	if orderId == "" {
+		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
+		return
+	}
+
+	//从数据库查订单状态，返回状态: 0,1,2
+	status, err := order_service.GetOrderStatus(orderId)
 	if err != nil {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "初始化client失败", nil)
+		appG.Response(http.StatusOK, "获取订单状态失败,请重试", nil)
 		return
 	}
-	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
-	ctx := context.Background()
-	ppRspc, err := client.OrderDetail(ctx, orderId, nil)
-	if err != nil {
-		xlog.Error(err)
-		appG.Response(http.StatusOK, "获取订单详情失败", nil)
-		return
-	}
-
-	if ppRspc.Code != paypal.Success {
-		// TODO ？？
-
-		appG.Response(http.StatusOK, "获取订单详情失败", nil)
-		return
-	}
-	appG.Response(http.StatusOK, e.SUCCESS, ppRspc.Response)
-
+	appG.Response(http.StatusOK, e.SUCCESS, status)
 }
 
 // ReceiveOrderEventsFromPayPal
-// 接收paypal订单事件-webhook接口
-// /api/v1/player//tarot/webhook/paypal
+// 接收paypal订单事件-webhook接口 被动查订单，更新订单状态
+// /api/v1/player/tarot/webhook/paypal
 func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -265,60 +249,17 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 	logging.Debugf("paypalWk.Resource.Intent : %v", paypalWk.Resource.Intent)
 	logging.Debugf("paypalWk.Resource.Status: %v", paypalWk.Resource.Status)
 
-	appG := app.Gin{C: c}
 	OriOrderId := paypalWk.Resource.Id
 	logging.Debugf("OrderID: %s", OriOrderId)
-	err = CaptureOrder(OriOrderId)
+	err = order_service.CaptureOrder(OriOrderId, "paypal")
 	if err != nil {
+		if err.Error() == "ok" { // ok代表订单状态已确认，或者支付成功，或者失败
+			return
+		}
 		logging.Debugf("Order: %s Failed", OriOrderId)
-		appG.Response(http.StatusOK, "确认订单失败", nil)
 		return
 	}
-	logging.Debugf("OrderID :%s 支付成功!", OriOrderId)
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
-}
-
-func CaptureOrder(OriOrderId string) (err error) {
-	logging.Debugf("Start Capture Order: %s", OriOrderId)
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
-	if err != nil {
-		logging.Debugf("Error %v", err)
-		return
-	}
-	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
-	ctx := context.Background()
-	ppRspc, err := client.OrderCapture(ctx, OriOrderId, nil)
-	if err != nil {
-		logging.Debugf("Error %v", err)
-		return
-	}
-	if ppRspc.Code != paypal.Success {
-		// TODO ？？
-		logging.Debugf("Return Code %v", ppRspc.Code)
-		return errors.New(fmt.Sprintf("Retuen Code is %d", ppRspc.Code))
-	}
-
-	// TODO：判断订单状态 COMPLETED 代表完成
-
-	transaction := ppRspc.Response.PurchaseUnits[0].Payments.Captures[0]
-	orderIdReturn := ppRspc.Response.Id
-	orderStatus := ppRspc.Response.Status
-	if !(transaction.Status == "COMPLETED" && orderStatus == "COMPLETED" && orderIdReturn == OriOrderId) {
-		logging.Debugf("交易单号：%s", transaction.Id)
-		return errors.New(fmt.Sprintf("Status is: %s", transaction.Status))
-	}
-
-	// 记录订单交易单号
-	// TODO 更新订单状态为已支付，并在订单表中记录交易单号
-	logging.Debugf("订单号：%s, 交易单号：%s, Status: %s", orderIdReturn, transaction.Id, orderStatus)
-	err = order_service.UpdateOrderStatus(orderIdReturn, transaction.Status, transaction.Id)
-	if err != nil {
-		logging.Debugf("更新订单状态失败：%v", err)
-		return
-	}
-	logging.Debugf("订单 %s 更新成功", OriOrderId)
-	return nil
+	logging.Info(fmt.Sprintf("OrderID :%s 支付成功!", OriOrderId))
 }
 
 type WebHookOfPayPalApprovedStruct struct {

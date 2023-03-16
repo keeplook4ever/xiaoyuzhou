@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -34,4 +35,18 @@ func TestSlice(t *testing.T) {
 	t.Log(str)
 	res := util.StringToIntSlice(or)
 	t.Log(res)
+}
+
+func TestTime(t *testing.T) {
+	//year := time.Now().Format("2006")
+	//month := time.Now().Format("01")
+	//day := time.Now().Format("02")
+	//fmt.Println(year, month, day)
+	//str := year[2:] + month + day
+	//t.Log(str)
+	ts := time.Now().Unix()
+	t.Log(ts)
+	ls := strconv.FormatInt(ts, 10)[5:]
+	t.Log(ls)
+
 }

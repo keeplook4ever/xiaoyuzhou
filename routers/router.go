@@ -34,8 +34,8 @@ func InitRouter() *gin.Engine {
 			// 塔罗抽取接口：返回塔罗图片和名字
 			apiPlayerV1.POST("/tarot/one", v1.GetTarotOne)
 
-			// 获取单个塔罗答案接口：根据订单返回
-			apiPlayerV1.GET("/tarot/one/answer", v1.GetTarotOneAnswer)
+			// 获取塔罗答案接口：根据订单返回
+			apiPlayerV1.GET("/tarot/answer", v1.GetTarotAnswer)
 
 			// 添加webhook监听paypal事件
 			apiPlayerV1.POST("/tarot/webhook/paypal", v1.ReceiveOrderEventsFromPayPal)
@@ -71,16 +71,18 @@ func InitRouter() *gin.Engine {
 			//创建PayPal支付订单
 			paypalV1.POST("/checkout/orders", v1.CreatePayPalOrder)
 
-			//确认支付订单
-			paypalV1.POST("/confirm/orders/:order_id", v1.ConfirmPayment)
+			////确认支付订单
+			//paypalV1.POST("/confirm/orders/:order_id", v1.ConfirmPayment)
+			//
+			////捕获PayPal订单
+			//paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
+			//
 
-			//捕获PayPal订单
-			paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
-
-			//获取PayPal订单详情
-			paypalV1.GET("/checkout/orders/:order_id", v1.GetPayPalOrderDetail)
 		}
 
+		//获取订单详情
+		apiPlayerV1.GET("/checkout/orders/:order_id", v1.GetOrderStatus)
+		apiPlayerV1.POST("/mail", v1.SendMailToCustomer)
 	}
 
 	// 后台管理接口

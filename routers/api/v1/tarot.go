@@ -239,18 +239,17 @@ func GetTarotOne(c *gin.Context) {
 		return
 	}
 
-	tarot, err := tarot_service.GetRandomOneTarot()
+	tarot, orderId, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return
 	}
 	var resp GetTarotOneRes
-	resp.Question = formD.Question
 	resp.TarotID = tarot.TarotId
 	resp.Name = tarot.CardName
 	resp.ImgUrl = tarot.ImgUrl
-
-	data, err := tarot_service.GetPrice()
+	resp.OrderId = orderId
+	data, err := models.GetPrice(formD.Location)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取价格失败", nil)
 		return
@@ -259,55 +258,57 @@ func GetTarotOne(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
 
-// GetTarotOneAnswer
-// @Summary 获取用户抽取单张塔罗牌的解答
+// GetTarotAnswer
+// @Summary 获取用户抽取塔罗牌的解答
 // @Param uid query string true "用户ID"
 // @Param order_id query string true "订单ID"
-// @Param pay_method query string true "支付方法"
 // @Success 200 {object} GetTarotOneAnswerResp
 // @Failure 500 {object} app.Response
-// @Router /player/tarot/one/answer [get]
+// @Router /player/tarot/answer [get]
 // @Tags Player
-func GetTarotOneAnswer(c *gin.Context) {
+func GetTarotAnswer(c *gin.Context) {
 	appG := app.Gin{C: c}
-	payed, err := order_service.CheckOrderIfPayed(c.Query("order_id"), c.Query("pay_method"), c.Query("uid"))
+	payed, err := order_service.CheckOrderIfPayed(c.Query("order_id"), c.Query("uid"))
 	if err != nil {
 		appG.Response(http.StatusOK, "订单校验失败", nil)
 		return
 	}
 	if !payed {
-		appG.Response(http.StatusOK, "订单未支付", nil)
+		appG.Response(http.StatusOK, err.Error(), nil)
 		return
 	}
 	// 根据订单号查对应抽取塔罗牌的答案, 这里的订单号是原始订单号
-	tarot, question, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"))
+	tarot, question, ts, err := tarot_service.GetOneTarotByOrderAndUser(c.Query("order_id"), c.Query("uid"))
 	if err != nil {
 		appG.Response(http.StatusOK, "获取塔罗失败", nil)
 		return
 	}
 
 	var resp GetTarotOneAnswerResp
-
+	resp.Type = "one"
 	resp.Tarot = *tarot
 	resp.Question = question
-
+	resp.Ts = ts
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
 
 type GetTarotOneRes struct {
-	TarotID  uint         `json:"tarot_id"` // 塔罗牌id
-	Name     string       `json:"name"`     // 塔罗牌名字
-	ImgUrl   string       `json:"img_url"`  // 塔罗牌图片链接
-	Price    models.Price `json:"price"`    // 价格
-	Question string       `json:"question"` // 用户抽取塔罗输入的问题
+	TarotID uint         `json:"tarot_id"` // 塔罗牌id
+	Name    string       `json:"name"`     // 塔罗牌名字
+	ImgUrl  string       `json:"img_url"`  // 塔罗牌图片链接
+	Price   models.Price `json:"price"`    // 价格
+	OrderId string       `json:"order_id"` // 用户抽塔罗牌的订单记录ID
 }
 
 type GetTarotOneForm struct {
 	Uid      string `json:"uid" binding:"required"`      // 用户uid
 	Question string `json:"question" binding:"required"` // 用户问题
+	Location string `json:"location" binding:"required" enums:"jp,zh,en,tc"`
 }
 
 type GetTarotOneAnswerResp struct {
-	Tarot    models.TarotDto `json:"tarot"`    // 塔罗详情
-	Question string          `json:"question"` // 用户提的问题
+	Tarot    models.TarotDto `json:"tarot"`                  // 塔罗详情
+	Question string          `json:"question"`               // 用户提的问题
+	Ts       int64           `json:"ts"`                     // 用户抽取塔罗牌的时间戳
+	Type     string          `json:"type" enums:"one,three"` // 单张或多张
 }

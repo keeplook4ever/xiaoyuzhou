@@ -7,7 +7,7 @@ import (
 
 func SendMail(to []string, Sub string, txt string) error {
 	e := email.NewEmail()
-	e.From = "QianYe <support@kiminouchuu.com>"
+	e.From = "QianYe <business@kiminouchuu.com>"
 	e.To = to
 	e.Subject = Sub
 	e.Text = []byte(txt)

@@ -1,25 +1,23 @@
 package tarot_service
 
 import (
-	"reflect"
 	"xiaoyuzhou/models"
-	"xiaoyuzhou/pkg/logging"
 )
 
 func SetPrice(data map[string]interface{}) error {
-	logging.Debugf("data: %v, type: %s", data, reflect.TypeOf(data))
 	return models.SetPrice(data)
-
 }
 
 func UpdatePrice(data map[string]interface{}) error {
 	return models.UpdatePrice(data)
 }
 
-func GetPrice() (*models.Price, error) {
-	return models.GetPrice()
+func GetPriceTotal() ([]models.Price, error) {
+	return models.GetPriceTotal()
 }
 
-func GetPaymentPrice(cardType, highOrLow string) float32 {
-	return models.GetPaymentPrice(cardType, highOrLow)
+func GetPaymentPrice(scene string, location string) float32 {
+	// enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"
+	// location: jp,zh,en,tc
+	return models.GetPaymentPrice(scene, location)
 }

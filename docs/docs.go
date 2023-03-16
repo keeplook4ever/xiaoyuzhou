@@ -1185,7 +1185,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Price"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Price"
+                            }
                         }
                     },
                     "500": {
@@ -1680,6 +1683,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/player/checkout/orders/{order_id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取订单支付状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/player/lottery": {
             "get": {
                 "produces": [
@@ -1720,25 +1760,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/paypal/capture/orders/{order_id}": {
+        "/player/mail": {
             "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Player"
                 ],
-                "summary": "捕获PapPal支付订单",
+                "summary": "发送邮件给客户",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "订单号",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
+                        "description": "发送邮件参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SendMailForm"
+                        }
                     }
                 ],
                 "responses": {
@@ -1796,61 +1832,25 @@ const docTemplate = `{
                 }
             }
         },
-        "/player/paypal/checkout/orders/{order_id}": {
+        "/player/tarot/answer": {
             "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Player"
                 ],
-                "summary": "获取PayPal订单详情",
+                "summary": "获取用户抽取塔罗牌的解答",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "订单号",
-                        "name": "order_id",
-                        "in": "path",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/player/paypal/confirm/orders/{order_id}": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Player"
-                ],
-                "summary": "确认支付",
-                "parameters": [
                     {
                         "type": "string",
-                        "description": "订单号",
+                        "description": "订单ID",
                         "name": "order_id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1858,7 +1858,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/app.Response"
+                            "$ref": "#/definitions/v1.GetTarotOneAnswerResp"
                         }
                     },
                     "500": {
@@ -1892,51 +1892,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.GetTarotOneRes"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/player/tarot/one/answer": {
-            "get": {
-                "tags": [
-                    "Player"
-                ],
-                "summary": "获取用户抽取单张塔罗牌的解答",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "订单ID",
-                        "name": "order_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "支付方法",
-                        "name": "pay_method",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.GetTarotOneAnswerResp"
                         }
                     },
                     "500": {
@@ -2221,6 +2176,16 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "location": {
+                    "description": "地区",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "single_orig": {
                     "description": "单个原价",
@@ -2673,52 +2638,43 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "cancel_url",
-                "card_type",
-                "higher_or_lower",
-                "question",
+                "location",
+                "order_id",
                 "return_url",
-                "tarot_id_list",
-                "uid"
+                "scene"
             ],
             "properties": {
                 "cancel_url": {
                     "description": "取消支付URL",
                     "type": "string"
                 },
-                "card_type": {
-                    "description": "卡牌类型 one:单张，three: 多张",
+                "location": {
+                    "description": "地区:  tc:台湾",
                     "type": "string",
                     "enum": [
-                        "one",
-                        "three"
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
                     ]
                 },
-                "higher_or_lower": {
-                    "description": "高价格还是低价格",
-                    "type": "string",
-                    "enum": [
-                        "high",
-                        "low"
-                    ]
-                },
-                "question": {
-                    "description": "用户问题",
+                "order_id": {
+                    "description": "订单ID",
                     "type": "string"
                 },
                 "return_url": {
-                    "description": "支付成功返回URL",
+                    "description": "CardType      string ` + "`" + `json:\"card_type\" binding:\"required\" enums:\"one,three\"` + "`" + `      // 卡牌类型 one:单张，three: 多张\nUid           string ` + "`" + `json:\"uid\" binding:\"required\"` + "`" + `                              // 用户ID",
                     "type": "string"
                 },
-                "tarot_id_list": {
-                    "description": "塔罗牌id列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "uid": {
-                    "description": "用户ID",
-                    "type": "string"
+                "scene": {
+                    "description": "TarotIdList   []int  ` + "`" + `json:\"tarot_id_list\" binding:\"required\"` + "`" + `                    // 塔罗牌id列表\nHigherOrLower string ` + "`" + `json:\"higher_or_lower\" binding:\"required\" enums:\"high,low\"` + "`" + ` // 高价格还是低价格\nQuestion      string ` + "`" + `json:\"question\" binding:\"required\"` + "`" + `                         // 用户问题\n场景：",
+                    "type": "string",
+                    "enum": [
+                        "ta_one_high",
+                        "ta_one_low",
+                        "ta_three_high",
+                        "ta_three_low"
+                    ]
                 }
             }
         },
@@ -3125,16 +3081,38 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.TarotDto"
                         }
                     ]
+                },
+                "ts": {
+                    "description": "用户抽取塔罗牌的时间戳",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "单张或多张",
+                    "type": "string",
+                    "enum": [
+                        "one",
+                        "three"
+                    ]
                 }
             }
         },
         "v1.GetTarotOneForm": {
             "type": "object",
             "required": [
+                "location",
                 "question",
                 "uid"
             ],
             "properties": {
+                "location": {
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
+                },
                 "question": {
                     "description": "用户问题",
                     "type": "string"
@@ -3156,6 +3134,10 @@ const docTemplate = `{
                     "description": "塔罗牌名字",
                     "type": "string"
                 },
+                "order_id": {
+                    "description": "用户抽塔罗牌的订单记录ID",
+                    "type": "string"
+                },
                 "price": {
                     "description": "价格",
                     "allOf": [
@@ -3163,10 +3145,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.Price"
                         }
                     ]
-                },
-                "question": {
-                    "description": "用户抽取塔罗输入的问题",
-                    "type": "string"
                 },
                 "tarot_id": {
                     "description": "塔罗牌id",
@@ -3204,9 +3182,40 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.SendMailForm": {
+            "type": "object",
+            "required": [
+                "order_id",
+                "send_to",
+                "send_type",
+                "uid"
+            ],
+            "properties": {
+                "order_id": {
+                    "description": "订单号",
+                    "type": "string"
+                },
+                "send_to": {
+                    "description": "接受者",
+                    "type": "string"
+                },
+                "send_type": {
+                    "description": "发送类型，ta:塔罗订单",
+                    "type": "string",
+                    "enum": [
+                        "ta"
+                    ]
+                },
+                "uid": {
+                    "description": "用户id",
+                    "type": "string"
+                }
+            }
+        },
         "v1.SetPriceForm": {
             "type": "object",
             "required": [
+                "location",
                 "single_orig",
                 "single_sell_higher",
                 "single_sell_lower",
@@ -3215,6 +3224,16 @@ const docTemplate = `{
                 "three_sell_lower"
             ],
             "properties": {
+                "location": {
+                    "description": "地区",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
+                },
                 "single_orig": {
                     "description": "单个原价",
                     "type": "number"
@@ -3256,7 +3275,20 @@ const docTemplate = `{
         },
         "v1.UpdatePriceForm": {
             "type": "object",
+            "required": [
+                "location"
+            ],
             "properties": {
+                "location": {
+                    "description": "地区",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
+                },
                 "single_orig": {
                     "description": "单个原价",
                     "type": "number"

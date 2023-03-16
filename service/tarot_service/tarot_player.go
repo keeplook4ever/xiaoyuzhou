@@ -1,33 +1,42 @@
 package tarot_service
 
 import (
+	"time"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/service/order_service"
 )
 
-// GetRandomOneTarot 获取随机一张塔罗牌
-func GetRandomOneTarot() (*models.TarotDto, error) {
+// GetRandomOneTarot 获取随机一张塔罗牌, 并且创建塔罗抽取记录, 获得塔罗牌，订单号
+func GetRandomOneTarot(uid, question string) (*models.TarotDto, string, error) {
 
 	randTarot, err := models.GetOneRandTarot()
 	if err != nil {
-		return nil, err
+		logging.Debugf("Error: %s", err.Error())
+		return nil, "", err
 	}
 
 	// 将问题与对应塔罗牌插入数据库
-	//err = InsertQuestionToDB(question, uid, recordId, randTarot.TarotId)
-	//if err != nil {
-	//	return nil, err
-	//}
+	idList := make([]uint, 0)
+	idList = append(idList, randTarot.TarotId)
+	ts := time.Now().Unix()
+	// 创建记录
+	err, orderId := order_service.CreateRecordWithNoOrder(uid, question, ts, idList)
+	if err != nil {
+		logging.Debugf("Error: %s", err.Error())
+		return nil, "", err
+	}
 
-	return randTarot, nil
+	return randTarot, orderId, nil
 }
 
 // GetOneTarotByOrderAndUser 根据订单号获取抽取的塔罗牌的解答
-func GetOneTarotByOrderAndUser(OriOrderId string) (*models.TarotDto, string, error) {
+func GetOneTarotByOrderAndUser(OrderId, uid string) (*models.TarotDto, string, int64, error) {
 	// 根据订单号找到对应塔罗牌列表
-	tarot, question, err := models.GetOneTarotFromOrder(OriOrderId)
+	tarot, question, ts, err := models.GetOneTarotFromOrder(OrderId, uid)
 
 	if err != nil {
-		return nil, "", err
+		return nil, "", 0, err
 	}
-	return tarot, question, nil
+	return tarot, question, ts, nil
 }

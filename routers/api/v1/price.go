@@ -9,21 +9,23 @@ import (
 )
 
 type SetPriceForm struct {
-	SingleOrig       float32 `json:"single_orig" binding:"required"`        // 单个原价
-	SingleSellHigher float32 `json:"single_sell_higher" binding:"required"` // 单个较高售价
-	SingleSellLower  float32 `json:"single_sell_lower" binding:"required"`  // 单个较低售价
-	ThreeOrig        float32 `json:"three_orig" binding:"required"`         // 三个原价
-	ThreeSellHigher  float32 `json:"three_sell_higher" binding:"required"`  // 三个较高售价
-	ThreeSellLower   float32 `json:"three_sell_lower" binding:"required"`   // 三个较低售价
+	SingleOrig       float32 `json:"single_orig" binding:"required"`                  // 单个原价
+	SingleSellHigher float32 `json:"single_sell_higher" binding:"required"`           // 单个较高售价
+	SingleSellLower  float32 `json:"single_sell_lower" binding:"required"`            // 单个较低售价
+	ThreeOrig        float32 `json:"three_orig" binding:"required"`                   // 三个原价
+	ThreeSellHigher  float32 `json:"three_sell_higher" binding:"required"`            // 三个较高售价
+	ThreeSellLower   float32 `json:"three_sell_lower" binding:"required"`             // 三个较低售价
+	Location         string  `json:"location" binding:"required" enums:"jp,zh,en,tc"` // 地区
 }
 
 type UpdatePriceForm struct {
-	SingleOrig       float32 `json:"single_orig"`        // 单个原价
-	SingleSellHigher float32 `json:"single_sell_higher"` // 单个较高售价
-	SingleSellLower  float32 `json:"single_sell_lower"`  // 单个较低售价
-	ThreeOrig        float32 `json:"three_orig"`         // 三个原价
-	ThreeSellHigher  float32 `json:"three_sell_higher"`  // 三个较高售价
-	ThreeSellLower   float32 `json:"three_sell_lower"`   // 三个较低售价
+	SingleOrig       float32 `json:"single_orig"`                                     // 单个原价
+	SingleSellHigher float32 `json:"single_sell_higher"`                              // 单个较高售价
+	SingleSellLower  float32 `json:"single_sell_lower"`                               // 单个较低售价
+	ThreeOrig        float32 `json:"three_orig"`                                      // 三个原价
+	ThreeSellHigher  float32 `json:"three_sell_higher"`                               // 三个较高售价
+	ThreeSellLower   float32 `json:"three_sell_lower"`                                // 三个较低售价
+	Location         string  `json:"location" enums:"jp,zh,en,tc" binding:"required"` // 地区
 }
 
 // SetPrice
@@ -43,6 +45,7 @@ func SetPrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
+		"location":           data.Location,
 		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
 		"single_sell_lower":  data.SingleSellLower,
@@ -61,14 +64,14 @@ func SetPrice(c *gin.Context) {
 
 // GetPrice
 // @Summary 获取价格
-// @Success 200 {object} models.Price
+// @Success 200 {object} []models.Price
 // @Failure 500 {object} app.Response
 // @Router /manager/tarot/price [get]
 // @Security ApiKeyAuth
 // @Tags Manager
 func GetPrice(c *gin.Context) {
 	appG := app.Gin{C: c}
-	data, err := tarot_service.GetPrice()
+	data, err := tarot_service.GetPriceTotal()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return
@@ -93,6 +96,7 @@ func UpdatePrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
+		"location":           data.Location,
 		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
 		"single_sell_lower":  data.SingleSellLower,
