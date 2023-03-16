@@ -57,14 +57,14 @@ func CreatePayPalOrder(c *gin.Context) {
 		return
 	}
 
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, true)
 	if err != nil {
 		xlog.Error(err)
 		appG.Response(http.StatusOK, "初始化client失败", nil)
 		return
 	}
 	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
+	client.DebugSwitch = gopay.DebugOff
 
 	xlog.Debugf("Appid: %s", client.Appid)
 	xlog.Debugf("AccessToken: %s", client.AccessToken)

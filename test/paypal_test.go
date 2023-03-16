@@ -33,7 +33,7 @@ func TestBasicAuth(t *testing.T) {
 
 func TestCreateOrder(t *testing.T) {
 
-	client, err := paypal.NewClient(Clientid, Secret, false)
+	client, err := paypal.NewClient(Clientid, Secret, true)
 	if err != nil {
 		xlog.Error(err)
 		return

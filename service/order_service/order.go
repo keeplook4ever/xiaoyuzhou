@@ -63,13 +63,13 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 		return errors.New("ok")
 	}
 
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, false)
+	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, true)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error %v", err))
 		return
 	}
 	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOn
+	client.DebugSwitch = gopay.DebugOff
 	ctx := context.Background()
 	ppRspc, err := client.OrderCapture(ctx, OriOrderId, nil)
 	if err != nil {
