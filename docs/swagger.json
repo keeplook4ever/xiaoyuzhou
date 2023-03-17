@@ -2655,11 +2655,11 @@
                     "type": "string"
                 },
                 "return_url": {
-                    "description": "CardType      string `json:\"card_type\" binding:\"required\" enums:\"one,three\"`      // 卡牌类型 one:单张，three: 多张\nUid           string `json:\"uid\" binding:\"required\"`                              // 用户ID",
+                    "description": "支付成功返回URL",
                     "type": "string"
                 },
                 "scene": {
-                    "description": "TarotIdList   []int  `json:\"tarot_id_list\" binding:\"required\"`                    // 塔罗牌id列表\nHigherOrLower string `json:\"higher_or_lower\" binding:\"required\" enums:\"high,low\"` // 高价格还是低价格\nQuestion      string `json:\"question\" binding:\"required\"`                         // 用户问题\n场景：",
+                    "description": "场景：",
                     "type": "string",
                     "enum": [
                         "ta_one_high",
@@ -3177,12 +3177,17 @@
         "v1.SendMailForm": {
             "type": "object",
             "required": [
+                "answer_url",
                 "order_id",
                 "send_to",
                 "send_type",
                 "uid"
             ],
             "properties": {
+                "answer_url": {
+                    "description": "塔罗解答URL",
+                    "type": "string"
+                },
                 "order_id": {
                     "description": "订单号",
                     "type": "string"

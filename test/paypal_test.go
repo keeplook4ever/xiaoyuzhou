@@ -2,7 +2,6 @@ package test
 
 import (
 	"context"
-	"encoding/base64"
 	"github.com/go-pay/gopay/paypal"
 	"testing"
 
@@ -24,18 +23,11 @@ var (
 //	os.Exit(m.Run())
 //}
 
-func TestBasicAuth(t *testing.T) {
-	uname := "jerry"
-	passwd := "12346"
-	auth := base64.StdEncoding.EncodeToString([]byte(uname + ":" + passwd))
-	xlog.Debugf("Basic %s", auth)
-}
-
 func TestCreateOrder(t *testing.T) {
 
-	client, err := paypal.NewClient(Clientid, Secret, true)
+	client, err := paypal.NewClient(Clientid, Secret, false)
 	if err != nil {
-		xlog.Error(err)
+		t.Error(err)
 		return
 	}
 	// 打开Debug开关，输出日志

@@ -65,20 +65,15 @@ func InitRouter() *gin.Engine {
 
 		}
 
-		// PayPal相关
-		paypalV1 := apiPlayerV1.Group("/paypal")
-		{
-			//创建PayPal支付订单
-			paypalV1.POST("/checkout/orders", v1.CreatePayPalOrder)
+		//创建PayPal支付订单
+		apiPlayerV1.POST("/paypal/checkout/orders", v1.CreatePayPalOrder)
 
-			////确认支付订单
-			//paypalV1.POST("/confirm/orders/:order_id", v1.ConfirmPayment)
-			//
-			////捕获PayPal订单
-			//paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
-			//
-
-		}
+		////确认支付订单
+		//paypalV1.POST("/confirm/orders/:order_id", v1.ConfirmPayment)
+		//
+		////捕获PayPal订单
+		//paypalV1.POST("/capture/orders/:order_id", v1.CapturePayPalOrder)
+		//
 
 		//获取订单详情
 		apiPlayerV1.GET("/checkout/orders/:order_id", v1.GetOrderStatus)

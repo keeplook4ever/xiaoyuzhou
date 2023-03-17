@@ -49,4 +49,7 @@ func TestTime(t *testing.T) {
 	ls := strconv.FormatInt(ts, 10)[5:]
 	t.Log(ls)
 
+	amount := 21.85
+	ta := int(amount)
+	t.Log(ta)
 }

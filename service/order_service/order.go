@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	PayPalClientID = "AYxax5vAtOVCwWE7k3-IkfeeW91WssDy0X87o3hYU6v64yJPWDkb_9mWbcKrlixMDssEXnaU75Qwd8A3"
-	PayPalSecret   = "EIIDNX57BlG8pCeFiiY6WJipeMtSQsIiOOP3ojg0_gtNSd3ndB0asdBQXP9IIeGh6gmlRnJHjjeozKGP"
+	PayPalClientIDTest = "AYxax5vAtOVCwWE7k3-IkfeeW91WssDy0X87o3hYU6v64yJPWDkb_9mWbcKrlixMDssEXnaU75Qwd8A3"
+	PayPalSecretTest   = "EIIDNX57BlG8pCeFiiY6WJipeMtSQsIiOOP3ojg0_gtNSd3ndB0asdBQXP9IIeGh6gmlRnJHjjeozKGP"
 )
 
 func CheckOrderIfPayed(OrderID, uid string) (bool, error) {
@@ -63,13 +63,13 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 		return errors.New("ok")
 	}
 
-	client, err := paypal.NewClient(PayPalClientID, PayPalSecret, true)
+	client, err := paypal.NewClient(PayPalClientIDTest, PayPalSecretTest, false)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error %v", err))
 		return
 	}
 	// 打开Debug开关，输出日志
-	client.DebugSwitch = gopay.DebugOff
+	client.DebugSwitch = gopay.DebugOn
 	ctx := context.Background()
 	ppRspc, err := client.OrderCapture(ctx, OriOrderId, nil)
 	if err != nil {

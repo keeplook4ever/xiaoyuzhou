@@ -20,7 +20,7 @@ type Order struct {
 	Status        int     `gorm:"column:status;not null;type:tinyint(3);default:0" json:"status"`                                     // 订单状态：0未支付，1已支付，2支付失败
 	TarotList     string  `gorm:"column:tarot_list;not null;type:varchar(100)" json:"tarot_list"`                                     // 塔罗牌id列表：单张是1个，三张是3个
 	PickTime      int64   `gorm:"column:pick_time;not null;type:int;default:0" json:"pick_time"`                                      // 塔罗抽取时间
-	PayedTime     int     `gorm:"column:payed_time;not null;type:int;default:0" json:"payed_time"`                                    // 支付时间戳
+	PayedTime     int64   `gorm:"column:payed_time;not null;type:int;default:0" json:"payed_time"`                                    // 支付时间戳
 	PayMethod     string  `gorm:"column:pay_method;not null;type:varchar(100)" json:"pay_method" enums:"paypal,wechat,alipay,credit"` // 支付方式：PayPal,微信,支付宝,信用卡
 	Ques          string  `gorm:"column:ques;not null;type:varchar(191)" json:"ques"`                                                 // 用户输入的问题
 	TransactionId string  `gorm:"column:transaction_id;not null;type:varchar(190)" json:"transaction_id"`                             // 交易付款流水号
@@ -95,7 +95,7 @@ func UpdateOrderStatus(OriOrderId string, payMethod string, status int, tansActi
 	var od Order
 	data := map[string]interface{}{
 		"status":         status,
-		"payed_time":     time.Now().UnixMilli(),
+		"payed_time":     time.Now().Unix(),
 		"transaction_id": tansActionId,
 	}
 	if err := Db.Model(&Order{}).Where("ori_order_id = ? and pay_method = ?", OriOrderId, payMethod).First(&od).Error; err == gorm.ErrRecordNotFound {

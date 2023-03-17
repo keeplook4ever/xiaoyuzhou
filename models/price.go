@@ -76,10 +76,18 @@ func GetPriceTotal() ([]Price, error) {
 
 func GetPaymentPrice(scene, location string) float32 {
 	// enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"
-
+	// location: jp,zh,en,tc
 	priceTotal, err := GetPrice(location)
 	if err != nil {
-		return 553.45 // 获取数据库失败后的默认价格：单张高价
+		if location == "jp" {
+			return 2480
+		} else if location == "zh" {
+			return 98
+		} else if location == "tc" {
+			return 598
+		} else if location == "en" {
+			return 24.99
+		}
 	}
 
 	switch scene {
