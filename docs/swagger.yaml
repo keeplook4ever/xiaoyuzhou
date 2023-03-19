@@ -922,15 +922,11 @@ definitions:
         enum:
         - ta
         type: string
-      uid:
-        description: 用户id
-        type: string
     required:
     - answer_url
     - order_id
     - send_to
     - send_type
-    - uid
     type: object
   v1.SetPriceForm:
     properties:
@@ -2171,11 +2167,6 @@ paths:
   /player/tarot/answer:
     get:
       parameters:
-      - description: 用户ID
-        in: query
-        name: uid
-        required: true
-        type: string
       - description: 订单ID
         in: query
         name: order_id

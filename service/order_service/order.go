@@ -15,8 +15,8 @@ const (
 	PayPalSecretTest   = "EIIDNX57BlG8pCeFiiY6WJipeMtSQsIiOOP3ojg0_gtNSd3ndB0asdBQXP9IIeGh6gmlRnJHjjeozKGP"
 )
 
-func CheckOrderIfPayed(OrderID, uid string) (bool, error) {
-	return models.CheckOrderIfPayed(OrderID, uid)
+func CheckOrderIfPayed(OrderID string) (bool, error) {
+	return models.CheckOrderIfPayed(OrderID)
 }
 
 func GetOrderStatus(OrderID string) (int, error) {

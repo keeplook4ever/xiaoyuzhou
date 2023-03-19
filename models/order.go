@@ -27,10 +27,10 @@ type Order struct {
 }
 
 // GetOneTarotFromOrder 根据订单号获取对应的塔罗牌
-func GetOneTarotFromOrder(OrderId, uid string) (*TarotDto, string, int64, error) {
+func GetOneTarotFromOrder(OrderId string) (*TarotDto, string, int64, error) {
 	var tarot Tarot
 	var od Order
-	if err := Db.Model(&Order{}).Where("order_id = ? and uid= ?", OrderId, uid).Find(&od).Error; err != nil {
+	if err := Db.Model(&Order{}).Where("order_id = ? ", OrderId).Find(&od).Error; err != nil {
 		return nil, "", 0, err
 	}
 	tLSlice := util.StringToIntSlice(od.TarotList)
@@ -110,9 +110,9 @@ func UpdateOrderStatus(OriOrderId string, payMethod string, status int, tansActi
 	return nil
 }
 
-func CheckOrderIfPayed(orderId, uid string) (bool, error) {
+func CheckOrderIfPayed(orderId string) (bool, error) {
 	var od Order
-	if err := Db.Model(&Order{}).Where("order_id = ? and uid = ?", orderId, uid).First(&od).Error; err != nil {
+	if err := Db.Model(&Order{}).Where("order_id = ? ", orderId).First(&od).Error; err != nil {
 		return false, err
 	}
 

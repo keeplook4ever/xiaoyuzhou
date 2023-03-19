@@ -31,9 +31,9 @@ func GetRandomOneTarot(uid, question string) (*models.TarotDto, string, error) {
 }
 
 // GetOneTarotByOrderAndUser 根据订单号获取抽取的塔罗牌的解答
-func GetOneTarotByOrderAndUser(OrderId, uid string) (*models.TarotDto, string, int64, error) {
+func GetOneTarotByOrderAndUser(OrderId string) (*models.TarotDto, string, int64, error) {
 	// 根据订单号找到对应塔罗牌列表
-	tarot, question, ts, err := models.GetOneTarotFromOrder(OrderId, uid)
+	tarot, question, ts, err := models.GetOneTarotFromOrder(OrderId)
 
 	if err != nil {
 		return nil, "", 0, err

@@ -1841,13 +1841,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "用户ID",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "订单ID",
                         "name": "order_id",
                         "in": "query",
@@ -3188,8 +3181,7 @@ const docTemplate = `{
                 "answer_url",
                 "order_id",
                 "send_to",
-                "send_type",
-                "uid"
+                "send_type"
             ],
             "properties": {
                 "answer_url": {
@@ -3210,10 +3202,6 @@ const docTemplate = `{
                     "enum": [
                         "ta"
                     ]
-                },
-                "uid": {
-                    "description": "用户id",
-                    "type": "string"
                 }
             }
         },
