@@ -1162,6 +1162,138 @@
                 }
             }
         },
+        "/manager/tarot-daily": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取每日塔罗牌:支持分页",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "名字",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetDailyTarotResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "修改每日塔罗牌",
+                "parameters": [
+                    {
+                        "description": "修改内容",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditDailyTarotForm"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "塔罗牌ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加每日免费塔罗牌内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddDailyTarotForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/tarot/price": {
             "get": {
                 "security": [
@@ -1824,6 +1956,44 @@
                 }
             }
         },
+        "/player/tarot-daily": {
+            "get": {
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取每日免费塔罗牌",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TarotDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/player/tarot/answer": {
             "get": {
                 "tags": [
@@ -1863,7 +2033,7 @@
                 "summary": "用户抽取塔罗牌: 1张",
                 "parameters": [
                     {
-                        "description": "抽取一张塔罗牌",
+                        "description": "抽取一张塔罗牌付费",
                         "name": "_",
                         "in": "body",
                         "required": true,
@@ -2053,6 +2223,61 @@
                 },
                 "updated_by": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DailyTarotDto": {
+            "type": "object",
+            "properties": {
+                "analyze": {
+                    "description": "解析",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "created_by": {
+                    "description": "创建者",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "integer"
+                },
+                "img_url": {
+                    "description": "图片",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string"
+                },
+                "love_list": {
+                    "description": "爱情",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "更新者",
+                    "type": "string"
+                },
+                "work_list": {
+                    "description": "工作",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -2453,6 +2678,64 @@
                 }
             }
         },
+        "v1.AddDailyTarotForm": {
+            "type": "object",
+            "required": [
+                "analyze",
+                "card_name",
+                "created_by",
+                "img_url",
+                "language",
+                "love_list",
+                "updated_by",
+                "work_list"
+            ],
+            "properties": {
+                "analyze": {
+                    "description": "解读",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "卡牌名字",
+                    "type": "string"
+                },
+                "created_by": {
+                    "description": "创建者",
+                    "type": "string"
+                },
+                "img_url": {
+                    "description": "图片链接",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en"
+                    ]
+                },
+                "love_list": {
+                    "description": "爱情列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_by": {
+                    "description": "更新者",
+                    "type": "string"
+                },
+                "work_list": {
+                    "description": "工作列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.AddLotteryContentData": {
             "type": "object",
             "required": [
@@ -2799,6 +3082,58 @@
                 }
             }
         },
+        "v1.EditDailyTarotForm": {
+            "type": "object",
+            "properties": {
+                "analyze": {
+                    "description": "解读",
+                    "type": "string"
+                },
+                "card_name": {
+                    "description": "卡牌名字",
+                    "type": "string"
+                },
+                "created_by": {
+                    "description": "创建者",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "塔罗ID",
+                    "type": "integer"
+                },
+                "img_url": {
+                    "description": "图片链接",
+                    "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en"
+                    ]
+                },
+                "love_list": {
+                    "description": "爱情列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_by": {
+                    "description": "更新者",
+                    "type": "string"
+                },
+                "work_list": {
+                    "description": "工作列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.EditLotteryForm": {
             "type": "object",
             "required": [
@@ -2997,6 +3332,20 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.CategoryDto"
+                    }
+                }
+            }
+        },
+        "v1.GetDailyTarotResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DailyTarotDto"
                     }
                 }
             }

@@ -226,7 +226,7 @@ func GetTarot(c *gin.Context) {
 
 // GetTarotOne
 // @Summary 用户抽取塔罗牌: 1张
-// @Param _ body GetTarotOneForm true "抽取一张塔罗牌"
+// @Param _ body GetTarotOneForm true "抽取一张塔罗牌付费"
 // @Success 200 {object} GetTarotOneRes
 // @Failure 500 {object} app.Response
 // @Router /player/tarot/one [post]

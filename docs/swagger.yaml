@@ -110,6 +110,46 @@ definitions:
       updated_by:
         type: string
     type: object
+  models.DailyTarotDto:
+    properties:
+      analyze:
+        description: 解析
+        type: string
+      card_name:
+        description: 名称
+        type: string
+      created_at:
+        description: 创建时间
+        type: integer
+      created_by:
+        description: 创建者
+        type: string
+      id:
+        description: id
+        type: integer
+      img_url:
+        description: 图片
+        type: string
+      language:
+        description: 语言
+        type: string
+      love_list:
+        description: 爱情
+        items:
+          type: string
+        type: array
+      updated_at:
+        description: 更新时间
+        type: integer
+      updated_by:
+        description: 更新者
+        type: string
+      work_list:
+        description: 工作
+        items:
+          type: string
+        type: array
+    type: object
   models.Lottery:
     properties:
       created_at:
@@ -396,6 +436,50 @@ definitions:
     - name
     - state
     type: object
+  v1.AddDailyTarotForm:
+    properties:
+      analyze:
+        description: 解读
+        type: string
+      card_name:
+        description: 卡牌名字
+        type: string
+      created_by:
+        description: 创建者
+        type: string
+      img_url:
+        description: 图片链接
+        type: string
+      language:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        type: string
+      love_list:
+        description: 爱情列表
+        items:
+          type: string
+        type: array
+      updated_by:
+        description: 更新者
+        type: string
+      work_list:
+        description: 工作列表
+        items:
+          type: string
+        type: array
+    required:
+    - analyze
+    - card_name
+    - created_by
+    - img_url
+    - language
+    - love_list
+    - updated_by
+    - work_list
+    type: object
   v1.AddLotteryContentData:
     properties:
       content:
@@ -651,6 +735,44 @@ definitions:
     required:
     - id
     type: object
+  v1.EditDailyTarotForm:
+    properties:
+      analyze:
+        description: 解读
+        type: string
+      card_name:
+        description: 卡牌名字
+        type: string
+      created_by:
+        description: 创建者
+        type: string
+      id:
+        description: 塔罗ID
+        type: integer
+      img_url:
+        description: 图片链接
+        type: string
+      language:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        type: string
+      love_list:
+        description: 爱情列表
+        items:
+          type: string
+        type: array
+      updated_by:
+        description: 更新者
+        type: string
+      work_list:
+        description: 工作列表
+        items:
+          type: string
+        type: array
+    type: object
   v1.EditLotteryForm:
     properties:
       keyword:
@@ -793,6 +915,15 @@ definitions:
       lists:
         items:
           $ref: '#/definitions/models.CategoryDto'
+        type: array
+    type: object
+  v1.GetDailyTarotResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.DailyTarotDto'
         type: array
     type: object
   v1.GetLotteryContentForManagerResponse:
@@ -1743,6 +1874,88 @@ paths:
       summary: 添加塔罗牌内容
       tags:
       - Manager
+  /manager/tarot-daily:
+    get:
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        type: integer
+      - description: 名字
+        in: query
+        name: name
+        type: string
+      - description: 语言
+        in: query
+        name: language
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetDailyTarotResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取每日塔罗牌:支持分页
+      tags:
+      - Manager
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddDailyTarotForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加每日免费塔罗牌内容
+      tags:
+      - Manager
+    put:
+      parameters:
+      - description: 修改内容
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditDailyTarotForm'
+      - description: 塔罗牌ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改每日塔罗牌
+      tags:
+      - Manager
   /manager/tarot/{id}:
     put:
       consumes:
@@ -2164,6 +2377,31 @@ paths:
       summary: 创建PapPal支付订单
       tags:
       - Player
+  /player/tarot-daily:
+    get:
+      parameters:
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 语言
+        in: query
+        name: language
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TarotDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取每日免费塔罗牌
+      tags:
+      - Player
   /player/tarot/answer:
     get:
       parameters:
@@ -2187,7 +2425,7 @@ paths:
   /player/tarot/one:
     post:
       parameters:
-      - description: 抽取一张塔罗牌
+      - description: 抽取一张塔罗牌付费
         in: body
         name: _
         required: true

@@ -34,6 +34,9 @@ func InitRouter() *gin.Engine {
 			// 塔罗抽取接口：返回塔罗图片和名字
 			apiPlayerV1.POST("/tarot/one", v1.GetTarotOne)
 
+			// 获取每日免费塔罗
+			apiPlayerV1.GET("/tarot-daily", v1.GetDailyFreeTarot)
+
 			// 获取塔罗答案接口：根据订单返回
 			apiPlayerV1.GET("/tarot/answer", v1.GetTarotAnswer)
 
@@ -151,16 +154,21 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.POST("/tarot", v1.AddTarot)
 		//修改塔罗牌
 		apiManagerV1.PUT("/tarot/:id", v1.EditTarot)
-
 		//获取塔罗牌
 		apiManagerV1.GET("/tarot", v1.GetTarot)
-
 		//创建塔罗牌价格
 		apiManagerV1.POST("/tarot/price", v1.SetPrice)
 		//获取塔罗牌价格
 		apiManagerV1.GET("/tarot/price", v1.GetPrice)
 		//修改塔罗牌价格
 		apiManagerV1.PUT("/tarot/price", v1.UpdatePrice)
+
+		//每日免费塔罗牌后台创建
+		apiManagerV1.POST("/tarot-daily", v1.AddDailyTarot)
+		// 修改每日塔罗牌
+		apiManagerV1.PUT("/tarot-daily", v1.EditDailyTarot)
+		// 获取每日塔牌
+		apiManagerV1.GET("/tarot-daily", v1.GetDailyTarot)
 
 	}
 

@@ -10,28 +10,28 @@ import (
 
 type Tarot struct {
 	Model
-	ImgUrl        string `gorm:"column:img_url;not null;type:varchar(191)" json:"img_url"`                    // 图片链接
-	Language      string `gorm:"column:language;not null;type:varchar(11)" json:"language" enums:"jp,zh,en"`  // 语言
-	Pos           string `gorm:"column:pos;not null;type:varchar(10)" json:"pos" enums:"up,down"`             // 塔罗正逆位
-	CardName      string `gorm:"column:card_name;not null;type:varchar(100)" json:"card_name"`                //卡牌名字
-	KeyWord       string `gorm:"column:keyword;not null;type:varchar(190)" json:"keyword"`                    // 卡牌解读关键词
-	Constellation string `gorm:"column:constellation;not null;type:varchar(190)" json:"constellation"`        //对应星座
-	People        string `gorm:"column:people;not null;type:varchar(190)" json:"people"`                      //对应人物
-	Element       string `gorm:"column:element;not null;type:varchar(190)" json:"element"`                    //对应元素
-	Enhance       string `gorm:"column:enhance;not null;type:varchar(190)" json:"enhance"`                    // 加强牌
-	AnalyzeOne    string `gorm:"column:analyze_one;not null;type:text" json:"analyze_one"`                    // 解析1
-	AnalyzeTwo    string `gorm:"column:analyze_two;not null;type:text" json:"analyze_two"`                    // 解析2
-	PosMeaning    string `gorm:"column:pos_meaning;not null;type:varchar(190)" json:"pos_meaning"`            // 正逆位含义
-	Love          string `gorm:"column:love;not null;type:varchar(190)" json:"love"`                          // 爱情婚姻
-	Work          string `gorm:"column:work;not null;type:varchar(190)" json:"work"`                          // 事业学业
-	Money         string `gorm:"column:money;not null;type:varchar(190)" json:"money"`                        // 人际财富
-	Health        string `gorm:"column:health;not null;type:varchar(190)" json:"health"`                      // 健康生活
-	Other         string `gorm:"column:other;not null;type:varchar(190)" json:"other"`                        // 其他
-	AnswerList    string `gorm:"column:answer_list;not null;type:text" json:"answer_list"`                    // 回答列表
-	LuckyNumber   string    `gorm:"column:lucky_number;not null;type:varchar(50)" json:"lucky_number"` // 幸运数字
-	Saying        string `gorm:"column:saying;not null;type:varchar(191)" json:"saying"`                      // 名言
-	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`               // 创建者
-	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`               // 更新者
+	ImgUrl        string `gorm:"column:img_url;not null;type:varchar(191)" json:"img_url"`                   // 图片链接
+	Language      string `gorm:"column:language;not null;type:varchar(11)" json:"language" enums:"jp,zh,en"` // 语言
+	Pos           string `gorm:"column:pos;not null;type:varchar(10)" json:"pos" enums:"up,down"`            // 塔罗正逆位
+	CardName      string `gorm:"column:card_name;not null;type:varchar(100)" json:"card_name"`               // 卡牌名字
+	KeyWord       string `gorm:"column:keyword;not null;type:varchar(190)" json:"keyword"`                   // 卡牌解读关键词
+	Constellation string `gorm:"column:constellation;not null;type:varchar(190)" json:"constellation"`       // 对应星座
+	People        string `gorm:"column:people;not null;type:varchar(190)" json:"people"`                     // 对应人物
+	Element       string `gorm:"column:element;not null;type:varchar(190)" json:"element"`                   // 对应元素
+	Enhance       string `gorm:"column:enhance;not null;type:varchar(190)" json:"enhance"`                   // 加强牌
+	AnalyzeOne    string `gorm:"column:analyze_one;not null;type:text" json:"analyze_one"`                   // 解析1
+	AnalyzeTwo    string `gorm:"column:analyze_two;not null;type:text" json:"analyze_two"`                   // 解析2
+	PosMeaning    string `gorm:"column:pos_meaning;not null;type:varchar(190)" json:"pos_meaning"`           // 正逆位含义
+	Love          string `gorm:"column:love;not null;type:varchar(190)" json:"love"`                         // 爱情婚姻
+	Work          string `gorm:"column:work;not null;type:varchar(190)" json:"work"`                         // 事业学业
+	Money         string `gorm:"column:money;not null;type:varchar(190)" json:"money"`                       // 人际财富
+	Health        string `gorm:"column:health;not null;type:varchar(190)" json:"health"`                     // 健康生活
+	Other         string `gorm:"column:other;not null;type:varchar(190)" json:"other"`                       // 其他
+	AnswerList    string `gorm:"column:answer_list;not null;type:text" json:"answer_list"`                   // 回答列表
+	LuckyNumber   string `gorm:"column:lucky_number;not null;type:varchar(50)" json:"lucky_number"`          // 幸运数字
+	Saying        string `gorm:"column:saying;not null;type:varchar(191)" json:"saying"`                     // 名言
+	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`              // 创建者
+	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`              // 更新者
 }
 
 type TarotDto struct {
@@ -39,11 +39,11 @@ type TarotDto struct {
 	ImgUrl        string   `json:"img_url"`       // 图片链接
 	Language      string   `json:"language"`      // 语言
 	Pos           string   `json:"pos"`           // 塔罗正逆位
-	CardName      string   `json:"card_name"`     //卡牌名字
+	CardName      string   `json:"card_name"`     // 卡牌名字
 	KeyWord       string   `json:"keyword"`       // 卡牌解读关键词
-	Constellation string   `json:"constellation"` //对应星座
-	People        string   `json:"people"`        //对应人物
-	Element       string   `json:"element"`       //对应元素
+	Constellation string   `json:"constellation"` // 对应星座
+	People        string   `json:"people"`        // 对应人物
+	Element       string   `json:"element"`       // 对应元素
 	Enhance       string   `json:"enhance"`       // 加强牌
 	AnalyzeOne    string   `json:"analyze_one"`   // 解析1
 	AnalyzeTwo    string   `json:"analyze_two"`   // 解析2
@@ -54,7 +54,7 @@ type TarotDto struct {
 	Health        string   `json:"health"`        // 健康生活
 	Other         string   `json:"other"`         // 其他
 	AnswerList    []string `json:"answer_list"`   // 回答列表
-	LuckyNumber   string      `json:"lucky_number"`  // 幸运数字
+	LuckyNumber   string   `json:"lucky_number"`  // 幸运数字
 	Saying        string   `json:"saying"`        // 名言
 	CreatedBy     string   `json:"created_by"`    // 创建者
 	UpdatedBy     string   `json:"updated_by"`    // 更新者
@@ -111,7 +111,7 @@ func AddTarot(data map[string]interface{}) error {
 		Money:         data["money"].(string),         // 人际财富
 		Health:        data["health"].(string),        // 健康生活
 		Other:         data["other"].(string),         // 其他
-		LuckyNumber:   data["lucky_number"].(string),     // 幸运数字
+		LuckyNumber:   data["lucky_number"].(string),  // 幸运数字
 		Saying:        data["saying"].(string),        // 名言
 		AnswerList:    data["answer_list"].(string),   // 回答列表
 		CreatedBy:     data["created_by"].(string),    // 创建者
@@ -178,7 +178,6 @@ func GetOneRandTarot() (*TarotDto, error) {
 	resp := tarots[rand.Intn(int(num))]
 	return &resp, nil
 }
-
 
 func GetThreeRandTarot() {
 
