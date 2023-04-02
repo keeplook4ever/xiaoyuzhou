@@ -2395,8 +2395,8 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "location": {
-                    "description": "地区",
+                "language": {
+                    "description": "语言",
                     "type": "string",
                     "enum": [
                         "jp",
@@ -2914,7 +2914,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "cancel_url",
-                "location",
+                "language",
                 "order_id",
                 "return_url",
                 "scene"
@@ -2924,7 +2924,7 @@ const docTemplate = `{
                     "description": "取消支付URL",
                     "type": "string"
                 },
-                "location": {
+                "language": {
                     "description": "地区:  tc:台湾",
                     "type": "string",
                     "enum": [
@@ -3441,12 +3441,12 @@ const docTemplate = `{
         "v1.GetTarotOneForm": {
             "type": "object",
             "required": [
-                "location",
+                "language",
                 "question",
                 "uid"
             ],
             "properties": {
-                "location": {
+                "language": {
                     "type": "string",
                     "enum": [
                         "jp",
@@ -3557,7 +3557,7 @@ const docTemplate = `{
         "v1.SetPriceForm": {
             "type": "object",
             "required": [
-                "location",
+                "language",
                 "single_orig",
                 "single_sell_higher",
                 "single_sell_lower",
@@ -3566,7 +3566,7 @@ const docTemplate = `{
                 "three_sell_lower"
             ],
             "properties": {
-                "location": {
+                "language": {
                     "description": "地区",
                     "type": "string",
                     "enum": [
@@ -3618,10 +3618,10 @@ const docTemplate = `{
         "v1.UpdatePriceForm": {
             "type": "object",
             "required": [
-                "location"
+                "language"
             ],
             "properties": {
-                "location": {
+                "language": {
                     "description": "地区",
                     "type": "string",
                     "enum": [

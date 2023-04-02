@@ -224,8 +224,8 @@ definitions:
         type: string
       id:
         type: integer
-      location:
-        description: 地区
+      language:
+        description: 语言
         enum:
         - jp
         - zh
@@ -612,7 +612,7 @@ definitions:
       cancel_url:
         description: 取消支付URL
         type: string
-      location:
+      language:
         description: '地区:  tc:台湾'
         enum:
         - jp
@@ -636,7 +636,7 @@ definitions:
         type: string
     required:
     - cancel_url
-    - location
+    - language
     - order_id
     - return_url
     - scene
@@ -980,7 +980,7 @@ definitions:
     type: object
   v1.GetTarotOneForm:
     properties:
-      location:
+      language:
         enum:
         - jp
         - zh
@@ -994,7 +994,7 @@ definitions:
         description: 用户uid
         type: string
     required:
-    - location
+    - language
     - question
     - uid
     type: object
@@ -1061,7 +1061,7 @@ definitions:
     type: object
   v1.SetPriceForm:
     properties:
-      location:
+      language:
         description: 地区
         enum:
         - jp
@@ -1088,7 +1088,7 @@ definitions:
         description: 三个较低售价
         type: number
     required:
-    - location
+    - language
     - single_orig
     - single_sell_higher
     - single_sell_lower
@@ -1107,7 +1107,7 @@ definitions:
     type: object
   v1.UpdatePriceForm:
     properties:
-      location:
+      language:
         description: 地区
         enum:
         - jp
@@ -1134,7 +1134,7 @@ definitions:
         description: 三个较低售价
         type: number
     required:
-    - location
+    - language
     type: object
   v1.auth:
     properties:

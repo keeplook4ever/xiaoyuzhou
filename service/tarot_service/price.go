@@ -16,8 +16,8 @@ func GetPriceTotal() ([]models.Price, error) {
 	return models.GetPriceTotal()
 }
 
-func GetPaymentPrice(scene string, location string) float32 {
+func GetPaymentPrice(scene string, language string) float32 {
 	// enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"
-	// location: jp,zh,en,tc
-	return models.GetPaymentPrice(scene, location)
+	// language: jp,zh,en,tc
+	return models.GetPaymentPrice(scene, language)
 }

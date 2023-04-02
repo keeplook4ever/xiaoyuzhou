@@ -27,7 +27,7 @@ type CreatePayPalOrderForm struct {
 	CancelURL string `json:"cancel_url"  binding:"required"` // 取消支付URL
 	// 场景：
 	Scene    string `json:"scene" binding:"required" enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"` // 支付场景：ta_one_high 塔罗单张高价
-	Location string `json:"location" binding:"required" enums:"jp,zh,en,tc"`                                    // 地区:  tc:台湾
+	Language string `json:"language" binding:"required" enums:"jp,zh,en,tc"`                                    // 地区:  tc:台湾
 }
 
 // CreatePayPalOrder
@@ -59,13 +59,13 @@ func CreatePayPalOrder(c *gin.Context) {
 	var pus []*paypal.PurchaseUnit
 
 	// 获取价格
-	amount := tarot_service.GetPaymentPrice(formD.Scene, formD.Location)
+	amount := tarot_service.GetPaymentPrice(formD.Scene, formD.Language)
 
 	// 默认
 	value := fmt.Sprintf("%.2f", amount)
 	currencyCode := "USD"
 
-	switch formD.Location {
+	switch formD.Language {
 	case "jp":
 		currencyCode = "JPY"
 		value = strconv.Itoa(int(amount))

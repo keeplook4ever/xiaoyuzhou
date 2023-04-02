@@ -249,7 +249,7 @@ func GetTarotOne(c *gin.Context) {
 	resp.Name = tarot.CardName
 	resp.ImgUrl = tarot.ImgUrl
 	resp.OrderId = orderId
-	data, err := models.GetPrice(formD.Location)
+	data, err := models.GetPrice(formD.Language)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取价格失败", nil)
 		return
@@ -302,7 +302,7 @@ type GetTarotOneRes struct {
 type GetTarotOneForm struct {
 	Uid      string `json:"uid" binding:"required"`      // 用户uid
 	Question string `json:"question" binding:"required"` // 用户问题
-	Location string `json:"location" binding:"required" enums:"jp,zh,en,tc"`
+	Language string `json:"language" binding:"required" enums:"jp,zh,en,tc"`
 }
 
 type GetTarotOneAnswerResp struct {

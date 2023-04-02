@@ -10,7 +10,7 @@ type Price struct {
 	ThreeOrig        float32 `gorm:"column:three_orig;not null;type:float" json:"three_orig"`                       // 三个原价
 	ThreeSellHigher  float32 `gorm:"column:three_sell_higher;not null;type:float" json:"three_sell_higher"`         // 三个较高售价
 	ThreeSellLower   float32 `gorm:"column:three_sell_lower;not null;type:float" json:"three_sell_lower"`           // 三个较低售价
-	Location         string  `gorm:"column:location;not null;type:varchar(10)" json:"location" enums:"jp,zh,en,tc"` // 地区
+	Language         string  `gorm:"column:language;not null;type:varchar(10)" json:"language" enums:"jp,zh,en,tc"` // 语言
 	CreatedBy        string  `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`                 // 创建者
 	UpdatedBy        string  `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`                 // 更新者
 }
@@ -25,14 +25,14 @@ func SetPrice(data map[string]interface{}) error {
 		ThreeSellLower:   data["three_sell_lower"].(float32),
 		CreatedBy:        data["created_by"].(string), // 创建者
 		UpdatedBy:        data["updated_by"].(string), // 更新者
-		Location:         data["location"].(string),   // 地区
+		Language:         data["language"].(string),   // 地区
 	}
 	var has []Price
 	// 有的话先删除
-	if err := Db.Model(&Price{}).Where("location = ?", data["location"]).Find(&has).Error; err != nil {
+	if err := Db.Model(&Price{}).Where("language = ?", data["language"]).Find(&has).Error; err != nil {
 		return err
 	} else {
-		Db.Where("location = ?", data["location"]).Delete(&Price{})
+		Db.Where("language = ?", data["language"]).Delete(&Price{})
 	}
 
 	if err := Db.Model(&Price{}).Create(&setD).Error; err != nil {
@@ -51,15 +51,15 @@ func UpdatePrice(data map[string]interface{}) error {
 		ThreeSellLower:   data["three_sell_lower"].(float32),
 	}
 	// 如果是0则updates会自动忽略更新
-	if err := Db.Model(&Price{}).Where("location = ?", data["location"]).Updates(&setD).Error; err != nil {
+	if err := Db.Model(&Price{}).Where("language = ?", data["language"]).Updates(&setD).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetPrice(location string) (*Price, error) {
+func GetPrice(language string) (*Price, error) {
 	var res Price
-	if err := Db.Model(&Price{}).Where("location = ?", location).First(&res).Error; err != nil {
+	if err := Db.Model(&Price{}).Where("language = ?", language).First(&res).Error; err != nil {
 		logging.Debugf("Error %s", err.Error())
 		return nil, err
 	}
@@ -74,18 +74,18 @@ func GetPriceTotal() ([]Price, error) {
 	return res, nil
 }
 
-func GetPaymentPrice(scene, location string) float32 {
+func GetPaymentPrice(scene, language string) float32 {
 	// enums:"ta_one_high,ta_one_low,ta_three_high,ta_three_low"
-	// location: jp,zh,en,tc
-	priceTotal, err := GetPrice(location)
+	// language: jp,zh,en,tc
+	priceTotal, err := GetPrice(language)
 	if err != nil {
-		if location == "jp" {
+		if language == "jp" {
 			return 2480
-		} else if location == "zh" {
+		} else if language == "zh" {
 			return 98
-		} else if location == "tc" {
+		} else if language == "tc" {
 			return 598
-		} else if location == "en" {
+		} else if language == "en" {
 			return 24.99
 		}
 	}

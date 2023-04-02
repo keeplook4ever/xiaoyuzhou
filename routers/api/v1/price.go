@@ -15,7 +15,7 @@ type SetPriceForm struct {
 	ThreeOrig        float32 `json:"three_orig" binding:"required"`                   // 三个原价
 	ThreeSellHigher  float32 `json:"three_sell_higher" binding:"required"`            // 三个较高售价
 	ThreeSellLower   float32 `json:"three_sell_lower" binding:"required"`             // 三个较低售价
-	Location         string  `json:"location" binding:"required" enums:"jp,zh,en,tc"` // 地区
+	Language         string  `json:"language" binding:"required" enums:"jp,zh,en,tc"` // 地区
 }
 
 type UpdatePriceForm struct {
@@ -25,7 +25,7 @@ type UpdatePriceForm struct {
 	ThreeOrig        float32 `json:"three_orig"`                                      // 三个原价
 	ThreeSellHigher  float32 `json:"three_sell_higher"`                               // 三个较高售价
 	ThreeSellLower   float32 `json:"three_sell_lower"`                                // 三个较低售价
-	Location         string  `json:"location" enums:"jp,zh,en,tc" binding:"required"` // 地区
+	Language         string  `json:"language" enums:"jp,zh,en,tc" binding:"required"` // 地区
 }
 
 // SetPrice
@@ -45,7 +45,7 @@ func SetPrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
-		"location":           data.Location,
+		"language":           data.Language,
 		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
 		"single_sell_lower":  data.SingleSellLower,
@@ -96,7 +96,7 @@ func UpdatePrice(c *gin.Context) {
 	}
 
 	priceData := map[string]interface{}{
-		"location":           data.Location,
+		"language":           data.Language,
 		"single_orig":        data.SingleOrig,
 		"single_sell_higher": data.SingleSellHigher,
 		"single_sell_lower":  data.SingleSellLower,
