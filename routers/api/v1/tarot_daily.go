@@ -69,14 +69,12 @@ func AddDailyTarot(c *gin.Context) {
 }
 
 type AddDailyTarotForm struct {
-	ImgUrl    string   `json:"img_url" binding:"required"`                   // 图片链接
-	Language  string   `json:"language" enums:"jp,zh,en" binding:"required"` // 语言
-	CardName  string   `json:"card_name" binding:"required"`                 // 卡牌名字
-	Analyze   string   `json:"analyze" binding:"required"`                   // 解读
-	LoveList  []string `json:"love_list" binding:"required"`                 // 爱情列表
-	WorkList  []string `json:"work_list" binding:"required"`                 // 工作列表
-	CreatedBy string   `json:"created_by" binding:"required"`                // 创建者
-	UpdatedBy string   `json:"updated_by" binding:"required"`                // 更新者
+	ImgUrl   string   `json:"img_url" binding:"required"`                   // 图片链接
+	Language string   `json:"language" enums:"jp,zh,en" binding:"required"` // 语言
+	CardName string   `json:"card_name" binding:"required"`                 // 卡牌名字
+	Analyze  string   `json:"analyze" binding:"required"`                   // 解读
+	LoveList []string `json:"love_list" binding:"required"`                 // 爱情列表
+	WorkList []string `json:"work_list" binding:"required"`                 // 工作列表
 }
 
 // EditDailyTarot
@@ -87,12 +85,11 @@ type AddDailyTarotForm struct {
 // @Failure 500 {object} app.Response
 // @Tags Manager
 // @Security ApiKeyAuth
-// @Router /manager/tarot-daily [put]
+// @Router /manager/tarot-daily/{id} [put]
 func EditDailyTarot(c *gin.Context) {
 	var (
 		data = EditDailyTarotForm{
-			Id:        com.StrTo(c.Param("id")).MustInt(),
-			UpdatedBy: c.GetString("username"),
+			Id: com.StrTo(c.Param("id")).MustInt(),
 		}
 		appG = app.Gin{C: c}
 	)
@@ -101,6 +98,7 @@ func EditDailyTarot(c *gin.Context) {
 		return
 	}
 	tarotE := tarot_service.DailyTarotInput{
+		Id:        data.Id,
 		ImgUrl:    data.ImgUrl,
 		Language:  data.Language,
 		CardName:  data.CardName,
@@ -128,15 +126,13 @@ func EditDailyTarot(c *gin.Context) {
 }
 
 type EditDailyTarotForm struct {
-	Id        int      `json:"id"`                        // 塔罗ID
-	ImgUrl    string   `json:"img_url"`                   // 图片链接
-	Language  string   `json:"language" enums:"jp,zh,en"` // 语言
-	CardName  string   `json:"card_name"`                 // 卡牌名字
-	Analyze   string   `json:"analyze"`                   // 解读
-	LoveList  []string `json:"love_list"`                 // 爱情列表
-	WorkList  []string `json:"work_list"`                 // 工作列表
-	CreatedBy string   `json:"created_by"`                // 创建者
-	UpdatedBy string   `json:"updated_by"`                // 更新者
+	Id       int      `json:"id"`                        // 塔罗ID
+	ImgUrl   string   `json:"img_url"`                   // 图片链接
+	Language string   `json:"language" enums:"jp,zh,en"` // 语言
+	CardName string   `json:"card_name"`                 // 卡牌名字
+	Analyze  string   `json:"analyze"`                   // 解读
+	LoveList []string `json:"love_list"`                 // 爱情列表
+	WorkList []string `json:"work_list"`                 // 工作列表
 }
 
 // GetDailyTarot

@@ -444,9 +444,6 @@ definitions:
       card_name:
         description: 卡牌名字
         type: string
-      created_by:
-        description: 创建者
-        type: string
       img_url:
         description: 图片链接
         type: string
@@ -462,9 +459,6 @@ definitions:
         items:
           type: string
         type: array
-      updated_by:
-        description: 更新者
-        type: string
       work_list:
         description: 工作列表
         items:
@@ -473,11 +467,9 @@ definitions:
     required:
     - analyze
     - card_name
-    - created_by
     - img_url
     - language
     - love_list
-    - updated_by
     - work_list
     type: object
   v1.AddLotteryContentData:
@@ -743,9 +735,6 @@ definitions:
       card_name:
         description: 卡牌名字
         type: string
-      created_by:
-        description: 创建者
-        type: string
       id:
         description: 塔罗ID
         type: integer
@@ -764,9 +753,6 @@ definitions:
         items:
           type: string
         type: array
-      updated_by:
-        description: 更新者
-        type: string
       work_list:
         description: 工作列表
         items:
@@ -1929,6 +1915,7 @@ paths:
       summary: 添加每日免费塔罗牌内容
       tags:
       - Manager
+  /manager/tarot-daily/{id}:
     put:
       parameters:
       - description: 修改内容

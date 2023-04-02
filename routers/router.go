@@ -166,7 +166,7 @@ func InitRouter() *gin.Engine {
 		//每日免费塔罗牌后台创建
 		apiManagerV1.POST("/tarot-daily", v1.AddDailyTarot)
 		// 修改每日塔罗牌
-		apiManagerV1.PUT("/tarot-daily", v1.EditDailyTarot)
+		apiManagerV1.PUT("/tarot-daily/:id", v1.EditDailyTarot)
 		// 获取每日塔牌
 		apiManagerV1.GET("/tarot-daily", v1.GetDailyTarot)
 

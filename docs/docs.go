@@ -1216,6 +1216,50 @@ const docTemplate = `{
                     }
                 }
             },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "添加每日免费塔罗牌内容",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddDailyTarotForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/tarot-daily/{id}": {
             "put": {
                 "security": [
                     {
@@ -1242,48 +1286,6 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Manager"
-                ],
-                "summary": "添加每日免费塔罗牌内容",
-                "parameters": [
-                    {
-                        "description": "参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.AddDailyTarotForm"
-                        }
                     }
                 ],
                 "responses": {
@@ -2691,11 +2693,9 @@ const docTemplate = `{
             "required": [
                 "analyze",
                 "card_name",
-                "created_by",
                 "img_url",
                 "language",
                 "love_list",
-                "updated_by",
                 "work_list"
             ],
             "properties": {
@@ -2705,10 +2705,6 @@ const docTemplate = `{
                 },
                 "card_name": {
                     "description": "卡牌名字",
-                    "type": "string"
-                },
-                "created_by": {
-                    "description": "创建者",
                     "type": "string"
                 },
                 "img_url": {
@@ -2730,10 +2726,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "updated_by": {
-                    "description": "更新者",
-                    "type": "string"
                 },
                 "work_list": {
                     "description": "工作列表",
@@ -3101,10 +3093,6 @@ const docTemplate = `{
                     "description": "卡牌名字",
                     "type": "string"
                 },
-                "created_by": {
-                    "description": "创建者",
-                    "type": "string"
-                },
                 "id": {
                     "description": "塔罗ID",
                     "type": "integer"
@@ -3128,10 +3116,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "updated_by": {
-                    "description": "更新者",
-                    "type": "string"
                 },
                 "work_list": {
                     "description": "工作列表",

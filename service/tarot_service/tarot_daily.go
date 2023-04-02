@@ -52,7 +52,7 @@ func (d *DailyTarotInput) ExistByID() (bool, error) {
 }
 
 func (d *DailyTarotInput) Edit() error {
-	data := make(map[string]string)
+	data := make(map[string]interface{})
 	if d.ImgUrl != "" {
 		data["img_url"] = d.ImgUrl
 	}
