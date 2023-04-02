@@ -14,8 +14,8 @@ type DailyTarot struct {
 	Language  string `gorm:"column:language;not null;type:varchar(11)" json:"language" enums:"jp,zh,en"` // 语言
 	CardName  string `gorm:"column:card_name;not null;type:varchar(100)" json:"card_name"`               // 卡牌名字
 	Analyze   string `gorm:"column:analyze;not null;type:text" json:"analyze"`                           // 解读
-	LoveList  string `gorm:"column:love_list;not null;type:varchar(190)" json:"love_list"`               // 爱情列表
-	WorkList  string `gorm:"column:work_list;not null;type:varchar(190)" json:"work_list"`               // 工作列表
+	LoveList  string `gorm:"column:love_list;not null;type:text" json:"love_list"`                       // 爱情列表
+	WorkList  string `gorm:"column:work_list;not null;type:text" json:"work_list"`                       // 工作列表
 	CreatedBy string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`              // 创建者
 	UpdatedBy string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`              // 更新者
 }
