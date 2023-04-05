@@ -29,7 +29,7 @@ type BodyOfShowApi struct {
 	Tomorrow     dayContext  `json:"tomorrow"`
 	MonthContext interface{} `json:"month"`
 	WeekC        WeekContext `json:"week"`
-	YearC        YearContext `json:"year"`
+	//YearC        YearContext `json:"year"`
 }
 
 type dayContext struct {
@@ -92,7 +92,7 @@ func Test_show(t *testing.T) {
 	res.AddTextPara("needTomorrow", "1")
 	res.AddTextPara("needWeek", "1")
 	res.AddTextPara("needMonth", "1")
-	res.AddTextPara("needYear", "1")
+	res.AddTextPara("needYear", "0")
 	res.AddTextPara("date", "0111")
 	//fmt.Println(res.Post())
 	result, err := res.Post()
@@ -100,7 +100,7 @@ func Test_show(t *testing.T) {
 		t.Error("Error")
 	}
 
-	//t.Log(result)
+	t.Log(result)
 	t.Log(reflect.TypeOf(result))
 	var dataS xingZuoApiRes
 	if err := json.Unmarshal([]byte(result), &dataS); err != nil {
@@ -108,4 +108,7 @@ func Test_show(t *testing.T) {
 	} else {
 		t.Log(dataS)
 	}
+
+	// 如果是1：util.RandFromRange(10, 20)， 2：21-49， 3：50-79 4：80-99  健康默认：3
+	// 当年的改成当月
 }

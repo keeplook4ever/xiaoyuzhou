@@ -1,6 +1,6 @@
 package v1
 
-// 每日免费塔罗
+// 占卜页-每日免费塔罗
 
 import (
 	"github.com/gin-gonic/gin"

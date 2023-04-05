@@ -161,3 +161,12 @@ func String2StringSlice(ori string) []string {
 	}
 	return obj
 }
+
+func IfInSlice(sSl []string, targ string) bool {
+	for _, v := range sSl {
+		if targ == v {
+			return true
+		}
+	}
+	return false
+}

@@ -63,10 +63,7 @@ func InitRouter() *gin.Engine {
 		}
 
 		// 星座相关
-		apiPlayerV1.Group("/constellation")
-		{
-
-		}
+		apiPlayerV1.GET("/constellation", v1.GetDailyConstellation)
 
 		//创建PayPal支付订单
 		apiPlayerV1.POST("/paypal/checkout/orders", v1.CreatePayPalOrder)
