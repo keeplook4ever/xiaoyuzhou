@@ -1023,6 +1023,50 @@ definitions:
           $ref: '#/definitions/models.UserDto'
         type: array
     type: object
+  v1.RespOfConstellation:
+    properties:
+      month:
+        $ref: '#/definitions/v1.RespOfOneConstellation'
+      name:
+        description: 星座名称
+        type: string
+      today:
+        $ref: '#/definitions/v1.RespOfOneConstellation'
+      tomorrow:
+        $ref: '#/definitions/v1.RespOfOneConstellation'
+      week:
+        $ref: '#/definitions/v1.RespOfOneConstellation'
+    type: object
+  v1.RespOfOneConstellation:
+    properties:
+      health_score:
+        description: 健康分
+        type: integer
+      love_score:
+        description: 爱情分
+        type: integer
+      lucky_color:
+        description: 幸运色
+        type: string
+      lucky_direction:
+        description: 幸运方向
+        type: string
+      lucky_xingzuo:
+        description: 幸运星座
+        type: string
+      money_score:
+        description: 金钱分
+        type: integer
+      summary_score:
+        description: 总体分
+        type: integer
+      summary_txt:
+        description: 运势概览
+        type: string
+      work_score:
+        description: 事业分
+        type: integer
+    type: object
   v1.SendMailForm:
     properties:
       answer_url:
@@ -2290,6 +2334,48 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: 获取订单支付状态
+      tags:
+      - Player
+  /player/constellation:
+    get:
+      parameters:
+      - description: 星座名
+        enum:
+        - baiyang
+        - jinniu
+        - shuangzi
+        - juxie
+        - shizi
+        - chunv
+        - tiancheng
+        - tianxie
+        - sheshou
+        - mojie
+        - shuiping
+        - shuangyu
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: 语言
+        enum:
+        - zh
+        - jp
+        - en
+        in: query
+        name: language
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.RespOfConstellation'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 获取星座运势
       tags:
       - Player
   /player/lottery:

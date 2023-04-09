@@ -47,6 +47,14 @@ type Redis struct {
 	IdleTimeout time.Duration
 }
 
+type TenctConf struct {
+	Region    string
+	SecretId  string
+	SecretKey string
+}
+
+var TencentSetting = &TenctConf{}
+
 var RedisSetting = &Redis{}
 
 var cfg *ini.File
@@ -63,6 +71,7 @@ func Setup() {
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
+	mapTo("tencent", TencentSetting)
 
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
 	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second

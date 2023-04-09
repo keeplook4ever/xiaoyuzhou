@@ -1846,6 +1846,63 @@
                 }
             }
         },
+        "/player/constellation": {
+            "get": {
+                "tags": [
+                    "Player"
+                ],
+                "summary": "获取星座运势",
+                "parameters": [
+                    {
+                        "enum": [
+                            "baiyang",
+                            "jinniu",
+                            "shuangzi",
+                            "juxie",
+                            "shizi",
+                            "chunv",
+                            "tiancheng",
+                            "tianxie",
+                            "sheshou",
+                            "mojie",
+                            "shuiping",
+                            "shuangyu"
+                        ],
+                        "type": "string",
+                        "description": "星座名",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.RespOfConstellation"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/player/lottery": {
             "get": {
                 "produces": [
@@ -3497,6 +3554,68 @@
                     "items": {
                         "$ref": "#/definitions/models.UserDto"
                     }
+                }
+            }
+        },
+        "v1.RespOfConstellation": {
+            "type": "object",
+            "properties": {
+                "month": {
+                    "$ref": "#/definitions/v1.RespOfOneConstellation"
+                },
+                "name": {
+                    "description": "星座名称",
+                    "type": "string"
+                },
+                "today": {
+                    "$ref": "#/definitions/v1.RespOfOneConstellation"
+                },
+                "tomorrow": {
+                    "$ref": "#/definitions/v1.RespOfOneConstellation"
+                },
+                "week": {
+                    "$ref": "#/definitions/v1.RespOfOneConstellation"
+                }
+            }
+        },
+        "v1.RespOfOneConstellation": {
+            "type": "object",
+            "properties": {
+                "health_score": {
+                    "description": "健康分",
+                    "type": "integer"
+                },
+                "love_score": {
+                    "description": "爱情分",
+                    "type": "integer"
+                },
+                "lucky_color": {
+                    "description": "幸运色",
+                    "type": "string"
+                },
+                "lucky_direction": {
+                    "description": "幸运方向",
+                    "type": "string"
+                },
+                "lucky_xingzuo": {
+                    "description": "幸运星座",
+                    "type": "string"
+                },
+                "money_score": {
+                    "description": "金钱分",
+                    "type": "integer"
+                },
+                "summary_score": {
+                    "description": "总体分",
+                    "type": "integer"
+                },
+                "summary_txt": {
+                    "description": "运势概览",
+                    "type": "string"
+                },
+                "work_score": {
+                    "description": "事业分",
+                    "type": "integer"
                 }
             }
         },

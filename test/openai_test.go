@@ -4,21 +4,19 @@ import (
 	"context"
 	"fmt"
 	openai "github.com/sashabaranov/go-openai"
-	"net/http"
-	"net/url"
 	"testing"
 )
 
 func Test_ChatGPT(t *testing.T) {
 
 	config := openai.DefaultConfig("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")
-	proxyUrl, _ := url.Parse("http://127.0.0.1:7890")
-	transport := &http.Transport{
-		Proxy: http.ProxyURL(proxyUrl),
-	}
-	config.HTTPClient = &http.Client{
-		Transport: transport,
-	}
+	//proxyUrl, _ := url.Parse("http://127.0.0.1:7890")
+	//transport := &http.Transport{
+	//	Proxy: http.ProxyURL(proxyUrl),
+	//}
+	//config.HTTPClient = &http.Client{
+	//	Transport: transport,
+	//}
 
 	client := openai.NewClientWithConfig(config)
 	resp, err := client.CreateChatCompletion(

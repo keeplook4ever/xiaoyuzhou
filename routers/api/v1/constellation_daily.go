@@ -7,6 +7,7 @@ import (
 	"time"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
+	"xiaoyuzhou/pkg/tencent"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/pkg/xingzuoapi"
 )
@@ -16,7 +17,8 @@ import (
 // GetDailyConstellation
 // @Summary 获取星座运势
 // @Param name query string true "星座名" Enums(baiyang,jinniu,shuangzi,juxie,shizi,chunv,tiancheng,tianxie,sheshou,mojie,shuiping,shuangyu)
-// @Success 200 {object} RespOfDailyConstellation
+// @Param language query string true "语言" Enums(zh,jp,en)
+// @Success 200 {object} RespOfConstellation
 // @Failure 500 {object} app.Response
 // @Tags Player
 // @Router /player/constellation [get]
@@ -54,6 +56,39 @@ func GetDailyConstellation(c *gin.Context) {
 	}
 
 	// TODO：把下面的拿去翻译
+	waitForTransList := make([]string, 0)
+	//today
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.DayContext.LuckyColor)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.DayContext.Grxz)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.DayContext.LuckyDirection)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.DayContext.GeneralTxt)
+	//tomorrow
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.Tomorrow.LuckyColor)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.Tomorrow.Grxz)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.Tomorrow.LuckyDirection)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.Tomorrow.GeneralTxt)
+	//week
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.WeekC.LuckyColor)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.WeekC.Grxz)
+	waitForTransList = append(waitForTransList, GetRandomDirection())
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.WeekC.GeneralTxt)
+	//month
+	waitForTransList = append(waitForTransList, GetRandomColor())
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.MonthC.Grxz)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.MonthC.LuckyDirection)
+	waitForTransList = append(waitForTransList, dataS.ShowApiBody.MonthC.GeneralTxt)
+
+	resAfterTrans := make([]string, len(waitForTransList))
+	sourceL := c.Query("language")
+	if sourceL == "zh" {
+		copy(resAfterTrans, waitForTransList)
+	} else {
+		err, resAfterTrans = tencent.TranslateTextList(waitForTransList, sourceL)
+		if err != nil {
+			appG.Response(http.StatusOK, "翻译失败", nil)
+			return
+		}
+	}
 
 	// 获取需要的星座数据
 	todayC := RespOfOneConstellation{
@@ -62,10 +97,10 @@ func GetDailyConstellation(c *gin.Context) {
 		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.DayContext.MoneyStar),
 		HealthScore:    getScoreFromXingzuo(-1),
 		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.DayContext.SummaryStar),
-		LuckyColor:     dataS.ShowApiBody.DayContext.LuckyColor,
-		LuckyXingzuo:   dataS.ShowApiBody.DayContext.Grxz,
-		LuckyDirection: dataS.ShowApiBody.DayContext.LuckyDirection,
-		SummaryTxt:     dataS.ShowApiBody.DayContext.GeneralTxt,
+		LuckyColor:     resAfterTrans[0],
+		LuckyXingzuo:   resAfterTrans[1],
+		LuckyDirection: resAfterTrans[2],
+		SummaryTxt:     resAfterTrans[3],
 	}
 	tomorrowC := RespOfOneConstellation{
 		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.LoveStar),
@@ -73,30 +108,32 @@ func GetDailyConstellation(c *gin.Context) {
 		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.MoneyStar),
 		HealthScore:    getScoreFromXingzuo(-1),
 		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.SummaryStar),
-		LuckyColor:     dataS.ShowApiBody.Tomorrow.LuckyColor,
-		LuckyXingzuo:   dataS.ShowApiBody.Tomorrow.Grxz,
-		LuckyDirection: dataS.ShowApiBody.Tomorrow.LuckyDirection,
-		SummaryTxt:     dataS.ShowApiBody.Tomorrow.GeneralTxt,
+		LuckyColor:     resAfterTrans[4],
+		LuckyXingzuo:   resAfterTrans[5],
+		LuckyDirection: resAfterTrans[6],
+		SummaryTxt:     resAfterTrans[7],
 	}
 	weekC := RespOfOneConstellation{
 		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.WeekC.LoveStar),
 		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.WeekC.WorkStar),
 		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.WeekC.MoneyStar),
 		HealthScore:    getScoreFromXingzuo(-1),
-		LuckyColor:     dataS.ShowApiBody.WeekC.LuckyColor,
-		LuckyXingzuo:   dataS.ShowApiBody.WeekC.Grxz,
-		LuckyDirection: GetRandomDirection(),
-		SummaryTxt:     dataS.ShowApiBody.WeekC.GeneralTxt,
+		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.WeekC.SummaryStar),
+		LuckyColor:     resAfterTrans[8],
+		LuckyXingzuo:   resAfterTrans[9],
+		LuckyDirection: resAfterTrans[10],
+		SummaryTxt:     resAfterTrans[11],
 	}
 	monthC := RespOfOneConstellation{
 		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.MonthC.LoveStar),
 		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.MonthC.WorkStar),
 		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.MonthC.MoneyStar),
 		HealthScore:    getScoreFromXingzuo(-1),
-		LuckyColor:     GetRandomColor(),
-		LuckyXingzuo:   dataS.ShowApiBody.MonthC.Grxz,
-		LuckyDirection: dataS.ShowApiBody.MonthC.LuckyDirection,
-		SummaryTxt:     dataS.ShowApiBody.MonthC.GeneralTxt,
+		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.MonthC.SummaryStar),
+		LuckyColor:     resAfterTrans[12],
+		LuckyXingzuo:   resAfterTrans[13],
+		LuckyDirection: resAfterTrans[14],
+		SummaryTxt:     resAfterTrans[15],
 	}
 	resp := RespOfConstellation{
 		Name:     name,
@@ -180,7 +217,7 @@ type monthContent struct {
 	GeneralTxt     string `json:"general_txt"`
 	Grxz           string `json:"grxz"`
 	Xrxz           string `json:"xrxz"`
-	LuckyNum       int    `json:"lucky_num"`
+	LuckyNum       string `json:"lucky_num"`
 }
 
 type RespOfOneConstellation struct {
