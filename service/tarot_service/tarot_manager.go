@@ -24,7 +24,7 @@ type TarotInput struct {
 	Money         string   // 人际财富
 	Health        string   // 健康生活
 	Other         string   // 其他
-	LuckyNumber   string      // 幸运数字
+	LuckyNumber   string   // 幸运数字
 	Saying        string   // 名言
 	AnswerList    []string // 答案列表
 	PageNum       int      // 分页偏移数
@@ -176,6 +176,8 @@ func (t *TarotInput) getMaps() map[string]interface{} {
 	if t.Element != "" {
 		maps["element"] = "%" + t.Element + "%"
 	}
+	if t.Language != "" {
+		maps["language"] = t.Language
+	}
 	return maps
 }
-

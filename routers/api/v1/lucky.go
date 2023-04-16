@@ -10,8 +10,9 @@ import (
 )
 
 type AddLuckyForm struct {
-	Data []string `json:"data" binding:"required"`                         //字符串数组
-	Type string   `json:"type" binding:"required" enums:"spell,song,todo"` //咒语：spell, 歌曲：song, 适宜：todo
+	Data     []string `json:"data" binding:"required"`                         //字符串数组
+	Type     string   `json:"type" binding:"required" enums:"spell,song,todo"` //咒语：spell, 歌曲：song, 适宜：todo
+	Language string   `json:"language" binding:"required" enums:"jp,zh,en,tc"` //语言
 }
 
 // AddLucky
@@ -32,8 +33,9 @@ func AddLucky(c *gin.Context) {
 		return
 	}
 	luckyI := lucky_service.LuckyInputContent{
-		Lists: reqData.Data,
-		Type:  reqData.Type,
+		Lists:    reqData.Data,
+		Type:     reqData.Type,
+		Language: reqData.Language,
 	}
 	if err := luckyI.Add(); err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)
@@ -82,7 +84,7 @@ func EditLucky(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.ERROR, nil)
 		return
 	}
-	if err := lucky_service.EditLucky(edF.Type, edF.Id, edF.Content); err != nil {
+	if err := lucky_service.EditLucky(edF.Type, edF.Id, edF.Content, edF.Language); err != nil {
 		appG.Response(http.StatusOK, "编辑失败", nil)
 		return
 	}
@@ -117,6 +119,7 @@ func DeleteLucky(c *gin.Context) {
 // GetLucky
 // @Summary 获取今日好运内容
 // @Param type query string true "咒语\歌曲\适宜" Enums(spell,song,todo)
+// @Param language query string true "语言" Enums(jp,zh,en,tc)
 // @Produce json
 // @Success 200 {object} GetLuckyResponse
 // @Failure 500 {object} app.Response
@@ -127,6 +130,7 @@ func GetLucky(c *gin.Context) {
 	appG := app.Gin{C: c}
 	luckI := lucky_service.LuckyInputContent{
 		Type:     c.Query("type"),
+		Language: c.Query("language"),
 		PageNum:  util.GetPage(c),
 		PageSize: util.GetPageSize(c),
 	}
@@ -154,7 +158,8 @@ type DeleteLuckyForm struct {
 }
 
 type EditLuckyForm struct {
-	Id      int    `json:"id" binding:"required"`
-	Type    string `json:"type" binding:"required" enums:"spell,song,todo"`
-	Content string `json:"content" binding:"required"`
+	Id       int    `json:"id" binding:"required"`
+	Type     string `json:"type" binding:"required" enums:"spell,song,todo"`
+	Content  string `json:"content" binding:"required"`
+	Language string `json:"language" binding:"required" enums:"jp,zh,en,tc"`
 }

@@ -85,6 +85,12 @@
                         "description": "Cover Img URL",
                         "name": "cover_image_url",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -549,6 +555,20 @@
                     "Manager"
                 ],
                 "summary": "获取运势表Lottery",
+                "parameters": [
+                    {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -638,6 +658,18 @@
                         "type": "string",
                         "description": "好运等级",
                         "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query"
                     }
                 ],
@@ -746,6 +778,18 @@
                         "name": "content",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -822,6 +866,19 @@
                         "type": "string",
                         "description": "咒语\\歌曲\\适宜",
                         "name": "type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query",
                         "required": true
                     }
@@ -1763,6 +1820,18 @@
                         "description": "ID list",
                         "name": "id_list",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1790,6 +1859,21 @@
                     "Player"
                 ],
                 "summary": "首页展示文章",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "jp",
+                            "zh",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1878,7 +1962,8 @@
                         "enum": [
                             "zh",
                             "jp",
-                            "en"
+                            "en",
+                            "tc"
                         ],
                         "type": "string",
                         "description": "语言",
@@ -1917,6 +2002,19 @@
                         "type": "string",
                         "description": "用户uid",
                         "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query",
                         "required": true
                     }
@@ -2030,6 +2128,12 @@
                         "required": true
                     },
                     {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en",
+                            "tc"
+                        ],
                         "type": "string",
                         "description": "语言",
                         "name": "language",
@@ -2353,6 +2457,17 @@
                     "description": "运势文字",
                     "type": "string"
                 },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
+                },
                 "max_score": {
                     "description": "最大分数",
                     "type": "integer"
@@ -2378,6 +2493,7 @@
             "type": "object",
             "properties": {
                 "content": {
+                    "description": "内容",
                     "type": "string"
                 },
                 "created_at": {
@@ -2385,6 +2501,17 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "A-D 枚举",
@@ -2406,6 +2533,10 @@
                     "description": "运势关键字",
                     "type": "string"
                 },
+                "language": {
+                    "description": "语言",
+                    "type": "string"
+                },
                 "score": {
                     "description": "运势分",
                     "type": "integer"
@@ -2419,6 +2550,10 @@
         "models.LuckyTodayDto": {
             "type": "object",
             "properties": {
+                "language": {
+                    "description": "语言",
+                    "type": "string"
+                },
                 "song": {
                     "description": "今日好运歌曲",
                     "type": "string"
@@ -2656,7 +2791,8 @@
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "meta_desc": {
@@ -2789,11 +2925,23 @@
             "type": "object",
             "required": [
                 "content",
+                "language",
                 "type"
             ],
             "properties": {
                 "content": {
+                    "description": "内容",
                     "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "枚举A-D",
@@ -2811,6 +2959,7 @@
             "type": "object",
             "required": [
                 "data",
+                "language",
                 "type"
             ],
             "properties": {
@@ -2820,6 +2969,16 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "咒语：spell, 歌曲：song, 适宜：todo",
@@ -3046,7 +3205,8 @@
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "meta_desc": {
@@ -3210,6 +3370,7 @@
             "required": [
                 "content",
                 "id",
+                "language",
                 "type"
             ],
             "properties": {
@@ -3218,6 +3379,15 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "language": {
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "type": "string",
@@ -3593,12 +3763,20 @@
                     "description": "幸运色",
                     "type": "string"
                 },
+                "lucky_color_ori": {
+                    "description": "幸运色中文",
+                    "type": "string"
+                },
                 "lucky_direction": {
                     "description": "幸运方向",
                     "type": "string"
                 },
                 "lucky_xingzuo": {
                     "description": "幸运星座",
+                    "type": "string"
+                },
+                "lucky_xingzuo_ori": {
+                    "description": "星座枚举",
                     "type": "string"
                 },
                 "money_score": {

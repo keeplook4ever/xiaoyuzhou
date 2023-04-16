@@ -28,7 +28,7 @@ type AddArticleForm struct {
 	AuthorId        int    `json:"author_id"  binding:"required"`
 	CoverImageUrl   string `json:"cover_image_url" binding:"required"`
 	State           int    `json:"state" binding:"required" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
-	Language        string `json:"language" binding:"required" enums:"jp,zh,en" default:"jp"`
+	Language        string `json:"language" binding:"required" enums:"jp,zh,en,tc" default:"jp"`
 }
 
 // AddArticle
@@ -120,7 +120,7 @@ type EditArticleForm struct {
 	AuthorId        int    `json:"author_id"`
 	CoverImageUrl   string `json:"cover_image_url"`
 	State           int    `json:"state" enums:"1,0" default:"1"` // 0表示禁用，1表示启用
-	Language        string `json:"language" enums:"jp,zh,en" default:"jp"`
+	Language        string `json:"language" enums:"jp,zh,en,tc" default:"jp"`
 	UpdatedBy       string `json:"updated_by"`
 }
 
@@ -156,6 +156,7 @@ func EditArticle(c *gin.Context) {
 		Content:         article.Content,
 		CoverImageUrl:   article.CoverImageUrl,
 		RelatedArticles: article.RelatedArticles,
+		Language:        article.Language,
 		UpdatedBy:       c.GetString("username"), // 后端获取，通过登录态
 		AuthorId:        article.AuthorId,
 		State:           article.State,
@@ -267,6 +268,7 @@ type GetArticlesResponse struct {
 // @Param page_title query string false "Page Title"
 // @Param meta_desc query string false "Meta Desc"
 // @Param cover_image_url query string false "Cover Img URL"
+// @Param language query string false "语言"
 // @Success 200 {object} GetArticlesResponse
 // @Failure 500 {object} app.Response
 // @Security ApiKeyAuth
@@ -303,7 +305,7 @@ func GetArticles(c *gin.Context) {
 	pageTitle := c.Query("page_title")
 	metaDesc := c.Query("meta_desc")
 	coverImageUrl := c.Query("cover_image_url")
-
+	language := c.Query("language")
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
@@ -321,6 +323,7 @@ func GetArticles(c *gin.Context) {
 		CategoryID:    tagId,
 		AuthorId:      authorId,
 		State:         state,
+		Language:      language,
 		PageNum:       util.GetPage(c),
 		PageSize:      util.GetPageSize(c),
 	}
@@ -341,13 +344,15 @@ func GetArticles(c *gin.Context) {
 // GetIndexArticleForPlayer
 // @Summary 首页展示文章
 // @Produce json
+// @Param language query string true "语言" Enums(en,jp,zh,tc)
 // @Success 200 {object} []models.ArticleDto
 // @Failure 500 {object} app.Response
 // @Tags Player
 // @Router /player/articles/index [get]
 func GetIndexArticleForPlayer(c *gin.Context) {
 	appG := app.Gin{C: c}
-	articleList, err := article_service.GetArticleForPlayer(4)
+	lang := c.Query("language")
+	articleList, err := article_service.GetArticleForPlayer(4, lang)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取首页文章失败", nil)
 		return
@@ -360,6 +365,7 @@ func GetIndexArticleForPlayer(c *gin.Context) {
 // @Produce json
 // @Param category_id query int false "Category ID"
 // @Param id_list query []int false "ID list"
+// @Param language query string false "语言" Enums(jp,zh,en,tc)
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Tags Player
@@ -368,11 +374,12 @@ func GetArticlesAll(c *gin.Context) {
 	appG := app.Gin{C: c}
 	idList := c.Query("id_list")
 	categoryId := c.Query("category_id")
+	language := c.Query("language")
 	// -1 代表无此参数
 	state := -1
 	tagId := -1
 	authorId := -1
-	if idList == "" && categoryId == "" {
+	if idList == "" && categoryId == "" && language == "" {
 		articleService := article_service.ArticleInput{
 			State:      state,
 			CategoryID: tagId,
@@ -403,11 +410,12 @@ func GetArticlesAll(c *gin.Context) {
 		res.Lists = article
 		res.Count = int64(len(article))
 		appG.Response(http.StatusOK, e.SUCCESS, res)
-	} else if categoryId != "" {
+	} else if categoryId != "" || language != "" {
 		categoryIdInt := com.StrTo(categoryId).MustInt()
 		articleService := article_service.ArticleInput{
 			State:      state,
 			CategoryID: categoryIdInt,
+			Language:   language,
 			PageNum:    util.GetPage(c),
 			PageSize:   util.GetPageSize(c),
 		}

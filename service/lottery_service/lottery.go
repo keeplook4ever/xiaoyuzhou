@@ -22,16 +22,17 @@ type LotteryContentInput struct {
 	ID       int
 	PageNum  int
 	PageSize int
+	Language string
 }
 
-func GetLotteryForPlayer(uid string) (*models.LotteryDto, error) {
-	cc, err := models.GetOneRandLottery()
+func GetLotteryForPlayer(uid, language string) (*models.LotteryDto, error) {
+	cc, err := models.GetOneRandLottery(language)
 	if err != nil {
 		return nil, err
 	}
 	// 成功之后需要记录日志
 	ts := int(time.Now().Unix())
-	err = models.CreatPlayerLotteryLog(uid, ts, cc.Score, cc.Keyword, cc.Content)
+	err = models.CreatPlayerLotteryLog(uid, ts, cc.Score, cc.Keyword, cc.Content, cc.Language)
 	if err != nil {
 		log.Printf("Create Player Lottery Log Failed: %v", err)
 		logging.Error(fmt.Sprintf("CreatPlayerLotteryLog Failed: %v", err))
@@ -39,8 +40,8 @@ func GetLotteryForPlayer(uid string) (*models.LotteryDto, error) {
 	return cc, nil
 }
 
-func GetLuckyForPlayer() (*models.LuckyTodayDto, error) {
-	return models.GetOneRandomLuckyToday()
+func GetLuckyForPlayer(language string) (*models.LuckyTodayDto, error) {
+	return models.GetOneRandomLuckyToday(language)
 }
 
 func (l *LotteryInput) Edit() error {
@@ -48,7 +49,7 @@ func (l *LotteryInput) Edit() error {
 }
 
 func (lc *LotteryContentInput) Add() error {
-	return models.AddLotteryContent(lc.Content, lc.Type)
+	return models.AddLotteryContent(lc.Content, lc.Type, lc.Language)
 }
 
 func (lc *LotteryContentInput) Update() error {
@@ -59,8 +60,8 @@ func (lc *LotteryContentInput) Delete() error {
 	return models.DeleteLotteryContent(lc.ID)
 }
 
-func GetLotteryForManager() ([]models.Lottery, int64, error) {
-	return models.GetLotteries()
+func GetLotteryForManager(lang string) ([]models.Lottery, int64, error) {
+	return models.GetLotteries(lang)
 }
 
 func (l *LotteryContentInput) GetLotteryContentForManager() ([]models.LotteryContent, int64, error) {
@@ -79,7 +80,9 @@ func (lc *LotteryContentInput) getMapsEdit() map[string]interface{} {
 	if lc.ID > 0 {
 		maps["id"] = lc.ID
 	}
-
+	if lc.Language != "" {
+		maps["language"] = lc.Language
+	}
 	if lc.Content != "" {
 		maps["content"] = lc.Content
 	}
@@ -96,6 +99,9 @@ func (lc *LotteryContentInput) getMapsGet() map[string]interface{} {
 	}
 	if lc.Content != "" {
 		maps["content like"] = "%" + lc.Content + "%"
+	}
+	if lc.Language != "" {
+		maps["language"] = lc.Language
 	}
 	return maps
 }

@@ -17,7 +17,7 @@ import (
 // GetDailyConstellation
 // @Summary 获取星座运势
 // @Param name query string true "星座名" Enums(baiyang,jinniu,shuangzi,juxie,shizi,chunv,tiancheng,tianxie,sheshou,mojie,shuiping,shuangyu)
-// @Param language query string true "语言" Enums(zh,jp,en)
+// @Param language query string true "语言" Enums(zh,jp,en,tc)
 // @Success 200 {object} RespOfConstellation
 // @Failure 500 {object} app.Response
 // @Tags Player
@@ -54,8 +54,11 @@ func GetDailyConstellation(c *gin.Context) {
 		appG.Response(http.StatusOK, "星座数据解析失败", nil)
 		return
 	}
+	if dataS.ShowApiError != "" {
+		appG.Response(http.StatusOK, dataS.ShowApiError, nil)
+		return
+	}
 
-	// TODO：把下面的拿去翻译
 	waitForTransList := make([]string, 0)
 	//today
 	waitForTransList = append(waitForTransList, dataS.ShowApiBody.DayContext.LuckyColor)
@@ -80,7 +83,7 @@ func GetDailyConstellation(c *gin.Context) {
 
 	resAfterTrans := make([]string, len(waitForTransList))
 	sourceL := c.Query("language")
-	if sourceL == "zh" {
+	if sourceL == "zh" || sourceL == "tc" { // 繁体中文没有，用简体中文代替
 		copy(resAfterTrans, waitForTransList)
 	} else {
 		err, resAfterTrans = tencent.TranslateTextList(waitForTransList, sourceL)
@@ -92,48 +95,56 @@ func GetDailyConstellation(c *gin.Context) {
 
 	// 获取需要的星座数据
 	todayC := RespOfOneConstellation{
-		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.DayContext.LoveStar),
-		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.DayContext.WorkStar),
-		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.DayContext.MoneyStar),
-		HealthScore:    getScoreFromXingzuo(-1),
-		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.DayContext.SummaryStar),
-		LuckyColor:     resAfterTrans[0],
-		LuckyXingzuo:   resAfterTrans[1],
-		LuckyDirection: resAfterTrans[2],
-		SummaryTxt:     resAfterTrans[3],
+		LoveScore:       getScoreFromXingzuo(dataS.ShowApiBody.DayContext.LoveStar),
+		WorkScore:       getScoreFromXingzuo(dataS.ShowApiBody.DayContext.WorkStar),
+		MoneyScore:      getScoreFromXingzuo(dataS.ShowApiBody.DayContext.MoneyStar),
+		HealthScore:     getScoreFromXingzuo(-1),
+		SummaryScore:    getScoreFromXingzuo(dataS.ShowApiBody.DayContext.SummaryStar),
+		LuckyColor:      resAfterTrans[0],
+		LuckyColorOri:   waitForTransList[0],
+		LuckyXingzuo:    resAfterTrans[1],
+		LuckyXingzuoOri: GetXingzuoFromZh(waitForTransList[1]),
+		LuckyDirection:  resAfterTrans[2],
+		SummaryTxt:      resAfterTrans[3],
 	}
 	tomorrowC := RespOfOneConstellation{
-		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.LoveStar),
-		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.WorkStar),
-		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.MoneyStar),
-		HealthScore:    getScoreFromXingzuo(-1),
-		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.SummaryStar),
-		LuckyColor:     resAfterTrans[4],
-		LuckyXingzuo:   resAfterTrans[5],
-		LuckyDirection: resAfterTrans[6],
-		SummaryTxt:     resAfterTrans[7],
+		LoveScore:       getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.LoveStar),
+		WorkScore:       getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.WorkStar),
+		MoneyScore:      getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.MoneyStar),
+		HealthScore:     getScoreFromXingzuo(-1),
+		SummaryScore:    getScoreFromXingzuo(dataS.ShowApiBody.Tomorrow.SummaryStar),
+		LuckyColor:      resAfterTrans[4],
+		LuckyColorOri:   waitForTransList[4],
+		LuckyXingzuo:    resAfterTrans[5],
+		LuckyXingzuoOri: GetXingzuoFromZh(waitForTransList[5]),
+		LuckyDirection:  resAfterTrans[6],
+		SummaryTxt:      resAfterTrans[7],
 	}
 	weekC := RespOfOneConstellation{
-		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.WeekC.LoveStar),
-		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.WeekC.WorkStar),
-		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.WeekC.MoneyStar),
-		HealthScore:    getScoreFromXingzuo(-1),
-		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.WeekC.SummaryStar),
-		LuckyColor:     resAfterTrans[8],
-		LuckyXingzuo:   resAfterTrans[9],
-		LuckyDirection: resAfterTrans[10],
-		SummaryTxt:     resAfterTrans[11],
+		LoveScore:       getScoreFromXingzuo(dataS.ShowApiBody.WeekC.LoveStar),
+		WorkScore:       getScoreFromXingzuo(dataS.ShowApiBody.WeekC.WorkStar),
+		MoneyScore:      getScoreFromXingzuo(dataS.ShowApiBody.WeekC.MoneyStar),
+		HealthScore:     getScoreFromXingzuo(-1),
+		SummaryScore:    getScoreFromXingzuo(dataS.ShowApiBody.WeekC.SummaryStar),
+		LuckyColor:      resAfterTrans[8],
+		LuckyColorOri:   waitForTransList[8],
+		LuckyXingzuo:    resAfterTrans[9],
+		LuckyXingzuoOri: GetXingzuoFromZh(waitForTransList[9]),
+		LuckyDirection:  resAfterTrans[10],
+		SummaryTxt:      resAfterTrans[11],
 	}
 	monthC := RespOfOneConstellation{
-		LoveScore:      getScoreFromXingzuo(dataS.ShowApiBody.MonthC.LoveStar),
-		WorkScore:      getScoreFromXingzuo(dataS.ShowApiBody.MonthC.WorkStar),
-		MoneyScore:     getScoreFromXingzuo(dataS.ShowApiBody.MonthC.MoneyStar),
-		HealthScore:    getScoreFromXingzuo(-1),
-		SummaryScore:   getScoreFromXingzuo(dataS.ShowApiBody.MonthC.SummaryStar),
-		LuckyColor:     resAfterTrans[12],
-		LuckyXingzuo:   resAfterTrans[13],
-		LuckyDirection: resAfterTrans[14],
-		SummaryTxt:     resAfterTrans[15],
+		LoveScore:       getScoreFromXingzuo(dataS.ShowApiBody.MonthC.LoveStar),
+		WorkScore:       getScoreFromXingzuo(dataS.ShowApiBody.MonthC.WorkStar),
+		MoneyScore:      getScoreFromXingzuo(dataS.ShowApiBody.MonthC.MoneyStar),
+		HealthScore:     getScoreFromXingzuo(-1),
+		SummaryScore:    getScoreFromXingzuo(dataS.ShowApiBody.MonthC.SummaryStar),
+		LuckyColor:      resAfterTrans[12],
+		LuckyColorOri:   waitForTransList[12],
+		LuckyXingzuo:    resAfterTrans[13],
+		LuckyXingzuoOri: GetXingzuoFromZh(waitForTransList[13]),
+		LuckyDirection:  resAfterTrans[14],
+		SummaryTxt:      resAfterTrans[15],
 	}
 	resp := RespOfConstellation{
 		Name:     name,
@@ -221,15 +232,17 @@ type monthContent struct {
 }
 
 type RespOfOneConstellation struct {
-	LoveScore      int    `json:"love_score"`      // 爱情分
-	WorkScore      int    `json:"work_score"`      // 事业分
-	MoneyScore     int    `json:"money_score"`     // 金钱分
-	HealthScore    int    `json:"health_score"`    // 健康分
-	SummaryScore   int    `json:"summary_score"`   // 总体分
-	LuckyColor     string `json:"lucky_color"`     // 幸运色
-	LuckyDirection string `json:"lucky_direction"` // 幸运方向
-	LuckyXingzuo   string `json:"lucky_xingzuo"`   // 幸运星座
-	SummaryTxt     string `json:"summary_txt"`     // 运势概览
+	LoveScore       int    `json:"love_score"`        // 爱情分
+	WorkScore       int    `json:"work_score"`        // 事业分
+	MoneyScore      int    `json:"money_score"`       // 金钱分
+	HealthScore     int    `json:"health_score"`      // 健康分
+	SummaryScore    int    `json:"summary_score"`     // 总体分
+	LuckyColor      string `json:"lucky_color"`       // 幸运色
+	LuckyColorOri   string `json:"lucky_color_ori"`   // 幸运色中文
+	LuckyDirection  string `json:"lucky_direction"`   // 幸运方向
+	LuckyXingzuo    string `json:"lucky_xingzuo"`     // 幸运星座
+	LuckyXingzuoOri string `json:"lucky_xingzuo_ori"` // 星座枚举
+	SummaryTxt      string `json:"summary_txt"`       // 运势概览
 }
 
 type RespOfConstellation struct {
@@ -305,4 +318,34 @@ func GetRandomColor() string {
 	colorList := []string{"姜黄色", "青金石蓝", "绿色", "棕色", "稻草黄", "紫色", "玫红色", "蘑菇灰", "天蓝色", "玫瑰红", "橘色", "樱桃红", "橙色", "粉色", "琥珀棕", "银灰色", "墨绿色", "酒红色", "梅子青", "酸橙绿", "咖啡色", "松石绿", "土黄色", "卡其色", "琥珀橙"}
 	ix := util.RandFromRange(0, len(colorList))
 	return colorList[ix]
+}
+
+func GetXingzuoFromZh(zh string) string {
+	switch zh {
+	case "白羊座":
+		return "baiyang"
+	case "金牛座":
+		return "jinniu"
+	case "双子座":
+		return "shuangzi"
+	case "巨蟹座":
+		return "juxie"
+	case "狮子座":
+		return "shizi"
+	case "处女座":
+		return "chunv"
+	case "天秤座":
+		return "tiancheng"
+	case "天蝎座":
+		return "tianxie"
+	case "射手座":
+		return "shezhou"
+	case "摩羯座":
+		return "mojie"
+	case "水瓶座":
+		return "shuiping"
+	case "双鱼座":
+		return "shuangyu"
+	}
+	return "jinniu"
 }

@@ -30,8 +30,8 @@ type Article struct {
 
 type StarLog struct {
 	Model
-	Uid string `gorm:"column:uid;not null;type:varchar(150);unique_index:U_A" json:"uid"` // 点赞的用户uid
-	ArticleId int `gorm:"column:article_id;not null;type:int;unique_index:U_A" json:"article_id"` // 点赞的文章id
+	Uid       string `gorm:"column:uid;not null;type:varchar(150);unique_index:U_A" json:"uid"`      // 点赞的用户uid
+	ArticleId int    `gorm:"column:article_id;not null;type:int;unique_index:U_A" json:"article_id"` // 点赞的文章id
 }
 
 type ArticleDto struct {
@@ -46,7 +46,7 @@ type ArticleDto struct {
 	Content         string `json:"content,omitempty"`
 	AuthorID        uint   `json:"author_id,omitempty"`
 	AuthorName      string `json:"author_name,omitempty"`
-	AuthorDesc 		string 	`json:"author_desc,omitempty"`
+	AuthorDesc      string `json:"author_desc,omitempty"`
 	AuthorAvatarUrl string `json:"author_avatar_url,omitempty"`
 	CoverImageUrl   string `json:"cover_image_url,omitempty"`
 	State           int    `json:"state,omitempty"`
@@ -77,7 +77,7 @@ func (itself *Article) ToArticleDto(hasContent bool) ArticleDto {
 		Content:         content,
 		AuthorID:        itself.Author.ID,
 		AuthorName:      itself.Author.Name,
-		AuthorDesc: 	 itself.Author.Desc,
+		AuthorDesc:      itself.Author.Desc,
 		AuthorAvatarUrl: itself.Author.AvatarUrl,
 		CoverImageUrl:   itself.CoverImageUrl,
 		State:           itself.State,
@@ -212,20 +212,20 @@ func CleanAllArticle() error {
 	return nil
 }
 
-func GetLatestArticle(cnt int) ([]ArticleDto, error) {
+func GetLatestArticle(cnt int, lang string) ([]ArticleDto, error) {
 	var err error
 	var articles []Article
 	var count int64
-	Db.Model(&Article{}).Count(&count)
+	Db.Model(&Article{}).Where("language = ?", lang).Count(&count)
 	if count < int64(cnt) {
 		cnt = int(count)
 	}
 
 	// 获取全部
 	if cnt == -1 {
-		err = Db.Preload("Category").Preload("Author").Order("created_at desc").Find(&articles).Error
+		err = Db.Preload("Category").Preload("Author").Where("language = ?", lang).Order("created_at desc").Find(&articles).Error
 	} else {
-		err = Db.Preload("Category").Preload("Author").Order("created_at desc").Limit(cnt).Find(&articles).Error
+		err = Db.Preload("Category").Preload("Author").Where("language = ?", lang).Order("created_at desc").Limit(cnt).Find(&articles).Error
 	}
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
@@ -236,7 +236,6 @@ func GetLatestArticle(cnt int) ([]ArticleDto, error) {
 	}
 	return resp, nil
 }
-
 
 func UpdateStarCountAndCreateLog(aId int, uid string) error {
 	// 放在事务里处理两个步骤
@@ -251,15 +250,13 @@ func UpdateStarCountAndCreateLog(aId int, uid string) error {
 		return err
 	}
 
-
 	if err := tx.Model(&Article{}).Where("id = ?", aId).UpdateColumn("star_num", gorm.Expr("star_num + ?", 1)).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
-
 	data := StarLog{
-		Uid: uid,
+		Uid:       uid,
 		ArticleId: aId,
 	}
 	if err := tx.Model(&StarLog{}).Create(&data).Error; err != nil {
@@ -269,10 +266,10 @@ func UpdateStarCountAndCreateLog(aId int, uid string) error {
 	return tx.Commit().Error
 }
 
-
 func GetArticleStarLog(aID int, uid string) (bool, error) {
 	var count int64
-	err := Db.Model(&StarLog{}).Where("uid = ? and article_id = ?", uid, aID).Count(&count).Error; if err != nil {
+	err := Db.Model(&StarLog{}).Where("uid = ? and article_id = ?", uid, aID).Count(&count).Error
+	if err != nil {
 		return false, err
 	}
 	if count > 0 {

@@ -239,7 +239,7 @@ func GetTarotOne(c *gin.Context) {
 		return
 	}
 
-	tarot, orderId, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question)
+	tarot, orderId, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question, formD.Language)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return

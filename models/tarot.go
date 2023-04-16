@@ -165,9 +165,9 @@ func GetTarots(pageNum int, pageSize int, cond string, vals []interface{}) ([]Ta
 }
 
 // GetOneRandTarot 获取一张随机塔罗
-func GetOneRandTarot() (*TarotDto, error) {
+func GetOneRandTarot(lang string) (*TarotDto, error) {
 	var tarots []TarotDto
-	tarots, num, err := GetTarots(0, 10000, "", nil)
+	tarots, num, err := GetTarots(0, 10000, "language = ?", []interface{}{lang})
 	if err != nil {
 		return nil, err
 	}

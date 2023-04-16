@@ -8,9 +8,9 @@ import (
 )
 
 // GetRandomOneTarot 获取随机一张塔罗牌, 并且创建塔罗抽取记录, 获得塔罗牌，订单号
-func GetRandomOneTarot(uid, question string) (*models.TarotDto, string, error) {
+func GetRandomOneTarot(uid, question, lang string) (*models.TarotDto, string, error) {
 
-	randTarot, err := models.GetOneRandTarot()
+	randTarot, err := models.GetOneRandTarot(lang)
 	if err != nil {
 		logging.Debugf("Error: %s", err.Error())
 		return nil, "", err

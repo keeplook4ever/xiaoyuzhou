@@ -1,15 +1,12 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
-	"log"
 	"net/http"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
-	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/service/lottery_service"
 )
@@ -20,9 +17,10 @@ type GetLotteryForUserResponse struct {
 }
 
 type EditLotteryContentForm struct {
-	Content string `form:"content" binding:"required"`
-	Type    string `form:"type" binding:"required"`
-	Id      int    `path:"id" binding:"required"`
+	Content  string `form:"content" binding:"required"`
+	Type     string `form:"type" binding:"required"`
+	Id       int    `path:"id" binding:"required"`
+	Language string `form:"language" binding:"required"`
 }
 
 type EditLotteryForm struct {
@@ -31,11 +29,13 @@ type EditLotteryForm struct {
 	Probability float32 `json:"probability"`
 	KeyWord     string  `json:"keyword"`
 	Type        string  `json:"type" binding:"required" enums:"A,B,C,D"` // A-D 枚举
+	//Language    string  `json:"language" enums:"jp,zh,en"`               // 语言
 }
 
 type AddLotteryContentData struct {
-	Type    string `json:"type" binding:"required" enums:"A,B,C,D"` //枚举A-D
-	Content string `json:"content" binding:"required"`
+	Type     string `json:"type" binding:"required" enums:"A,B,C,D"`         //枚举A-D
+	Content  string `json:"content" binding:"required"`                      //内容
+	Language string `json:"language" binding:"required" enums:"jp,zh,en,tc"` //语言
 }
 
 type GetLotteryForManagerResponse struct {
@@ -51,6 +51,7 @@ type GetLotteryContentForManagerResponse struct {
 // GetLotteryForManager
 // @Summary 获取运势表Lottery
 // @Produce json
+// @Param language query string false "语言" Enums(zh,jp,en,tc)
 // @Success 200 {object} GetLotteryForManagerResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -59,7 +60,7 @@ type GetLotteryContentForManagerResponse struct {
 // @Security ApiKeyAuth
 func GetLotteryForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
-	lotteries, count, err := lottery_service.GetLotteryForManager()
+	lotteries, count, err := lottery_service.GetLotteryForManager(c.Query("language"))
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势表出错", nil)
 		return
@@ -124,8 +125,9 @@ func AddLotteryContent(c *gin.Context) {
 		return
 	}
 	lotteryContentInput := lottery_service.LotteryContentInput{
-		Content: lotteryC.Content,
-		Type:    lotteryC.Type, // type 代表A-D不同等级
+		Content:  lotteryC.Content,
+		Type:     lotteryC.Type, // type 代表A-D不同等级
+		Language: lotteryC.Language,
 	}
 	if err := lotteryContentInput.Add(); err != nil {
 		appG.Response(http.StatusOK, "添加LotteryContent失败", nil)
@@ -140,6 +142,7 @@ func AddLotteryContent(c *gin.Context) {
 // @Param id path int true "ID"
 // @Param type formData string true "好运等级" Enums(A,B,C,D)
 // @Param content formData string true "Content"
+// @Param language formData string true "语言" Enums(zh,jp,en)
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /manager/lottery-content/{id} [put]
@@ -156,9 +159,10 @@ func EditLotteryContent(c *gin.Context) {
 	}
 
 	lcInput := lottery_service.LotteryContentInput{
-		ID:      Lc.Id,
-		Type:    Lc.Type,
-		Content: Lc.Content,
+		ID:       Lc.Id,
+		Type:     Lc.Type,
+		Content:  Lc.Content,
+		Language: Lc.Language,
 	}
 	if err := lcInput.Update(); err != nil {
 		appG.Response(http.StatusOK, "更新运势内容失败", nil)
@@ -192,6 +196,7 @@ func DeleteLotteryContent(c *gin.Context) {
 // @Summary 获取全部运势内容表LotteryContent
 // @Produce json
 // @Param type query string false "好运等级" Enums(A,B,C,D)
+// @Param language query string false "语言" Enums(jp,zh,en,tc)
 // @Success 200 {object} GetLotteryContentForManagerResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -201,8 +206,10 @@ func DeleteLotteryContent(c *gin.Context) {
 func GetLotteryContentForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
 	tP := c.Query("type")
+	lan := c.Query("language")
 	lotteryInput := lottery_service.LotteryContentInput{
 		Type:     tP,
+		Language: lan,
 		PageNum:  util.GetPage(c),
 		PageSize: util.GetPageSize(c),
 	}
@@ -251,22 +258,6 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 		return false
 	}
 
-	//// 校验score是否从小到大
-	//sortedScoreList := make([]int, len(scoreList))
-	//copy(sortedScoreList, scoreList)
-	//sort.Ints(sortedScoreList)
-	//if !reflect.DeepEqual(scoreList, sortedScoreList) {
-	//	return false
-	//}
-	//
-	//// 校验probList 概率相加是否等于1
-	//totalValue := float32(0)
-	//for _, v := range probList {
-	//	totalValue = v + totalValue
-	//}
-	//if totalValue != 1 {
-	//	return false
-	//}
 	return true
 }
 
@@ -274,6 +265,7 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 // @Summary 获取日签
 // @Produce  json
 // @Param uid query string true "用户uid"
+// @Param language query string true "语言" Enums(jp,zh,en,tc)
 // @Success 200 {object} GetLotteryForUserResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -282,22 +274,17 @@ func checkLotteryValid(editL []EditLotteryForm) bool {
 func GetLotteryForUser(c *gin.Context) {
 	appG := app.Gin{C: c}
 	uid := c.Query("uid")
-	lottery, err := lottery_service.GetLotteryForPlayer(uid)
+	language := c.Query("language")
+	lottery, err := lottery_service.GetLotteryForPlayer(uid, language)
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetLotteryFail, nil)
 		return
 	}
-	luckyTody, err := lottery_service.GetLuckyForPlayer()
+	luckyTody, err := lottery_service.GetLuckyForPlayer(language)
 	if err != nil {
 		appG.Response(http.StatusOK, e.ErrorGetLuckytodyFail, nil)
 		return
 	}
 	resp := GetLotteryForUserResponse{LotteryContent: *lottery, LuckyContent: *luckyTody}
-	// TODO 存储用户uid的记录
-	//err = lottery_service.LogPlayerRecord(uid, resp)
-	if err != nil {
-		log.Printf("ErroR: %s, Info: %v", "记录用户抽签记录失败", err.Error())
-		logging.Error(fmt.Sprintf("ErroR: %s, Info: %v", "记录用户抽签记录失败", err.Error()))
-	}
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }

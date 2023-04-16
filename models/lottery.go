@@ -11,50 +11,58 @@ import (
 
 type Lottery struct {
 	Model
-	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"` // 最小分数
-	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"` // 最大分数
-	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`    // 运势文字
-	Probability float32 `gorm:"column:probability;type:float" json:"probability"`           // 概率
-	Type        string  `gorm:"column:type;type:varchar(10)" json:"type"`                   //枚举
+	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"`                        // 最小分数
+	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"`                        // 最大分数
+	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`                           // 运势文字
+	Probability float32 `gorm:"column:probability;type:float" json:"probability"`                                  // 概率
+	Type        string  `gorm:"column:type;type:varchar(10)" json:"type"`                                          // 枚举
+	Language    string  `gorm:"column:language;type:varchar(10)" json:"language" enums:"jp,zh,en,tc" default:"jp"` // 语言
 }
 
 type LotteryContent struct {
 	Model
-	Type    string `gorm:"column:type;not null;type:varchar(1)" json:"type"` //A-D 枚举
-	Content string `gorm:"column:content;not null;type:text" json:"content"`
+	Type     string `gorm:"column:type;not null;type:varchar(1)" json:"type"`                                  // A-D 枚举
+	Content  string `gorm:"column:content;not null;type:text" json:"content"`                                  // 内容
+	Language string `gorm:"column:language;type:varchar(10)" json:"language" enums:"jp,zh,en,tc" default:"jp"` // 语言
 }
 
 type LotteryDto struct {
-	Score   int    `json:"score"`   //运势分
-	Keyword string `json:"keyword"` //运势关键字
-	Content string `json:"content"` //运势内容
-	Type    string `json:"type"`    //运势等级
-}
-
-type TypeAndProb struct {
-	Type string  `json:"type"`
-	Prob float32 `json:"prob"`
+	Score    int    `json:"score"`    //运势分
+	Keyword  string `json:"keyword"`  //运势关键字
+	Content  string `json:"content"`  //运势内容
+	Type     string `json:"type"`     //运势等级
+	Language string `json:"language"` //语言
 }
 
 func (l *Lottery) makeLotteryWithContent() LotteryDto {
 	score := util.RandFromRange(l.MinScore, l.MaxScore)
-	content, _ := getOneRandLotteryContent(l.Type)
+	content, _ := getOneRandLotteryContent(l.Type, l.Language)
 	return LotteryDto{
-		Score:   score,
-		Keyword: l.KeyWord,
-		Content: content,
-		Type:    l.Type,
+		Score:    score,
+		Keyword:  l.KeyWord,
+		Content:  content,
+		Type:     l.Type,
+		Language: l.Language,
 	}
 }
 
-func GetLotteries() ([]Lottery, int64, error) {
+func GetLotteries(language string) ([]Lottery, int64, error) {
 	var lotteries []Lottery
-	err := Db.Model(&Lottery{}).Find(&lotteries).Error
+	if language == "" {
+		err := Db.Model(&Lottery{}).Find(&lotteries).Error
+		if err != nil {
+			return nil, 0, err
+		}
+		var count int64
+		Db.Model(&Lottery{}).Count(&count)
+		return lotteries, count, nil
+	}
+	err := Db.Model(&Lottery{}).Where("language = ?", language).Find(&lotteries).Error
 	if err != nil {
 		return nil, 0, err
 	}
 	var count int64
-	Db.Model(&Lottery{}).Count(&count)
+	Db.Model(&Lottery{}).Where("language = ?", language).Count(&count)
 	return lotteries, count, nil
 }
 
@@ -69,8 +77,8 @@ func GetLotteryContents(pageNum int, pageSize int, cond string, vals []interface
 	return lotteryContents, count, nil
 }
 
-func GetOneRandLottery() (*LotteryDto, error) {
-	lotteries, _, err := GetLotteries()
+func GetOneRandLottery(language string) (*LotteryDto, error) {
+	lotteries, _, err := GetLotteries(language)
 	if err != nil {
 		return nil, err
 	}
@@ -82,9 +90,9 @@ func GetOneRandLottery() (*LotteryDto, error) {
 	return &lotteryWithContent, nil
 }
 
-func getOneRandLotteryContent(tyPe string) (string, error) {
+func getOneRandLotteryContent(tyPe, language string) (string, error) {
 	var contents []string
-	err := Db.Model(&LotteryContent{}).Where("type = ?", tyPe).Pluck("content", &contents).Error
+	err := Db.Model(&LotteryContent{}).Where("type = ? and language = ?", tyPe, language).Pluck("content", &contents).Error
 	if err != nil {
 		return "", err
 	}
@@ -104,10 +112,11 @@ func EditLottery(typE string, data map[string]interface{}) error {
 	return nil
 }
 
-func AddLotteryContent(content, typE string) error {
+func AddLotteryContent(content, typE, lang string) error {
 	lc := LotteryContent{
-		Content: content,
-		Type:    typE,
+		Content:  content,
+		Type:     typE,
+		Language: lang,
 	}
 	err := Db.Model(&LotteryContent{}).Create(&lc).Error
 	if err != nil {
@@ -125,11 +134,11 @@ func UpdateLotteryContent(id int, data interface{}) error {
 }
 
 func DeleteLotteryContent(id int) error {
-	// 删除时需要确认是否该类型 >= 2
-	var Type string
-	Db.Model(&LotteryContent{}).Where("id = ?", id).Pluck("type", &Type)
+	// 删除时需要确认是否该类型 >= 2, 每种语言的每种类型至少保留一个
+	var Lc LotteryContent
+	Db.Model(&LotteryContent{}).Where("id = ?", id).First(&Lc)
 	var count int64
-	Db.Model(&LotteryContent{}).Where("type = ?", Type).Count(&count)
+	Db.Model(&LotteryContent{}).Where("type = ? and language = ?", Lc.Type, Lc.Language).Count(&count)
 	if count >= 2 {
 		err := Db.Where("id = ?", id).Delete(&LotteryContent{}).Error
 		if err != nil {

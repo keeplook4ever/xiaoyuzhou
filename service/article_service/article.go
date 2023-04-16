@@ -165,11 +165,14 @@ func (a *ArticleInput) getMaps() map[string]interface{} {
 	if len(a.RelatedArticles) > 0 {
 		maps["related_articles"] = relatedA
 	}
+	if a.Language != "" {
+		maps["language"] = a.Language
+	}
 	return maps
 }
 
-func GetArticleForPlayer(cnt int) ([]models.ArticleDto, error) {
-	return models.GetLatestArticle(cnt)
+func GetArticleForPlayer(cnt int, lang string) ([]models.ArticleDto, error) {
+	return models.GetLatestArticle(cnt, lang)
 }
 
 func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]models.ArticleDto, error) {
@@ -184,7 +187,6 @@ func GetSpecificArticleByIDs(ids []int, hasContent bool) ([]models.ArticleDto, e
 func GetSpecificArticleBySeoUrl(seoUrl string) (*models.ArticleDto, error) {
 	return models.GetArticleBySeoUrl(seoUrl)
 }
-
 
 func StarArticle(articleId int, uid string) error {
 	err := models.UpdateStarCountAndCreateLog(articleId, uid)

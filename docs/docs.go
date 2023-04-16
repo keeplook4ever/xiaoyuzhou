@@ -93,6 +93,12 @@ const docTemplate = `{
                         "description": "Cover Img URL",
                         "name": "cover_image_url",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -557,6 +563,20 @@ const docTemplate = `{
                     "Manager"
                 ],
                 "summary": "获取运势表Lottery",
+                "parameters": [
+                    {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -646,6 +666,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "好运等级",
                         "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query"
                     }
                 ],
@@ -754,6 +786,18 @@ const docTemplate = `{
                         "name": "content",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -830,6 +874,19 @@ const docTemplate = `{
                         "type": "string",
                         "description": "咒语\\歌曲\\适宜",
                         "name": "type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query",
                         "required": true
                     }
@@ -1771,6 +1828,18 @@ const docTemplate = `{
                         "description": "ID list",
                         "name": "id_list",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1798,6 +1867,21 @@ const docTemplate = `{
                     "Player"
                 ],
                 "summary": "首页展示文章",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "jp",
+                            "zh",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1886,7 +1970,8 @@ const docTemplate = `{
                         "enum": [
                             "zh",
                             "jp",
-                            "en"
+                            "en",
+                            "tc"
                         ],
                         "type": "string",
                         "description": "语言",
@@ -1925,6 +2010,19 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户uid",
                         "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "jp",
+                            "zh",
+                            "en",
+                            "tc"
+                        ],
+                        "type": "string",
+                        "description": "语言",
+                        "name": "language",
                         "in": "query",
                         "required": true
                     }
@@ -2038,6 +2136,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "enum": [
+                            "zh",
+                            "jp",
+                            "en",
+                            "tc"
+                        ],
                         "type": "string",
                         "description": "语言",
                         "name": "language",
@@ -2361,6 +2465,17 @@ const docTemplate = `{
                     "description": "运势文字",
                     "type": "string"
                 },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
+                },
                 "max_score": {
                     "description": "最大分数",
                     "type": "integer"
@@ -2386,6 +2501,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
+                    "description": "内容",
                     "type": "string"
                 },
                 "created_at": {
@@ -2393,6 +2509,17 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "A-D 枚举",
@@ -2414,6 +2541,10 @@ const docTemplate = `{
                     "description": "运势关键字",
                     "type": "string"
                 },
+                "language": {
+                    "description": "语言",
+                    "type": "string"
+                },
                 "score": {
                     "description": "运势分",
                     "type": "integer"
@@ -2427,6 +2558,10 @@ const docTemplate = `{
         "models.LuckyTodayDto": {
             "type": "object",
             "properties": {
+                "language": {
+                    "description": "语言",
+                    "type": "string"
+                },
                 "song": {
                     "description": "今日好运歌曲",
                     "type": "string"
@@ -2664,7 +2799,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "meta_desc": {
@@ -2797,11 +2933,23 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "content",
+                "language",
                 "type"
             ],
             "properties": {
                 "content": {
+                    "description": "内容",
                     "type": "string"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "枚举A-D",
@@ -2819,6 +2967,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "data",
+                "language",
                 "type"
             ],
             "properties": {
@@ -2828,6 +2977,16 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "description": "咒语：spell, 歌曲：song, 适宜：todo",
@@ -3054,7 +3213,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "meta_desc": {
@@ -3218,6 +3378,7 @@ const docTemplate = `{
             "required": [
                 "content",
                 "id",
+                "language",
                 "type"
             ],
             "properties": {
@@ -3226,6 +3387,15 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "language": {
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "tc"
+                    ]
                 },
                 "type": {
                     "type": "string",
@@ -3601,12 +3771,20 @@ const docTemplate = `{
                     "description": "幸运色",
                     "type": "string"
                 },
+                "lucky_color_ori": {
+                    "description": "幸运色中文",
+                    "type": "string"
+                },
                 "lucky_direction": {
                     "description": "幸运方向",
                     "type": "string"
                 },
                 "lucky_xingzuo": {
                     "description": "幸运星座",
+                    "type": "string"
+                },
+                "lucky_xingzuo_ori": {
+                    "description": "星座枚举",
                     "type": "string"
                 },
                 "money_score": {

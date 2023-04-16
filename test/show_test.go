@@ -105,6 +105,8 @@ func Test_show(t *testing.T) {
 	var dataS xingZuoApiRes
 	if err := json.Unmarshal([]byte(result), &dataS); err != nil {
 		t.Error(err)
+	} else if dataS.ShowApiError != "" {
+		t.Error(dataS.ShowApiError)
 	} else {
 		t.Log(dataS)
 	}

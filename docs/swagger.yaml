@@ -159,6 +159,15 @@ definitions:
       keyword:
         description: 运势文字
         type: string
+      language:
+        default: jp
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        type: string
       max_score:
         description: 最大分数
         type: integer
@@ -177,11 +186,21 @@ definitions:
   models.LotteryContent:
     properties:
       content:
+        description: 内容
         type: string
       created_at:
         type: integer
       id:
         type: integer
+      language:
+        default: jp
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        type: string
       type:
         description: A-D 枚举
         type: string
@@ -196,6 +215,9 @@ definitions:
       keyword:
         description: 运势关键字
         type: string
+      language:
+        description: 语言
+        type: string
       score:
         description: 运势分
         type: integer
@@ -205,6 +227,9 @@ definitions:
     type: object
   models.LuckyTodayDto:
     properties:
+      language:
+        description: 语言
+        type: string
       song:
         description: 今日好运歌曲
         type: string
@@ -369,6 +394,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       meta_desc:
         type: string
@@ -475,6 +501,15 @@ definitions:
   v1.AddLotteryContentData:
     properties:
       content:
+        description: 内容
+        type: string
+      language:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
         type: string
       type:
         description: 枚举A-D
@@ -486,6 +521,7 @@ definitions:
         type: string
     required:
     - content
+    - language
     - type
     type: object
   v1.AddLuckyForm:
@@ -495,6 +531,14 @@ definitions:
         items:
           type: string
         type: array
+      language:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        type: string
       type:
         description: 咒语：spell, 歌曲：song, 适宜：todo
         enum:
@@ -504,6 +548,7 @@ definitions:
         type: string
     required:
     - data
+    - language
     - type
     type: object
   v1.AddTarotForm:
@@ -668,6 +713,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       meta_desc:
         type: string
@@ -786,6 +832,13 @@ definitions:
         type: string
       id:
         type: integer
+      language:
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        type: string
       type:
         enum:
         - spell
@@ -795,6 +848,7 @@ definitions:
     required:
     - content
     - id
+    - language
     - type
     type: object
   v1.EditTarotForm:
@@ -1048,11 +1102,17 @@ definitions:
       lucky_color:
         description: 幸运色
         type: string
+      lucky_color_ori:
+        description: 幸运色中文
+        type: string
       lucky_direction:
         description: 幸运方向
         type: string
       lucky_xingzuo:
         description: 幸运星座
+        type: string
+      lucky_xingzuo_ori:
+        description: 星座枚举
         type: string
       money_score:
         description: 金钱分
@@ -1226,6 +1286,10 @@ paths:
       - description: Cover Img URL
         in: query
         name: cover_image_url
+        type: string
+      - description: 语言
+        in: query
+        name: language
         type: string
       produces:
       - application/json
@@ -1513,6 +1577,16 @@ paths:
       - Manager
   /manager/lottery:
     get:
+      parameters:
+      - description: 语言
+        enum:
+        - zh
+        - jp
+        - en
+        - tc
+        in: query
+        name: language
+        type: string
       produces:
       - application/json
       responses:
@@ -1570,6 +1644,15 @@ paths:
         - D
         in: query
         name: type
+        type: string
+      - description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        in: query
+        name: language
         type: string
       produces:
       - application/json
@@ -1661,6 +1744,15 @@ paths:
         name: content
         required: true
         type: string
+      - description: 语言
+        enum:
+        - zh
+        - jp
+        - en
+        in: formData
+        name: language
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1713,6 +1805,16 @@ paths:
         - todo
         in: query
         name: type
+        required: true
+        type: string
+      - description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        in: query
+        name: language
         required: true
         type: string
       produces:
@@ -2280,6 +2382,15 @@ paths:
           type: integer
         name: id_list
         type: array
+      - description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        in: query
+        name: language
+        type: string
       produces:
       - application/json
       responses:
@@ -2296,6 +2407,17 @@ paths:
       - Player
   /player/articles/index:
     get:
+      parameters:
+      - description: 语言
+        enum:
+        - en
+        - jp
+        - zh
+        - tc
+        in: query
+        name: language
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -2362,6 +2484,7 @@ paths:
         - zh
         - jp
         - en
+        - tc
         in: query
         name: language
         required: true
@@ -2384,6 +2507,16 @@ paths:
       - description: 用户uid
         in: query
         name: uid
+        required: true
+        type: string
+      - description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - tc
+        in: query
+        name: language
         required: true
         type: string
       produces:
@@ -2459,6 +2592,11 @@ paths:
         required: true
         type: string
       - description: 语言
+        enum:
+        - zh
+        - jp
+        - en
+        - tc
         in: query
         name: language
         required: true

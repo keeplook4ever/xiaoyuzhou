@@ -16,7 +16,7 @@ import (
 // GetDailyFreeTarot
 // @Summary 获取每日免费塔罗牌
 // @Param uid query string true "用户ID"
-// @Param language query string true "语言"
+// @Param language query string true "语言" Enums(zh,jp,en,tc)
 // @Success 200 {object} models.TarotDto
 // @Failure 500 {object} app.Response
 // @Router /player/tarot-daily [get]
