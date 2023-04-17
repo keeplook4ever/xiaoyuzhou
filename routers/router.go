@@ -167,6 +167,12 @@ func InitRouter() *gin.Engine {
 		// 获取每日塔牌
 		apiManagerV1.GET("/tarot-daily", v1.GetDailyTarot)
 
+		// 添加每日真言
+		apiManagerV1.POST("/true-world", v1.AddTrueWorld)
+		// 修改每日真言
+		apiManagerV1.PUT("/true-world", v1.EditTrueWorld)
+		// 获取每日真言
+		apiManagerV1.GET("/true-world", v1.GetTrueWorld)
 	}
 
 	return r
