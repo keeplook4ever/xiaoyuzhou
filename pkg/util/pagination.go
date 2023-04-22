@@ -19,7 +19,7 @@ func GetPage(c *gin.Context) int {
 
 // GetPageSize 获取每页展示量，默认10
 func GetPageSize(c *gin.Context) int {
-	result := 10
+	result := 1000
 	pageSize := com.StrTo(c.Query("pageSize")).MustInt()
 	if pageSize > 0 {
 		result = pageSize
