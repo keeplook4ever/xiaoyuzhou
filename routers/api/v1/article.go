@@ -252,7 +252,7 @@ func DeleteArticle(c *gin.Context) {
 
 type GetArticlesResponse struct {
 	Lists []models.ArticleDto `json:"lists"`
-	Count int64               `json:"total"` //符合条件的总数，不是单页数量
+	Count int64               `json:"count"` //符合条件的总数，不是单页数量
 }
 
 // GetArticles

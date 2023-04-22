@@ -56,8 +56,8 @@ func (lc *LotteryContentInput) Delete() error {
 	return models.DeleteLotteryContent(lc.ID)
 }
 
-func GetLotteryForManager(lang string) ([]models.Lottery, int64, error) {
-	return models.GetLotteries(lang)
+func GetLotteryForManager() ([]models.Lottery, int64, error) {
+	return models.GetLotteries("")
 }
 
 func (l *LotteryContentInput) GetLotteryContentForManager() ([]models.LotteryContent, int64, error) {

@@ -563,20 +563,6 @@ const docTemplate = `{
                     "Manager"
                 ],
                 "summary": "获取运势表Lottery",
-                "parameters": [
-                    {
-                        "enum": [
-                            "zh",
-                            "jp",
-                            "en",
-                            "tc"
-                        ],
-                        "type": "string",
-                        "description": "语言",
-                        "name": "language",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3564,15 +3550,15 @@ const docTemplate = `{
         "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "符合条件的总数，不是单页数量",
+                    "type": "integer"
+                },
                 "lists": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ArticleDto"
                     }
-                },
-                "total": {
-                    "description": "符合条件的总数，不是单页数量",
-                    "type": "integer"
                 }
             }
         },

@@ -11,12 +11,12 @@ import (
 
 type Lottery struct {
 	Model
-	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"`                        // 最小分数
-	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"`                        // 最大分数
-	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`                           // 运势文字
-	Probability float32 `gorm:"column:probability;type:float" json:"probability"`                                  // 概率
-	Type        string  `gorm:"column:type;type:varchar(10)" json:"type"`                                          // 枚举
-	Language    string  `gorm:"column:language;type:varchar(10)" json:"language" enums:"jp,zh,en,tc" default:"jp"` // 语言
+	MinScore    int     `gorm:"column:min_score;not null;type:tinyint(3)" json:"min_score"`                                  // 最小分数
+	MaxScore    int     `gorm:"column:max_score;not null;type:tinyint(3)" json:"max_score"`                                  // 最大分数
+	KeyWord     string  `gorm:"column:keyword;not null;type:varchar(50)" json:"keyword"`                                     // 运势文字
+	Probability float32 `gorm:"column:probability;type:float" json:"probability"`                                            // 概率
+	Type        string  `gorm:"column:type;type:varchar(10)" json:"type"`                                                    // 枚举
+	Language    string  `gorm:"column:language;type:varchar(10)" json:"language,omitempty" enums:"jp,zh,en,tc" default:"jp"` // 语言
 }
 
 type LotteryContent struct {
@@ -47,22 +47,14 @@ func (l *Lottery) makeLotteryWithContent() LotteryDto {
 }
 
 func GetLotteries(language string) ([]Lottery, int64, error) {
+	// 这里不区分语言，各种语言都一样
 	var lotteries []Lottery
-	if language == "" {
-		err := Db.Model(&Lottery{}).Find(&lotteries).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		var count int64
-		Db.Model(&Lottery{}).Count(&count)
-		return lotteries, count, nil
-	}
-	err := Db.Model(&Lottery{}).Where("language = ?", language).Find(&lotteries).Error
+	err := Db.Model(&Lottery{}).Find(&lotteries).Error
 	if err != nil {
 		return nil, 0, err
 	}
 	var count int64
-	Db.Model(&Lottery{}).Where("language = ?", language).Count(&count)
+	Db.Model(&Lottery{}).Count(&count)
 	return lotteries, count, nil
 }
 
@@ -86,6 +78,7 @@ func GetOneRandLottery(language string) (*LotteryDto, error) {
 		return nil, errors.New("没有设置lottery")
 	}
 	lotteryChose := getOneLotteryWithProb(lotteries)
+	lotteryChose.Language = language
 	lotteryWithContent := lotteryChose.makeLotteryWithContent()
 	return &lotteryWithContent, nil
 }

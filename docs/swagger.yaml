@@ -931,13 +931,13 @@ definitions:
     type: object
   v1.GetArticlesResponse:
     properties:
+      count:
+        description: 符合条件的总数，不是单页数量
+        type: integer
       lists:
         items:
           $ref: '#/definitions/models.ArticleDto'
         type: array
-      total:
-        description: 符合条件的总数，不是单页数量
-        type: integer
     type: object
   v1.GetAuthorsResponse:
     properties:
@@ -1577,16 +1577,6 @@ paths:
       - Manager
   /manager/lottery:
     get:
-      parameters:
-      - description: 语言
-        enum:
-        - zh
-        - jp
-        - en
-        - tc
-        in: query
-        name: language
-        type: string
       produces:
       - application/json
       responses:

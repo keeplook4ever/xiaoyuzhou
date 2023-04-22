@@ -51,7 +51,6 @@ type GetLotteryContentForManagerResponse struct {
 // GetLotteryForManager
 // @Summary 获取运势表Lottery
 // @Produce json
-// @Param language query string false "语言" Enums(zh,jp,en,tc)
 // @Success 200 {object} GetLotteryForManagerResponse
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -60,7 +59,7 @@ type GetLotteryContentForManagerResponse struct {
 // @Security ApiKeyAuth
 func GetLotteryForManager(c *gin.Context) {
 	appG := app.Gin{C: c}
-	lotteries, count, err := lottery_service.GetLotteryForManager(c.Query("language"))
+	lotteries, count, err := lottery_service.GetLotteryForManager()
 	if err != nil {
 		appG.Response(http.StatusOK, "获取运势表出错", nil)
 		return
