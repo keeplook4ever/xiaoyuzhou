@@ -143,31 +143,57 @@ func GetLuckys(_type string, pageNum int, pageSize int, lang string) (string, in
 	switch _type {
 	case "spell":
 		var lucks []LuckySpell
-		if err := Db.Offset(pageNum).Limit(pageSize).Where("language = ?", lang).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
-			return _type, nil, 0, err
-		}
-		//获取总数
 		var count int64
-		Db.Model(&LuckySpell{}).Where("language = ?", lang).Count(&count)
+
+		if lang != "" {
+			if err := Db.Where("language = ?", lang).Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckySpell{}).Where("language = ?", lang).Count(&count)
+		} else {
+			if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckySpell{}).Count(&count)
+		}
 		return _type, lucks, count, nil
 
 	case "song":
 		var lucks []LuckySong
-		if err := Db.Offset(pageNum).Limit(pageSize).Where("language = ?", lang).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
-			return _type, nil, 0, err
-		}
-		//获取总数
 		var count int64
-		Db.Model(&LuckySong{}).Where("language = ?", lang).Count(&count)
+		if lang != "" {
+			if err := Db.Where("language = ?", lang).Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckySong{}).Where("language = ?", lang).Count(&count)
+		} else {
+			if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckySong{}).Count(&count)
+		}
 		return _type, lucks, count, nil
 	case "todo":
 		var lucks []LuckyTodo
-		if err := Db.Offset(pageNum).Limit(pageSize).Where("language = ?", lang).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
-			return _type, nil, 0, err
-		}
-		//获取总数
 		var count int64
-		Db.Model(&LuckyTodo{}).Where("language = ?", lang).Count(&count)
+		if lang != "" {
+			if err := Db.Where("language = ?", lang).Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckyTodo{}).Where("language = ?", lang).Count(&count)
+		} else {
+			if err := Db.Offset(pageNum).Limit(pageSize).Find(&lucks).Error; err != nil && err != gorm.ErrRecordNotFound {
+				return _type, nil, 0, err
+			}
+			//获取总数
+			Db.Model(&LuckyTodo{}).Count(&count)
+
+		}
 		return _type, lucks, count, nil
 	default:
 		return _type, nil, 0, errors.New("type not supported")

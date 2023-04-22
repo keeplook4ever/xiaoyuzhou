@@ -119,7 +119,7 @@ func DeleteLucky(c *gin.Context) {
 // GetLucky
 // @Summary 获取今日好运内容
 // @Param type query string true "咒语\歌曲\适宜" Enums(spell,song,todo)
-// @Param language query string true "语言" Enums(jp,zh,en,tc)
+// @Param language query string false "语言" Enums(jp,zh,en,tc)
 // @Produce json
 // @Success 200 {object} GetLuckyResponse
 // @Failure 500 {object} app.Response

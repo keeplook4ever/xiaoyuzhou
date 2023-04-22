@@ -873,8 +873,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "语言",
                         "name": "language",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
