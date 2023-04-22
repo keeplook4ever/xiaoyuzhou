@@ -2183,6 +2183,37 @@ paths:
       summary: 修改价格
       tags:
       - Manager
+  /manager/true-world:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 语言
+        in: query
+        name: lang
+        required: true
+        type: string
+      - description: 真言
+        in: query
+        name: world
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加真言
+      tags:
+      - Manager
   /manager/user:
     get:
       parameters:
