@@ -377,12 +377,11 @@ func GetArticlesAll(c *gin.Context) {
 	language := c.Query("language")
 	// -1 代表无此参数
 	state := -1
-	tagId := -1
 	authorId := -1
 	if idList == "" && categoryId == "" && language == "" {
 		articleService := article_service.ArticleInput{
 			State:      state,
-			CategoryID: tagId,
+			CategoryID: -1,
 			AuthorId:   authorId,
 			PageNum:    util.GetPage(c),
 			PageSize:   util.GetPageSize(c),

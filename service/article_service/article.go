@@ -135,7 +135,7 @@ func (a *ArticleInput) getMaps() map[string]interface{} {
 	if a.State != -1 {
 		maps["state"] = a.State
 	}
-	if a.CategoryID != -1 {
+	if a.CategoryID > 0 {
 		maps["category_id"] = a.CategoryID
 	}
 	if a.ID > 0 {
