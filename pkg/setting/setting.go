@@ -53,6 +53,12 @@ type TenctConf struct {
 	SecretKey string
 }
 
+type PayMentConf struct {
+	Mode string
+}
+
+var PaymentSetting = &PayMentConf{}
+
 var TencentSetting = &TenctConf{}
 
 var RedisSetting = &Redis{}
@@ -72,6 +78,7 @@ func Setup() {
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
 	mapTo("tencent", TencentSetting)
+	mapTo("payment", PaymentSetting)
 
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
 	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second

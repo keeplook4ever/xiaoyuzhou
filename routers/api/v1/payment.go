@@ -13,6 +13,7 @@ import (
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/pkg/setting"
 	"xiaoyuzhou/service/order_service"
 	"xiaoyuzhou/service/tarot_service"
 )
@@ -47,11 +48,20 @@ func CreatePayPalOrder(c *gin.Context) {
 		return
 	}
 
-	client, err := paypal.NewClient(order_service.PayPalClientIDTest, order_service.PayPalSecretTest, false)
+	// 默认产线模式
+	client, err := paypal.NewClient(order_service.PayPalClientIDPrd, order_service.PayPalSecretPrd, true)
 	if err != nil {
 		logging.Error(fmt.Sprintf("初始化client失败: %s", err.Error()))
 		appG.Response(http.StatusOK, "初始化client失败", nil)
 		return
+	}
+	if setting.PaymentSetting.Mode == "debug" {
+		client, err = paypal.NewClient(order_service.PayPalClientIDTest, order_service.PayPalSecretTest, false)
+		if err != nil {
+			logging.Error(fmt.Sprintf("初始化client失败: %s", err.Error()))
+			appG.Response(http.StatusOK, "初始化client失败", nil)
+			return
+		}
 	}
 	// 打开Debug开关，输出日志
 	client.DebugSwitch = gopay.DebugOn
@@ -61,23 +71,27 @@ func CreatePayPalOrder(c *gin.Context) {
 	// 获取价格
 	amount := tarot_service.GetPaymentPrice(formD.Scene, formD.Language)
 
-	// 默认
-	value := fmt.Sprintf("%.2f", amount)
-	currencyCode := "USD"
-
+	// 默认日本
+	value := strconv.Itoa(int(amount))
+	currencyCode := "JPY"
+	localeV := "ja-JP"
 	switch formD.Language {
 	case "jp":
 		currencyCode = "JPY"
 		value = strconv.Itoa(int(amount))
+		localeV = "ja-JP"
 	case "zh":
 		currencyCode = "CNY"
 		value = fmt.Sprintf("%.2f", amount)
+		localeV = "zh-CN"
 	case "en":
 		currencyCode = "USD"
 		value = fmt.Sprintf("%.2f", amount)
+		localeV = "en-US"
 	case "tc":
 		currencyCode = "TWD"
 		value = fmt.Sprintf("%.2f", amount)
+		localeV = "zh-TW"
 	}
 
 	var item = &paypal.PurchaseUnit{
@@ -94,7 +108,7 @@ func CreatePayPalOrder(c *gin.Context) {
 		Set("purchase_units", pus).
 		SetBodyMap("application_context", func(b gopay.BodyMap) {
 			b.Set("brand_name", "小さな宇宙").
-				//Set("locale", "en-PT").
+				Set("locale", localeV).
 				Set("return_url", formD.ReturnURL).
 				Set("cancel_url", formD.CancelURL)
 		})

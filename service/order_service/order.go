@@ -8,11 +8,14 @@ import (
 	"github.com/go-pay/gopay/paypal"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/logging"
+	"xiaoyuzhou/pkg/setting"
 )
 
 const (
-	PayPalClientIDTest = "AYxax5vAtOVCwWE7k3-IkfeeW91WssDy0X87o3hYU6v64yJPWDkb_9mWbcKrlixMDssEXnaU75Qwd8A3"
-	PayPalSecretTest   = "EIIDNX57BlG8pCeFiiY6WJipeMtSQsIiOOP3ojg0_gtNSd3ndB0asdBQXP9IIeGh6gmlRnJHjjeozKGP"
+	PayPalClientIDTest = "Adume2QcPr8y_RdWg2aVXnukqXC1zQWmOJmgN_7F-fMNr-LOHPlmBypWSz2QVXqzVw9Pzx18mPnwqVId"
+	PayPalSecretTest   = "EJPUmppFw_NP36NBxZUO3wLoWu3MkKceVd7X8rosU7LMCUDzNB-XTl5bVtaYNzteGq6DhC9dEFGEUfvb"
+	PayPalClientIDPrd  = "AZTKeoDxoleGB9frtSlHugzdsM1kLcf-VsycOgq2lkGVquO4lOW5f43asbB32n1yBxFZ1xglY363D3hk"
+	PayPalSecretPrd    = "EK_ulMtKhhSDRXdU2C7r6XrgEpjywwtvrLOGcDEdr8bwbejuyx3slE7QbGsDraoSLamAezBZ7fq32MwF"
 )
 
 func CheckOrderIfPayed(OrderID string) (bool, error) {
@@ -63,11 +66,19 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 		return errors.New("ok")
 	}
 
-	client, err := paypal.NewClient(PayPalClientIDTest, PayPalSecretTest, false)
+	client, err := paypal.NewClient(PayPalClientIDPrd, PayPalSecretPrd, true)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error %v", err))
 		return
 	}
+	if setting.PaymentSetting.Mode == "debug" {
+		client, err = paypal.NewClient(PayPalClientIDTest, PayPalSecretTest, false)
+		if err != nil {
+			logging.Error(fmt.Sprintf("Error %v", err))
+			return
+		}
+	}
+
 	// 打开Debug开关，输出日志
 	client.DebugSwitch = gopay.DebugOn
 	ctx := context.Background()
