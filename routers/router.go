@@ -78,6 +78,9 @@ func InitRouter() *gin.Engine {
 		//获取订单详情
 		apiPlayerV1.GET("/checkout/orders/:order_id", v1.GetOrderStatus)
 		apiPlayerV1.POST("/mail", v1.SendMailToCustomer)
+
+		//获取真言
+		apiPlayerV1.GET("/true-word", v1.GetTrueWordForPlayer)
 	}
 
 	// 后台管理接口
@@ -168,11 +171,14 @@ func InitRouter() *gin.Engine {
 		apiManagerV1.GET("/tarot-daily", v1.GetDailyTarot)
 
 		// 添加每日真言
-		apiManagerV1.POST("/true-world", v1.AddTrueWorld)
+		apiManagerV1.POST("/true-word", v1.AddTrueWord)
 		// 修改每日真言
-		apiManagerV1.PUT("/true-world", v1.EditTrueWorld)
+		apiManagerV1.PUT("/true-word/:id", v1.EditTrueWord)
+		// 删除真言
+		apiManagerV1.DELETE("/true-word/:id", v1.DeleteTrueWord)
 		// 获取每日真言
-		apiManagerV1.GET("/true-world", v1.GetTrueWorld)
+		apiManagerV1.GET("/true-word", v1.GetTrueWord)
+
 	}
 
 	return r

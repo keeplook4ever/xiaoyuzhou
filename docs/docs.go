@@ -1499,7 +1499,58 @@ const docTemplate = `{
                 }
             }
         },
-        "/manager/true-world": {
+        "/manager/true-word": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "获取真言",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "编辑body",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "jp",
+                            "zh",
+                            "ts"
+                        ],
+                        "type": "string",
+                        "description": "语言类型",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetTrueWordResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1518,17 +1569,103 @@ const docTemplate = `{
                 "summary": "添加真言",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "语言",
-                        "name": "lang",
-                        "in": "query",
-                        "required": true
+                        "description": "参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddTrueWordForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/manager/true-word/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "编辑真言:一次只能编辑一条",
+                "parameters": [
+                    {
+                        "description": "编辑body",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.EditTrueWordForm"
+                        }
                     },
                     {
-                        "type": "string",
-                        "description": "真言",
-                        "name": "world",
-                        "in": "query",
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "删除真言",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -2262,6 +2399,48 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/player/true-word": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Player"
+                ],
+                "summary": "为用户输出真言",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "jp",
+                            "zh",
+                            "ts"
+                        ],
+                        "type": "string",
+                        "description": "语言类型",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TrueWord"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2774,6 +2953,41 @@ const docTemplate = `{
                 }
             }
         },
+        "models.TrueWord": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "description": "语言",
+                    "type": "string",
+                    "default": "jp",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "ts"
+                    ]
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                },
+                "word": {
+                    "description": "真言",
+                    "type": "string"
+                }
+            }
+        },
         "models.UserDto": {
             "type": "object",
             "properties": {
@@ -3149,6 +3363,32 @@ const docTemplate = `{
                 "work": {
                     "description": "事业学业",
                     "type": "string"
+                }
+            }
+        },
+        "v1.AddTrueWordForm": {
+            "type": "object",
+            "required": [
+                "lang",
+                "word_list"
+            ],
+            "properties": {
+                "lang": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "ts"
+                    ]
+                },
+                "word_list": {
+                    "description": "真言数组",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -3546,6 +3786,28 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.EditTrueWordForm": {
+            "type": "object",
+            "required": [
+                "word"
+            ],
+            "properties": {
+                "lang": {
+                    "description": "语言",
+                    "type": "string",
+                    "enum": [
+                        "jp",
+                        "zh",
+                        "en",
+                        "ts"
+                    ]
+                },
+                "word": {
+                    "description": "真言",
+                    "type": "string"
+                }
+            }
+        },
         "v1.GetArticlesResponse": {
             "type": "object",
             "properties": {
@@ -3751,6 +4013,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.TarotDto"
+                    }
+                }
+            }
+        },
+        "v1.GetTrueWordResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TrueWord"
                     }
                 }
             }

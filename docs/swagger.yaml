@@ -361,6 +361,31 @@ definitions:
         description: 事业学业
         type: string
     type: object
+  models.TrueWord:
+    properties:
+      created_at:
+        type: integer
+      created_by:
+        type: string
+      id:
+        type: integer
+      language:
+        default: jp
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - ts
+        type: string
+      updated_at:
+        type: integer
+      updated_by:
+        type: string
+      word:
+        description: 真言
+        type: string
+    type: object
   models.UserDto:
     properties:
       created_at:
@@ -643,6 +668,25 @@ definitions:
     - pos_meaning
     - saying
     - work
+    type: object
+  v1.AddTrueWordForm:
+    properties:
+      lang:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - ts
+        type: string
+      word_list:
+        description: 真言数组
+        items:
+          type: string
+        type: array
+    required:
+    - lang
+    - word_list
     type: object
   v1.CreatePayPalOrderForm:
     properties:
@@ -929,6 +973,22 @@ definitions:
         description: 事业学业
         type: string
     type: object
+  v1.EditTrueWordForm:
+    properties:
+      lang:
+        description: 语言
+        enum:
+        - jp
+        - zh
+        - en
+        - ts
+        type: string
+      word:
+        description: 真言
+        type: string
+    required:
+    - word
+    type: object
   v1.GetArticlesResponse:
     properties:
       count:
@@ -1066,6 +1126,15 @@ definitions:
         description: 塔罗牌列表
         items:
           $ref: '#/definitions/models.TarotDto'
+        type: array
+    type: object
+  v1.GetTrueWordResponse:
+    properties:
+      count:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.TrueWord'
         type: array
     type: object
   v1.GetUserResponse:
@@ -2172,21 +2241,50 @@ paths:
       summary: 修改价格
       tags:
       - Manager
-  /manager/true-world:
+  /manager/true-word:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 编辑body
+        in: query
+        name: id
+        type: integer
+      - description: 语言类型
+        enum:
+        - en
+        - jp
+        - zh
+        - ts
+        in: query
+        name: language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetTrueWordResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取真言
+      tags:
+      - Manager
     post:
       consumes:
       - application/json
       parameters:
-      - description: 语言
-        in: query
-        name: lang
+      - description: 参数
+        in: body
+        name: _
         required: true
-        type: string
-      - description: 真言
-        in: query
-        name: world
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/v1.AddTrueWordForm'
       produces:
       - application/json
       responses:
@@ -2201,6 +2299,63 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 添加真言
+      tags:
+      - Manager
+  /manager/true-word/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除真言
+      tags:
+      - Manager
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 编辑body
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/v1.EditTrueWordForm'
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 编辑真言:一次只能编辑一条
       tags:
       - Manager
   /manager/user:
@@ -2672,6 +2827,34 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: '用户抽取塔罗牌: 1张'
+      tags:
+      - Player
+  /player/true-word:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 语言类型
+        enum:
+        - en
+        - jp
+        - zh
+        - ts
+        in: query
+        name: language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TrueWord'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: 为用户输出真言
       tags:
       - Player
 securityDefinitions:

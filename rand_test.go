@@ -1,9 +1,11 @@
 package main
 
 import (
+	"math/rand"
 	"reflect"
 	"sort"
 	"testing"
+	"time"
 )
 
 func Test_equal(t *testing.T) {
@@ -17,4 +19,10 @@ func Test_equal(t *testing.T) {
 	}
 	t.Log(scoreList)
 	t.Log(sortedScoreList)
+}
+
+func Test_Rand(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+	ix := rand.Intn(2)
+	t.Log(ix)
 }
