@@ -13,13 +13,13 @@ import (
 )
 
 type AddTrueWordForm struct {
-	Lang     string   `json:"lang" binding:"required" enums:"jp,zh,en,ts"` // 语言
-	WordList []string `json:"word_list" binding:"required"`                // 真言数组
+	Lang     string   `json:"language" binding:"required" enums:"jp,zh,en,ts"` // 语言
+	WordList []string `json:"word_list" binding:"required"`                    // 真言数组
 }
 
 type EditTrueWordForm struct {
-	Lang string `json:"lang" enums:"jp,zh,en,ts"` // 语言
-	Word string `json:"word" binding:"required"`  // 真言
+	Lang string `json:"language" enums:"jp,zh,en,ts"` // 语言
+	Word string `json:"word" binding:"required"`      // 真言
 }
 
 type GetTrueWordResponse struct {
