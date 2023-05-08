@@ -2,9 +2,11 @@ package lucky_service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/xuri/excelize/v2"
 	"io"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
 )
 
 type LuckyInputContent struct {
@@ -88,34 +90,9 @@ func Import(r io.Reader) error {
 	if err_jps != "" || err_zhs != "" || err_ens != "" || err_tss != "" {
 		fiErrString = err_jps + err_zhs + err_ens + err_tss
 	}
-	//if SpellRows != nil {
-	//	var SpellData []string
-	//	for _, row := range SpellRows {
-	//		for _, cell := range row {
-	//			if cell != "" {
-	//				SpellData = append(SpellData, cell)
-	//			}
-	//		}
-	//	}
-	//	if err = models.AddLucky(SpellData, "spell", "jp"); err != nil {
-	//		fiErrString += err.Error()
-	//	}
-	//}
-	//if SongRows != nil {
-	//	var SongData []string
-	//	for _, row := range SongRows {
-	//		for _, cell := range row {
-	//			if cell != "" {
-	//				SongData = append(SongData, cell)
-	//			}
-	//		}
-	//	}
-	//	if err = models.AddLucky(SongData, "song", "jp"); err != nil {
-	//		fiErrString += err.Error()
-	//	}
-	//}
-	//
+
 	if fiErrString != "" {
+		logging.Error(fmt.Sprintf("Error import excel: %s", fiErrString))
 		return errors.New(fiErrString)
 	}
 

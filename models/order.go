@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
-	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -99,12 +98,10 @@ func UpdateOrderStatus(OriOrderId string, payMethod string, status int, tansActi
 		"transaction_id": tansActionId,
 	}
 	if err := Db.Model(&Order{}).Where("ori_order_id = ? and pay_method = ?", OriOrderId, payMethod).First(&od).Error; err == gorm.ErrRecordNotFound {
-		logging.Debugf("Error: %s", err.Error())
 		return err
 	}
 
 	if err := Db.Model(&Order{}).Where("ori_order_id = ? and pay_method = ?", OriOrderId, payMethod).Updates(data).Error; err != nil {
-		logging.Debugf("Error: %s", err.Error())
 		return err
 	}
 	return nil

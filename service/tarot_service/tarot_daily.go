@@ -86,10 +86,12 @@ func (d *DailyTarotInput) Edit() error {
 func (d *DailyTarotInput) Get() ([]models.DailyTarotDto, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(d.getMaps(), "and")
 	if err != nil {
+		logging.Error(fmt.Sprintf("Error Get(): %s", err.Error()))
 		return nil, 0, err
 	}
 	tarots, count, err := models.GetDailyTarots(d.PageNum, d.PageSize, cond, vals)
 	if err != nil {
+		logging.Error(fmt.Sprintf("Error Get(): %s", err.Error()))
 		return nil, 0, err
 	}
 	return tarots, count, nil

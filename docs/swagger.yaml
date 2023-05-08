@@ -671,7 +671,7 @@ definitions:
     type: object
   v1.AddTrueWordForm:
     properties:
-      lang:
+      language:
         description: 语言
         enum:
         - jp
@@ -685,7 +685,7 @@ definitions:
           type: string
         type: array
     required:
-    - lang
+    - language
     - word_list
     type: object
   v1.CreatePayPalOrderForm:
@@ -975,7 +975,7 @@ definitions:
     type: object
   v1.EditTrueWordForm:
     properties:
-      lang:
+      language:
         description: 语言
         enum:
         - jp

@@ -68,13 +68,13 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 
 	client, err := paypal.NewClient(PayPalClientIDPrd, PayPalSecretPrd, true)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error %v", err))
+		logging.Error(fmt.Sprintf("创建clientPrd失败 %v", err))
 		return
 	}
 	if setting.PaymentSetting.Mode == "debug" {
 		client, err = paypal.NewClient(PayPalClientIDTest, PayPalSecretTest, false)
 		if err != nil {
-			logging.Error(fmt.Sprintf("Error %v", err))
+			logging.Error(fmt.Sprintf("创建client测试失败 %v", err))
 			return
 		}
 	}
@@ -84,7 +84,7 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 	ctx := context.Background()
 	ppRspc, err := client.OrderCapture(ctx, OriOrderId, nil)
 	if err != nil {
-		logging.Error(fmt.Sprintf("Error %v", err))
+		logging.Error(fmt.Sprintf("捕获订单状态失败： %v", err))
 		return
 	}
 	status := 0
@@ -93,6 +93,7 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 		status = 2
 		err = UpdateOrderStatus(ppRspc.Response.Id, payMethod, status, "")
 		if err != nil {
+			logging.Error(fmt.Sprintf("更新订单状态失败: %s", err.Error()))
 			return errors.New(fmt.Sprintf("交易单 %s 支付失败, 订单状态更新失败！"))
 		}
 		logging.Debugf("Return Code %v", ppRspc.Code)
@@ -108,6 +109,7 @@ func CaptureOrder(OriOrderId, payMethod string) (err error) {
 		status = 2
 		err = UpdateOrderStatus(orderIdReturn, payMethod, status, transaction.Id)
 		if err != nil {
+			logging.Error(fmt.Sprintf("更新订单状态失败: %s", err.Error()))
 			return errors.New(fmt.Sprintf("交易单 %s 支付失败, 订单状态更新失败！", transaction.Id))
 		}
 		return errors.New(fmt.Sprintf("交易单 %s 支付失败", transaction.Id))

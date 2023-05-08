@@ -2,7 +2,9 @@ package trueword_service
 
 import (
 	"errors"
+	"fmt"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -51,6 +53,7 @@ func (t *TrueWordInput) getMaps() map[string]interface{} {
 func (t *TrueWordInput) Get() ([]models.TrueWord, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(t.getMaps(), "and")
 	if err != nil {
+		logging.Error(fmt.Sprintf("Error Get(): %s", err.Error()))
 		return nil, 0, err
 	}
 	return models.GetTrueWord(t.PageNum, t.PageSize, cond, vals)

@@ -1,7 +1,9 @@
 package category_service
 
 import (
+	"fmt"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -63,6 +65,7 @@ func (t *CategoryInput) GetAll() ([]models.CategoryDto, int64, error) {
 	}
 	categories, count, err := models.GetCategory(t.PageNum, t.PageSize, cond, vals)
 	if err != nil {
+		logging.Error(fmt.Sprintf("GetCategory error: %s", err.Error()))
 		return nil, count, err
 	}
 

@@ -191,6 +191,7 @@ func ReceiveOrderEventsFromPayPal(c *gin.Context) {
 			return
 		}
 		logging.Debugf("Order: %s Failed", OriOrderId)
+		logging.Error(fmt.Sprintf("Error Webhook: %s", err.Error()))
 		return
 	}
 	logging.Info(fmt.Sprintf("OrderID :%s 支付成功!", OriOrderId))

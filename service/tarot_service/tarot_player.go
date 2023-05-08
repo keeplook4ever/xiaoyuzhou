@@ -1,6 +1,7 @@
 package tarot_service
 
 import (
+	"fmt"
 	"time"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/logging"
@@ -12,7 +13,7 @@ func GetRandomOneTarot(uid, question, lang string) (*models.TarotDto, string, er
 
 	randTarot, err := models.GetOneRandTarot(lang)
 	if err != nil {
-		logging.Debugf("Error: %s", err.Error())
+		logging.Error(fmt.Sprintf("Error: %s", err.Error()))
 		return nil, "", err
 	}
 
@@ -23,7 +24,7 @@ func GetRandomOneTarot(uid, question, lang string) (*models.TarotDto, string, er
 	// 创建记录
 	err, orderId := order_service.CreateRecordWithNoOrder(uid, question, ts, idList)
 	if err != nil {
-		logging.Debugf("Error: %s", err.Error())
+		logging.Error(fmt.Sprintf("Error: %s", err.Error()))
 		return nil, "", err
 	}
 

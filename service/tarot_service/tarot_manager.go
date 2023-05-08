@@ -1,7 +1,9 @@
 package tarot_service
 
 import (
+	"fmt"
 	"xiaoyuzhou/models"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
 )
 
@@ -144,10 +146,12 @@ func (t *TarotInput) Edit() error {
 func (t *TarotInput) Get() ([]models.TarotDto, int64, error) {
 	cond, vals, err := util.SqlWhereBuild(t.getMaps(), "and")
 	if err != nil {
+		logging.Error(fmt.Sprintf("Error Get(): %s", err.Error()))
 		return nil, 0, err
 	}
 	tarots, count, err := models.GetTarots(t.PageNum, t.PageSize, cond, vals)
 	if err != nil {
+		logging.Error(fmt.Sprintf("Error Get(): %s", err.Error()))
 		return nil, 0, err
 	}
 	return tarots, count, nil

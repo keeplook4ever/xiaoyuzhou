@@ -3369,11 +3369,11 @@ const docTemplate = `{
         "v1.AddTrueWordForm": {
             "type": "object",
             "required": [
-                "lang",
+                "language",
                 "word_list"
             ],
             "properties": {
-                "lang": {
+                "language": {
                     "description": "语言",
                     "type": "string",
                     "enum": [
@@ -3792,7 +3792,7 @@ const docTemplate = `{
                 "word"
             ],
             "properties": {
-                "lang": {
+                "language": {
                     "description": "语言",
                     "type": "string",
                     "enum": [

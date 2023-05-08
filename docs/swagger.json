@@ -3361,11 +3361,11 @@
         "v1.AddTrueWordForm": {
             "type": "object",
             "required": [
-                "lang",
+                "language",
                 "word_list"
             ],
             "properties": {
-                "lang": {
+                "language": {
                     "description": "语言",
                     "type": "string",
                     "enum": [
@@ -3784,7 +3784,7 @@
                 "word"
             ],
             "properties": {
-                "lang": {
+                "language": {
                     "description": "语言",
                     "type": "string",
                     "enum": [
