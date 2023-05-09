@@ -9,7 +9,7 @@ import (
 func Test_SendMail(t *testing.T) {
 	receiverList := []string{
 
-		"cw4t@qq.com",
+		"charles_ln@163.com",
 	}
 
 	subject := "TTTT"
