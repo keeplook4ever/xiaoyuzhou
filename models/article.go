@@ -238,6 +238,7 @@ func GetLatestArticle(cnt int, lang string) ([]ArticleDto, error) {
 }
 
 func UpdateStarCountAndCreateLog(aId int, uid string) error {
+
 	// 放在事务里处理两个步骤
 	tx := Db.Begin()
 	defer func() {
@@ -253,6 +254,12 @@ func UpdateStarCountAndCreateLog(aId int, uid string) error {
 	if err := tx.Model(&Article{}).Where("id = ?", aId).UpdateColumn("star_num", gorm.Expr("star_num + ?", 1)).Error; err != nil {
 		tx.Rollback()
 		return err
+	}
+
+	// 增加一个更新浏览量的操作
+	if e := tx.Model(&Article{}).Where("id = ?", aId).UpdateColumn("read_num", gorm.Expr("read_num + ?", 1)).Error; e != nil {
+		tx.Rollback()
+		return e
 	}
 
 	data := StarLog{
