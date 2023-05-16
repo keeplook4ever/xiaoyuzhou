@@ -69,12 +69,12 @@ func AddDailyTarot(c *gin.Context) {
 }
 
 type AddDailyTarotForm struct {
-	ImgUrl   string   `json:"img_url" binding:"required"`                   // 图片链接
-	Language string   `json:"language" enums:"jp,zh,en" binding:"required"` // 语言
-	CardName string   `json:"card_name" binding:"required"`                 // 卡牌名字
-	Analyze  string   `json:"analyze" binding:"required"`                   // 解读
-	LoveList []string `json:"love_list" binding:"required"`                 // 爱情列表
-	WorkList []string `json:"work_list" binding:"required"`                 // 工作列表
+	ImgUrl   string   `json:"img_url" binding:"required"`                      // 图片链接
+	Language string   `json:"language" enums:"jp,zh,en,tc" binding:"required"` // 语言
+	CardName string   `json:"card_name" binding:"required"`                    // 卡牌名字
+	Analyze  string   `json:"analyze" binding:"required"`                      // 解读
+	LoveList []string `json:"love_list" binding:"required"`                    // 爱情列表
+	WorkList []string `json:"work_list" binding:"required"`                    // 工作列表
 }
 
 // EditDailyTarot
@@ -126,13 +126,13 @@ func EditDailyTarot(c *gin.Context) {
 }
 
 type EditDailyTarotForm struct {
-	Id       int      `json:"id"`                        // 塔罗ID
-	ImgUrl   string   `json:"img_url"`                   // 图片链接
-	Language string   `json:"language" enums:"jp,zh,en"` // 语言
-	CardName string   `json:"card_name"`                 // 卡牌名字
-	Analyze  string   `json:"analyze"`                   // 解读
-	LoveList []string `json:"love_list"`                 // 爱情列表
-	WorkList []string `json:"work_list"`                 // 工作列表
+	Id       int      `json:"id"`                           // 塔罗ID
+	ImgUrl   string   `json:"img_url"`                      // 图片链接
+	Language string   `json:"language" enums:"jp,zh,en,tc"` // 语言
+	CardName string   `json:"card_name"`                    // 卡牌名字
+	Analyze  string   `json:"analyze"`                      // 解读
+	LoveList []string `json:"love_list"`                    // 爱情列表
+	WorkList []string `json:"work_list"`                    // 工作列表
 }
 
 // GetDailyTarot

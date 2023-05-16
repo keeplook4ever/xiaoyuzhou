@@ -13,51 +13,51 @@ import (
 )
 
 type AddTarotForm struct {
-	ImgUrl        string   `json:"img_url" binding:"required"`                   // 图片链接
-	Language      string   `json:"language" enums:"jp,zh,en" binding:"required"` // 语言
-	Pos           string   `json:"pos" enums:"up,down" binding:"required"`       // 塔罗正逆位: up正，down逆
-	CardName      string   `json:"card_name" binding:"required"`                 // 卡牌名字
-	KeyWord       string   `json:"keyword" binding:"required"`                   // 卡牌解读关键词
-	Constellation string   `json:"constellation" binding:"required"`             // 对应星座
-	People        string   `json:"people" binding:"required"`                    // 对应人物
-	Element       string   `json:"element" binding:"required"`                   // 对应元素
-	Enhance       string   `json:"enhance" binding:"required"`                   // 加强牌
-	AnalyzeOne    string   `json:"analyze_one" binding:"required"`               // 解析1
-	AnalyzeTwo    string   `json:"analyze_two" binding:"required"`               // 解析2
-	PosMeaning    string   `json:"pos_meaning" binding:"required"`               // 正逆位含义
-	Love          string   `json:"love" binding:"required"`                      // 爱情婚姻
-	Work          string   `json:"work" binding:"required"`                      // 事业学业
-	Money         string   `json:"money" binding:"required"`                     // 人际财富
-	Health        string   `json:"health" binding:"required"`                    // 健康生活
-	Other         string   `json:"other" binding:"required"`                     // 其他
-	LuckyNumber   string   `json:"lucky_number" binding:"required"`              // 幸运数字
-	Saying        string   `json:"saying" binding:"required"`                    // 名言
-	AnswerList    []string `json:"answer_list" binding:"required"`               // 答案列表
+	ImgUrl        string   `json:"img_url" binding:"required"`                      // 图片链接
+	Language      string   `json:"language" enums:"jp,zh,en,tc" binding:"required"` // 语言
+	Pos           string   `json:"pos" enums:"up,down" binding:"required"`          // 塔罗正逆位: up正，down逆
+	CardName      string   `json:"card_name" binding:"required"`                    // 卡牌名字
+	KeyWord       string   `json:"keyword" binding:"required"`                      // 卡牌解读关键词
+	Constellation string   `json:"constellation" binding:"required"`                // 对应星座
+	People        string   `json:"people" binding:"required"`                       // 对应人物
+	Element       string   `json:"element" binding:"required"`                      // 对应元素
+	Enhance       string   `json:"enhance" binding:"required"`                      // 加强牌
+	AnalyzeOne    string   `json:"analyze_one" binding:"required"`                  // 解析1
+	AnalyzeTwo    string   `json:"analyze_two" binding:"required"`                  // 解析2
+	PosMeaning    string   `json:"pos_meaning" binding:"required"`                  // 正逆位含义
+	Love          string   `json:"love" binding:"required"`                         // 爱情婚姻
+	Work          string   `json:"work" binding:"required"`                         // 事业学业
+	Money         string   `json:"money" binding:"required"`                        // 人际财富
+	Health        string   `json:"health" binding:"required"`                       // 健康生活
+	Other         string   `json:"other" binding:"required"`                        // 其他
+	LuckyNumber   string   `json:"lucky_number" binding:"required"`                 // 幸运数字
+	Saying        string   `json:"saying" binding:"required"`                       // 名言
+	AnswerList    []string `json:"answer_list" binding:"required"`                  // 答案列表
 }
 
 type EditTarotForm struct {
-	Id            int      `json:"id"`                        // 塔罗牌ID
-	ImgUrl        string   `json:"img_url"`                   // 图片链接
-	Language      string   `json:"language" enums:"jp,zh,en"` // 语言
-	Pos           string   `json:"pos" enums:"up,down"`       // 塔罗正逆位 up正，down逆
-	CardName      string   `json:"card_name"`                 // 卡牌名字
-	KeyWord       string   `json:"keyword"`                   // 卡牌解读关键词
-	Constellation string   `json:"constellation"`             // 对应星座
-	People        string   `json:"people"`                    // 对应人物
-	Element       string   `json:"element"`                   // 对应元素
-	Enhance       string   `json:"enhance"`                   // 加强牌
-	AnalyzeOne    string   `json:"analyze_one"`               // 解析1
-	AnalyzeTwo    string   `json:"analyze_two"`               // 解析2
-	PosMeaning    string   `json:"pos_meaning"`               // 正逆位含义
-	Love          string   `json:"love"`                      // 爱情婚姻
-	Work          string   `json:"work"`                      // 事业学业
-	Money         string   `json:"money"`                     // 人际财富
-	Health        string   `json:"health"`                    // 健康生活
-	Other         string   `json:"other"`                     // 其他
-	LuckyNumber   string   `json:"lucky_number"`              // 幸运数字
-	Saying        string   `json:"saying"`                    // 名言
-	AnswerList    []string `json:"answer_list"`               // 答案列表
-	UpdatedBy     string   `json:"updated_by"`                // 修改人
+	Id            int      `json:"id"`                           // 塔罗牌ID
+	ImgUrl        string   `json:"img_url"`                      // 图片链接
+	Language      string   `json:"language" enums:"jp,zh,en,tc"` // 语言
+	Pos           string   `json:"pos" enums:"up,down"`          // 塔罗正逆位 up正，down逆
+	CardName      string   `json:"card_name"`                    // 卡牌名字
+	KeyWord       string   `json:"keyword"`                      // 卡牌解读关键词
+	Constellation string   `json:"constellation"`                // 对应星座
+	People        string   `json:"people"`                       // 对应人物
+	Element       string   `json:"element"`                      // 对应元素
+	Enhance       string   `json:"enhance"`                      // 加强牌
+	AnalyzeOne    string   `json:"analyze_one"`                  // 解析1
+	AnalyzeTwo    string   `json:"analyze_two"`                  // 解析2
+	PosMeaning    string   `json:"pos_meaning"`                  // 正逆位含义
+	Love          string   `json:"love"`                         // 爱情婚姻
+	Work          string   `json:"work"`                         // 事业学业
+	Money         string   `json:"money"`                        // 人际财富
+	Health        string   `json:"health"`                       // 健康生活
+	Other         string   `json:"other"`                        // 其他
+	LuckyNumber   string   `json:"lucky_number"`                 // 幸运数字
+	Saying        string   `json:"saying"`                       // 名言
+	AnswerList    []string `json:"answer_list"`                  // 答案列表
+	UpdatedBy     string   `json:"updated_by"`                   // 修改人
 
 }
 
