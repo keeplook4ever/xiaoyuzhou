@@ -1448,6 +1448,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/manager/tarot/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Manager"
+                ],
+                "summary": "上传塔罗牌excel, 批量创建(除了图片)",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "excel文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/manager/tarot/{id}": {
             "put": {
                 "security": [
@@ -3158,7 +3197,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "love_list": {
@@ -3321,7 +3361,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "love": {
@@ -3598,7 +3639,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "love_list": {
@@ -3737,7 +3779,8 @@ const docTemplate = `{
                     "enum": [
                         "jp",
                         "zh",
-                        "en"
+                        "en",
+                        "tc"
                     ]
                 },
                 "love": {

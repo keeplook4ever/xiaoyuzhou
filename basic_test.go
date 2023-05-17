@@ -53,3 +53,15 @@ func TestTime(t *testing.T) {
 	ta := int(amount)
 	t.Log(ta)
 }
+
+func TestStr(t *testing.T) {
+	a := "a"
+	b := "b"
+	c := "c"
+	d := "d"
+	tt := make([]string, 0)
+	tt = append(tt, a, b, c, d)
+	t.Log(tt)
+	ttStr := util.StringSlice2String(tt)
+	t.Log(*ttStr)
+}

@@ -1,7 +1,10 @@
 package tarot_service
 
 import (
+	"errors"
 	"fmt"
+	"github.com/xuri/excelize/v2"
+	"io"
 	"xiaoyuzhou/models"
 	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/util"
@@ -66,6 +69,60 @@ func (t *TarotInput) Add() error {
 		"updated_by":    t.UpdatedBy,
 	}
 	return models.AddTarot(dbData)
+}
+
+func Import(r io.Reader) error {
+	xlsx, err := excelize.OpenReader(r)
+	if err != nil {
+		return err
+	}
+	tarotData, _ := xlsx.GetRows("tarot")
+	tarotList := make([]map[string]interface{}, 0)
+	for i, row := range tarotData {
+		fmt.Println(row)
+		if i == 0 {
+			continue
+		}
+		// 如果数据不够，则抛出异常
+		if len(row) < 23 {
+			return errors.New("格式不对")
+		}
+
+		answers := make([]string, 0)
+		answers = append(answers, row[18], row[19], row[20], row[21], row[22])
+		answersList := util.StringSlice2String(answers)
+		tarotOne := map[string]interface{}{
+			"img_url":       "",
+			"language":      row[0],
+			"pos":           row[1],
+			"card_name":     row[2],
+			"keyword":       row[3],
+			"constellation": row[4],
+			"people":        row[5],
+			"element":       row[6],
+			"enhance":       row[7],
+			"saying":        row[8],
+			"lucky_number":  row[9],
+			"analyze_one":   row[10],
+			"analyze_two":   row[11],
+			"pos_meaning":   row[12],
+			"love":          row[13],
+			"work":          row[14],
+			"money":         row[15],
+			"health":        row[16],
+			"other":         row[17],
+			"answer_list":   *answersList,
+			"created_by":    "admin",
+			"updated_by":    "admin",
+		}
+		tarotList = append(tarotList, tarotOne)
+	}
+	if err := models.Db.Model(&models.Tarot{}).Create(tarotList).Error; err != nil {
+		logging.Error(fmt.Sprintf("批量导入塔罗失败: %s", err.Error()))
+		return err
+	}
+
+	return err
 }
 
 func (t *TarotInput) ExistByID() (bool, error) {

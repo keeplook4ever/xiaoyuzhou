@@ -51,3 +51,4 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bin/xiaoyuzho
 
 ### 启动命令：
 nohup ./bin/xiaoyuzhou > ./log/run.log 2>&1 &
+

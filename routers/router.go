@@ -152,6 +152,8 @@ func InitRouter() *gin.Engine {
 
 		//创建塔罗牌
 		apiManagerV1.POST("/tarot", v1.AddTarot)
+		//上传塔罗牌文件
+		apiManagerV1.POST("/tarot/upload", v1.UploadTarot)
 		//修改塔罗牌
 		apiManagerV1.PUT("/tarot/:id", v1.EditTarot)
 		//获取塔罗牌

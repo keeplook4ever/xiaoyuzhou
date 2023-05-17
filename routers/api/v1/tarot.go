@@ -112,6 +112,29 @@ func AddTarot(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+// UploadTarot
+// @Summary 上传塔罗牌excel, 批量创建(除了图片)
+// @Param file formData file true "excel文件"
+// @Accept json
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /manager/tarot/upload [post]
+// @Security ApiKeyAuth
+// @Tags Manager
+func UploadTarot(c *gin.Context) {
+	appG := app.Gin{C: c}
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		appG.Response(http.StatusBadRequest, "参数错误", nil)
+		return
+	}
+	if err := tarot_service.Import(file); err != nil {
+		appG.Response(http.StatusOK, "导入塔罗excel失败", nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
 // EditTarot
 // @Summary 修改塔罗牌内容
 // @Param _ body EditTarotForm true "参数"

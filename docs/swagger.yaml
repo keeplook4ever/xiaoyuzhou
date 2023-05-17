@@ -504,6 +504,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       love_list:
         description: 爱情列表
@@ -616,6 +617,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       love:
         description: 爱情婚姻
@@ -837,6 +839,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       love_list:
         description: 爱情列表
@@ -938,6 +941,7 @@ definitions:
         - jp
         - zh
         - en
+        - tc
         type: string
       love:
         description: 爱情婚姻
@@ -2239,6 +2243,30 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 修改价格
+      tags:
+      - Manager
+  /manager/tarot/upload:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: excel文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传塔罗牌excel, 批量创建(除了图片)
       tags:
       - Manager
   /manager/true-word:
