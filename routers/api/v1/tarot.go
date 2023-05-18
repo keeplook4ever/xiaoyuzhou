@@ -33,6 +33,7 @@ type AddTarotForm struct {
 	LuckyNumber   string   `json:"lucky_number" binding:"required"`                 // 幸运数字
 	Saying        string   `json:"saying" binding:"required"`                       // 名言
 	AnswerList    []string `json:"answer_list" binding:"required"`                  // 答案列表
+	Status        string   `json:"status" binding:"required"`                       // 状态
 }
 
 type EditTarotForm struct {
@@ -58,7 +59,7 @@ type EditTarotForm struct {
 	Saying        string   `json:"saying"`                       // 名言
 	AnswerList    []string `json:"answer_list"`                  // 答案列表
 	UpdatedBy     string   `json:"updated_by"`                   // 修改人
-
+	Status        string   `json:"status"`                       // 状态
 }
 
 // AddTarot
@@ -104,6 +105,7 @@ func AddTarot(c *gin.Context) {
 		AnswerList:    data.AnswerList,
 		CreatedBy:     c.GetString("username"),
 		UpdatedBy:     c.GetString("username"),
+		Status:        data.Status,
 	}
 	if err := articleService.Add(); err != nil {
 		appG.Response(http.StatusOK, err.Error(), nil)
@@ -182,6 +184,7 @@ func EditTarot(c *gin.Context) {
 		Saying:        data.Saying,
 		AnswerList:    data.AnswerList,
 		UpdatedBy:     c.GetString("username"),
+		Status:        data.Status,
 	}
 
 	exists, err := tarotS.ExistByID()
@@ -216,6 +219,7 @@ type GetTarotResponse struct {
 // @Param people query string false "对应人物"
 // @Param element query string false "对应元素"
 // @Param enhance query string false "加强牌"
+// @Param status query string false "状态"
 // @Success 200 {object} GetTarotResponse
 // @Failure 500 {object} app.Response
 // @Router /manager/tarot [get]
@@ -233,6 +237,7 @@ func GetTarot(c *gin.Context) {
 		People:        c.Query("pepole"),
 		Element:       c.Query("element"),
 		Enhance:       c.Query("enhance"),
+		Status:        c.Query("status"),
 		PageNum:       util.GetPage(c),
 		PageSize:      util.GetPageSize(c),
 	}

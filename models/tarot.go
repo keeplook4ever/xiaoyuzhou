@@ -32,6 +32,7 @@ type Tarot struct {
 	Saying        string `gorm:"column:saying;not null;type:varchar(191)" json:"saying"`                     // 名言
 	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`              // 创建者
 	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`              // 更新者
+	Status        string `gorm:"column:status;not null;type:varchar(20);default:on" json:"status"`           // 状态:on默认启用,off关闭，需手动开启才可被抽取
 }
 
 type TarotDto struct {
@@ -60,6 +61,7 @@ type TarotDto struct {
 	UpdatedBy     string   `json:"updated_by"`    // 更新者
 	CreatedAt     int      `json:"created_at"`    // 创建时间
 	UpdatedAt     int      `json:"updated_at"`    // 更新时间
+	Status        string   `json:"status"`        // 状态
 }
 
 func (t *Tarot) ToTarotDto() TarotDto {
@@ -89,6 +91,7 @@ func (t *Tarot) ToTarotDto() TarotDto {
 		UpdatedBy:     t.UpdatedBy,
 		CreatedAt:     t.CreatedAt,
 		UpdatedAt:     t.UpdatedAt,
+		Status:        t.Status,
 	}
 }
 
@@ -116,6 +119,7 @@ func AddTarot(data map[string]interface{}) error {
 		AnswerList:    data["answer_list"].(string),   // 回答列表
 		CreatedBy:     data["created_by"].(string),    // 创建者
 		UpdatedBy:     data["updated_by"].(string),    // 更新者(默认同创建者)
+		Status:        data["status"].(string),        // 状态
 	}
 	if err := Db.Create(&tarot).Error; err != nil {
 		return err
@@ -167,7 +171,7 @@ func GetTarots(pageNum int, pageSize int, cond string, vals []interface{}) ([]Ta
 // GetOneRandTarot 获取一张随机塔罗
 func GetOneRandTarot(lang string) (*TarotDto, error) {
 	var tarots []TarotDto
-	tarots, num, err := GetTarots(0, 10000, "language = ?", []interface{}{lang})
+	tarots, num, err := GetTarots(0, 10000, "language = ? and status = \"on\"", []interface{}{lang})
 	if err != nil {
 		return nil, err
 	}

@@ -36,6 +36,7 @@ type TarotInput struct {
 	PageSize      int      // 每页数量
 	CreatedBy     string   // 创建人
 	UpdatedBy     string   // 修改人
+	Status        string   // 状态
 }
 
 func (t *TarotInput) Add() error {
@@ -67,6 +68,7 @@ func (t *TarotInput) Add() error {
 		"saying":        t.Saying,
 		"created_by":    t.CreatedBy,
 		"updated_by":    t.UpdatedBy,
+		"status":        t.Status,
 	}
 	return models.AddTarot(dbData)
 }
@@ -114,6 +116,7 @@ func Import(r io.Reader) error {
 			"answer_list":   *answersList,
 			"created_by":    "admin",
 			"updated_by":    "admin",
+			"status":        "off", // 批量导入的由于没有图片，所以状态：关闭
 		}
 		tarotList = append(tarotList, tarotOne)
 	}
@@ -197,6 +200,9 @@ func (t *TarotInput) Edit() error {
 	if t.UpdatedBy != "" {
 		data["updated_by"] = t.UpdatedBy
 	}
+	if t.Status != "" {
+		data["status"] = t.Status
+	}
 	return models.EditTarot(t.ID, data)
 }
 
@@ -239,6 +245,9 @@ func (t *TarotInput) getMaps() map[string]interface{} {
 	}
 	if t.Language != "" {
 		maps["language"] = t.Language
+	}
+	if t.Status != "" {
+		maps["status"] = t.Status
 	}
 	return maps
 }
