@@ -348,6 +348,9 @@ definitions:
       saying:
         description: 名言
         type: string
+      status:
+        description: 状态
+        type: string
       tarot_id:
         description: 塔罗牌id
         type: integer
@@ -646,6 +649,9 @@ definitions:
       saying:
         description: 名言
         type: string
+      status:
+        description: 状态
+        type: string
       work:
         description: 事业学业
         type: string
@@ -669,6 +675,7 @@ definitions:
     - pos
     - pos_meaning
     - saying
+    - status
     - work
     type: object
   v1.AddTrueWordForm:
@@ -969,6 +976,9 @@ definitions:
         type: string
       saying:
         description: 名言
+        type: string
+      status:
+        description: 状态
         type: string
       updated_by:
         description: 修改人
@@ -2027,6 +2037,10 @@ paths:
       - description: 加强牌
         in: query
         name: enhance
+        type: string
+      - description: 状态
+        in: query
+        name: status
         type: string
       responses:
         "200":

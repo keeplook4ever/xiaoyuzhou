@@ -1152,6 +1152,12 @@ const docTemplate = `{
                         "description": "加强牌",
                         "name": "enhance",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2974,6 +2980,10 @@ const docTemplate = `{
                     "description": "名言",
                     "type": "string"
                 },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
                 "tarot_id": {
                     "description": "塔罗牌id",
                     "type": "integer"
@@ -3309,6 +3319,7 @@ const docTemplate = `{
                 "pos",
                 "pos_meaning",
                 "saying",
+                "status",
                 "work"
             ],
             "properties": {
@@ -3399,6 +3410,10 @@ const docTemplate = `{
                 },
                 "saying": {
                     "description": "名言",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
                     "type": "string"
                 },
                 "work": {
@@ -3817,6 +3832,10 @@ const docTemplate = `{
                 },
                 "saying": {
                     "description": "名言",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
                     "type": "string"
                 },
                 "updated_by": {
