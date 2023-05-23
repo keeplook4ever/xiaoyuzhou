@@ -7,9 +7,12 @@ import (
 	"time"
 	"xiaoyuzhou/pkg/app"
 	"xiaoyuzhou/pkg/e"
+	"xiaoyuzhou/pkg/gredis"
+	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/tencent"
 	"xiaoyuzhou/pkg/util"
 	"xiaoyuzhou/pkg/xingzuoapi"
+	"xiaoyuzhou/service/cache_service"
 )
 
 // 占卜页-星座
@@ -31,32 +34,51 @@ func GetDailyConstellation(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, e.InvalidParams, nil)
 		return
 	}
-
-	showapi_appid := 1370755                           //要替换成自己的
-	showapi_sign := "bd37a3ceb71a40a9bfd7ad19085ec725" //要替换成自己的
-	res := xingzuoapi.ShowapiRequest("http://route.showapi.com/872-1", showapi_appid, showapi_sign)
-	res.AddTextPara("star", "baiyang")
-	res.AddTextPara("needTomorrow", "1")
-	res.AddTextPara("needWeek", "1")
-	res.AddTextPara("needMonth", "1")
-	res.AddTextPara("needYear", "0")
-	dateNow := time.Now().Format("0102")
-	res.AddTextPara("date", dateNow)
-
-	result, err := res.Post()
-	if err != nil {
-		appG.Response(http.StatusOK, "后台星座获取失败", nil)
-		return
-	}
-
 	var dataS xingZuoApiRes
-	if err := json.Unmarshal([]byte(result), &dataS); err != nil {
-		appG.Response(http.StatusOK, "星座数据解析失败", nil)
-		return
+
+	cache := cache_service.XingzuoInput{
+		Name: name,
 	}
-	if dataS.ShowApiError != "" {
-		appG.Response(http.StatusOK, dataS.ShowApiError, nil)
-		return
+	key := cache.GetXingzuoKey()
+	if gredis.Exists(key) {
+		data, err := gredis.Get(key)
+		if err != nil {
+			logging.Error(err)
+		} else {
+			err = json.Unmarshal([]byte(data), &dataS)
+			if err != nil {
+				logging.Error(err)
+			}
+		}
+	}
+
+	// dataS.ShowApiId == "" 表示上述获取缓存失败或者无缓存
+	if dataS.ShowApiId == "" {
+		showapi_appid := 1370755                           //要替换成自己的
+		showapi_sign := "bd37a3ceb71a40a9bfd7ad19085ec725" //要替换成自己的
+		res := xingzuoapi.ShowapiRequest("http://route.showapi.com/872-1", showapi_appid, showapi_sign)
+		res.AddTextPara("star", "baiyang")
+		res.AddTextPara("needTomorrow", "1")
+		res.AddTextPara("needWeek", "1")
+		res.AddTextPara("needMonth", "1")
+		res.AddTextPara("needYear", "0")
+		dateNow := time.Now().Format("0102")
+		res.AddTextPara("date", dateNow)
+
+		result, err := res.Post()
+		if err != nil {
+			appG.Response(http.StatusOK, "后台星座获取失败", nil)
+			return
+		}
+		if err := json.Unmarshal([]byte(result), &dataS); err != nil {
+			appG.Response(http.StatusOK, "星座数据解析失败", nil)
+			return
+		}
+		if dataS.ShowApiError != "" {
+			appG.Response(http.StatusOK, dataS.ShowApiError, nil)
+			return
+		}
+		gredis.Set(key, dataS, 43200) // 12小时
 	}
 
 	waitForTransList := make([]string, 0)
@@ -86,7 +108,8 @@ func GetDailyConstellation(c *gin.Context) {
 	if sourceL == "zh" || sourceL == "tc" { // 繁体中文没有，用简体中文代替
 		copy(resAfterTrans, waitForTransList)
 	} else {
-		err, resAfterTrans = tencent.TranslateTextList(waitForTransList, sourceL)
+		err, resAfterTransG := tencent.TranslateTextList(waitForTransList, sourceL)
+		resAfterTrans = resAfterTransG
 		if err != nil {
 			appG.Response(http.StatusOK, "翻译失败", nil)
 			return
