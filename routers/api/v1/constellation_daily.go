@@ -60,7 +60,7 @@ func GetDailyConstellation(c *gin.Context) {
 		showapi_appid := 1370755                           //要替换成自己的
 		showapi_sign := "bd37a3ceb71a40a9bfd7ad19085ec725" //要替换成自己的
 		res := xingzuoapi.ShowapiRequest("http://route.showapi.com/872-1", showapi_appid, showapi_sign)
-		res.AddTextPara("star", "baiyang")
+		res.AddTextPara("star", name)
 		res.AddTextPara("needTomorrow", "1")
 		res.AddTextPara("needWeek", "1")
 		res.AddTextPara("needMonth", "1")
@@ -151,22 +151,22 @@ func GetDailyConstellation(c *gin.Context) {
 
 	//today
 	waitForTransList = append(waitForTransList, respOri.Today.LuckyColor)
-	waitForTransList = append(waitForTransList, respOri.Today.LuckyXingzuoOri)
+	waitForTransList = append(waitForTransList, respOri.Today.LuckyXingzuo)
 	waitForTransList = append(waitForTransList, respOri.Today.LuckyDirection)
 	waitForTransList = append(waitForTransList, respOri.Today.SummaryTxt)
 	////tomorrow
 	waitForTransList = append(waitForTransList, respOri.Tomorrow.LuckyColor)
-	waitForTransList = append(waitForTransList, respOri.Tomorrow.LuckyXingzuoOri)
+	waitForTransList = append(waitForTransList, respOri.Tomorrow.LuckyXingzuo)
 	waitForTransList = append(waitForTransList, respOri.Tomorrow.LuckyDirection)
 	waitForTransList = append(waitForTransList, respOri.Tomorrow.SummaryTxt)
 	////week
 	waitForTransList = append(waitForTransList, respOri.Week.LuckyColor)
-	waitForTransList = append(waitForTransList, respOri.Week.LuckyXingzuoOri)
+	waitForTransList = append(waitForTransList, respOri.Week.LuckyXingzuo)
 	waitForTransList = append(waitForTransList, respOri.Week.LuckyDirection)
 	waitForTransList = append(waitForTransList, respOri.Week.SummaryTxt)
 	////month
 	waitForTransList = append(waitForTransList, respOri.Month.LuckyColor)
-	waitForTransList = append(waitForTransList, respOri.Month.LuckyColorOri)
+	waitForTransList = append(waitForTransList, respOri.Month.LuckyXingzuo)
 	waitForTransList = append(waitForTransList, respOri.Month.LuckyDirection)
 	waitForTransList = append(waitForTransList, respOri.Month.SummaryTxt)
 
