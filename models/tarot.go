@@ -14,19 +14,19 @@ type Tarot struct {
 	Language      string `gorm:"column:language;not null;type:varchar(11)" json:"language" enums:"jp,zh,en"` // 语言
 	Pos           string `gorm:"column:pos;not null;type:varchar(10)" json:"pos" enums:"up,down"`            // 塔罗正逆位
 	CardName      string `gorm:"column:card_name;not null;type:varchar(100)" json:"card_name"`               // 卡牌名字
-	KeyWord       string `gorm:"column:keyword;not null;type:varchar(190)" json:"keyword"`                   // 卡牌解读关键词
+	KeyWord       string `gorm:"column:keyword;not null;type:text" json:"keyword"`                           // 卡牌解读关键词
 	Constellation string `gorm:"column:constellation;not null;type:varchar(190)" json:"constellation"`       // 对应星座
 	People        string `gorm:"column:people;not null;type:varchar(190)" json:"people"`                     // 对应人物
 	Element       string `gorm:"column:element;not null;type:varchar(190)" json:"element"`                   // 对应元素
 	Enhance       string `gorm:"column:enhance;not null;type:varchar(190)" json:"enhance"`                   // 加强牌
 	AnalyzeOne    string `gorm:"column:analyze_one;not null;type:text" json:"analyze_one"`                   // 解析1
 	AnalyzeTwo    string `gorm:"column:analyze_two;not null;type:text" json:"analyze_two"`                   // 解析2
-	PosMeaning    string `gorm:"column:pos_meaning;not null;type:varchar(190)" json:"pos_meaning"`           // 正逆位含义
-	Love          string `gorm:"column:love;not null;type:varchar(190)" json:"love"`                         // 爱情婚姻
-	Work          string `gorm:"column:work;not null;type:varchar(190)" json:"work"`                         // 事业学业
-	Money         string `gorm:"column:money;not null;type:varchar(190)" json:"money"`                       // 人际财富
-	Health        string `gorm:"column:health;not null;type:varchar(190)" json:"health"`                     // 健康生活
-	Other         string `gorm:"column:other;not null;type:varchar(190)" json:"other"`                       // 其他
+	PosMeaning    string `gorm:"column:pos_meaning;not null;type:text" json:"pos_meaning"`                   // 正逆位含义
+	Love          string `gorm:"column:love;not null;type:text" json:"love"`                                 // 爱情婚姻
+	Work          string `gorm:"column:work;not null;type:text" json:"work"`                                 // 事业学业
+	Money         string `gorm:"column:money;not null;type:text" json:"money"`                               // 人际财富
+	Health        string `gorm:"column:health;not null;type:text" json:"health"`                             // 健康生活
+	Other         string `gorm:"column:other;not null;type:text" json:"other"`                               // 其他
 	AnswerList    string `gorm:"column:answer_list;not null;type:text" json:"answer_list"`                   // 回答列表
 	LuckyNumber   string `gorm:"column:lucky_number;not null;type:varchar(50)" json:"lucky_number"`          // 幸运数字
 	Saying        string `gorm:"column:saying;not null;type:varchar(191)" json:"saying"`                     // 名言
