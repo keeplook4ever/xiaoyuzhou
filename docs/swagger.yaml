@@ -1101,6 +1101,9 @@ definitions:
         - en
         - tc
         type: string
+      mobile:
+        default: "0"
+        type: string
       question:
         description: 用户问题
         type: string

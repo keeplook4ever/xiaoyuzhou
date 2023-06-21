@@ -4024,6 +4024,10 @@ const docTemplate = `{
                         "tc"
                     ]
                 },
+                "mobile": {
+                    "type": "string",
+                    "default": "0"
+                },
                 "question": {
                     "description": "用户问题",
                     "type": "string"

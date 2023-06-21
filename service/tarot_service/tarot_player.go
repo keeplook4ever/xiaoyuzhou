@@ -9,7 +9,7 @@ import (
 )
 
 // GetRandomOneTarot 获取随机一张塔罗牌, 并且创建塔罗抽取记录, 获得塔罗牌，订单号
-func GetRandomOneTarot(uid, question, lang string) (*models.TarotDto, string, error) {
+func GetRandomOneTarot(uid, question string, isMobile bool, lang string) (*models.TarotDto, string, error) {
 
 	randTarot, err := models.GetOneRandTarot(lang)
 	if err != nil {
@@ -22,7 +22,7 @@ func GetRandomOneTarot(uid, question, lang string) (*models.TarotDto, string, er
 	idList = append(idList, randTarot.TarotId)
 	ts := time.Now().Unix()
 	// 创建记录
-	err, orderId := order_service.CreateRecordWithNoOrder(uid, question, ts, idList)
+	err, orderId := order_service.CreateRecordWithNoOrder(uid, question, isMobile, ts, idList)
 	if err != nil {
 		logging.Error(fmt.Sprintf("Error: %s", err.Error()))
 		return nil, "", err

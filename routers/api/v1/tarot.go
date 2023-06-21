@@ -267,7 +267,12 @@ func GetTarotOne(c *gin.Context) {
 		return
 	}
 
-	tarot, orderId, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question, formD.Language)
+	isMobile := false
+	if formD.Mobile == "1" {
+		isMobile = true
+	}
+
+	tarot, orderId, err := tarot_service.GetRandomOneTarot(formD.Uid, formD.Question, isMobile, formD.Language)
 	if err != nil {
 		appG.Response(http.StatusOK, "获取失败", nil)
 		return
@@ -301,7 +306,7 @@ func GetTarotAnswer(c *gin.Context) {
 		return
 	}
 	if !payed {
-		appG.Response(http.StatusOK, err.Error(), nil)
+		appG.Response(http.StatusOK, "未支付", nil)
 		return
 	}
 	// 根据订单号查对应抽取塔罗牌的答案, 这里的订单号是原始订单号
@@ -331,6 +336,7 @@ type GetTarotOneForm struct {
 	Uid      string `json:"uid" binding:"required"`      // 用户uid
 	Question string `json:"question" binding:"required"` // 用户问题
 	Language string `json:"language" binding:"required" enums:"jp,zh,en,tc"`
+	Mobile   string `json:"mobile" default:"0"`
 }
 
 type GetTarotOneAnswerResp struct {

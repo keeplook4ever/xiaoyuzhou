@@ -48,8 +48,8 @@ func AddPaymentInfoToOrder(OrderId string, OriOrderID string, PayMethod string, 
 }
 
 // CreateRecordWithNoOrder 创建没有订单的抽牌记录
-func CreateRecordWithNoOrder(uid string, Question string, ts int64, tarotIdList []uint) (error, string) {
-	return models.CreateRecordWithNoOrder(uid, Question, ts, tarotIdList)
+func CreateRecordWithNoOrder(uid string, Question string, isMobile bool, ts int64, tarotIdList []uint) (error, string) {
+	return models.CreateRecordWithNoOrder(uid, Question, isMobile, ts, tarotIdList)
 }
 
 func UpdateOrderStatus(OriOrderID string, payMethod string, status int, tansactionId string) error {
