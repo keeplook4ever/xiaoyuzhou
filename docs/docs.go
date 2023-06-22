@@ -2908,6 +2908,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
                 "card_name": {
                     "description": "卡牌名字",
                     "type": "string"

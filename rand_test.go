@@ -23,6 +23,6 @@ func Test_equal(t *testing.T) {
 
 func Test_Rand(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	ix := rand.Intn(2)
+	ix := rand.Intn(1)
 	t.Log(ix)
 }

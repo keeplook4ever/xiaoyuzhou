@@ -33,6 +33,7 @@ type Tarot struct {
 	CreatedBy     string `gorm:"column:created_by;not null;type:varchar(50)" json:"created_by"`              // 创建者
 	UpdatedBy     string `gorm:"column:updated_by;not null;type:varchar(50)" json:"updated_by"`              // 更新者
 	Status        string `gorm:"column:status;not null;type:varchar(20);default:on" json:"status"`           // 状态:on默认启用,off关闭，需手动开启才可被抽取
+	Author        string `gorm:"column:author;not null;type:varchar(70)" json:"author"`                      // 作者
 }
 
 type TarotDto struct {
@@ -62,6 +63,7 @@ type TarotDto struct {
 	CreatedAt     int      `json:"created_at"`    // 创建时间
 	UpdatedAt     int      `json:"updated_at"`    // 更新时间
 	Status        string   `json:"status"`        // 状态
+	Author        string   `json:"author"`        // 作者
 }
 
 func (t *Tarot) ToTarotDto() TarotDto {
@@ -92,10 +94,24 @@ func (t *Tarot) ToTarotDto() TarotDto {
 		CreatedAt:     t.CreatedAt,
 		UpdatedAt:     t.UpdatedAt,
 		Status:        t.Status,
+		Author:        t.Author,
 	}
 }
 
 func AddTarot(data map[string]interface{}) error {
+	// 随机设置作者
+	author := ""
+	if data["language"] == "jp" {
+		authorList := []string{"金盛浦子", "中島美嘉", "安室 ERIKA", "八鳳 ゆきか", "松坂 梅", "風間 美奈子", "ルーチン・ル", "玄武タツヤ"}
+		author = authorList[util.RandFromRange(0, len(authorList))]
+	} else if data["language"] == "en" {
+		authorList := []string{"ERIKA", "Esta", "Lucy", "Weils Austin"}
+		author = authorList[util.RandFromRange(0, len(authorList))]
+	} else {
+		authorList := []string{"何莉", "钟缘慧", "杜隐"}
+		author = authorList[util.RandFromRange(0, len(authorList))]
+	}
+
 	tarot := Tarot{
 		ImgUrl:        data["img_url"].(string),
 		Language:      data["language"].(string),
@@ -120,6 +136,7 @@ func AddTarot(data map[string]interface{}) error {
 		CreatedBy:     data["created_by"].(string),    // 创建者
 		UpdatedBy:     data["updated_by"].(string),    // 更新者(默认同创建者)
 		Status:        data["status"].(string),        // 状态
+		Author:        author,
 	}
 	if err := Db.Create(&tarot).Error; err != nil {
 		return err

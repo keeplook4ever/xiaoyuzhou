@@ -301,7 +301,7 @@ func GetTarotAnswer(c *gin.Context) {
 		return
 	}
 	if !payed {
-		appG.Response(http.StatusOK, err.Error(), nil)
+		appG.Response(http.StatusOK, "未支付", nil)
 		return
 	}
 	// 根据订单号查对应抽取塔罗牌的答案, 这里的订单号是原始订单号
