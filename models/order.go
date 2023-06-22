@@ -23,6 +23,7 @@ type Order struct {
 	PayMethod     string  `gorm:"column:pay_method;not null;type:varchar(100)" json:"pay_method" enums:"paypal,wechat,alipay,credit"` // 支付方式：PayPal,微信,支付宝,信用卡
 	Ques          string  `gorm:"column:ques;not null;type:varchar(191)" json:"ques"`                                                 // 用户输入的问题
 	TransactionId string  `gorm:"column:transaction_id;not null;type:varchar(190)" json:"transaction_id"`                             // 交易付款流水号
+	IsMobile      int     `gorm:"column:is_mobile;not null;type:tinyint(3);default:0" json:"is_mobile"`
 }
 
 // GetOneTarotFromOrder 根据订单号获取对应的塔罗牌
@@ -65,7 +66,7 @@ func AddPaymentInfoToOrder(OrderId string, OriOrderID string, PayMethod string, 
 }
 
 // CreateRecordWithNoOrder 用户抽取塔罗牌输入问题，记录抽取时间
-func CreateRecordWithNoOrder(uid, question string, ts int64, tarotIdlist []uint) (error, string) {
+func CreateRecordWithNoOrder(uid, question string, isMobile bool, ts int64, tarotIdlist []uint) (error, string) {
 	ids, err := json.Marshal(tarotIdlist)
 	if err != nil {
 		return err, ""
@@ -74,6 +75,14 @@ func CreateRecordWithNoOrder(uid, question string, ts int64, tarotIdlist []uint)
 	month := time.Now().Format("01")
 	day := time.Now().Format("02")
 	ls := strconv.FormatInt(ts, 10)[5:]
+
+	status := 0
+	isMb := 0 // 是否移动端订单
+	// 如果是移动端生成的订单，默认设置已支付。支付由苹果支付，前端控制支付后请求塔罗解答入口。
+	if isMobile {
+		status = 1
+		isMb = 1
+	}
 
 	// 订单号生成："TA" + 年后两位+月日 +秒的后5位 + uid后3位
 	orderId := "TA" + year[2:] + month + day + ls + uid[33:]
@@ -84,6 +93,8 @@ func CreateRecordWithNoOrder(uid, question string, ts int64, tarotIdlist []uint)
 		Ques:      question,
 		PickTime:  ts,
 		TarotList: string(ids),
+		Status:    status,
+		IsMobile:  isMb,
 	}).Error; err != nil {
 		return err, ""
 	}
@@ -113,6 +124,10 @@ func CheckOrderIfPayed(orderId string) (bool, error) {
 		return false, err
 	}
 
+	// 移动端状态直接返回
+	if od.IsMobile == 1 {
+		return true, nil
+	}
 	// Status 改成0，1，2 : 0未支付，1已支付，2支付失败
 	if od.Status == 1 && od.TransactionId != "" && od.PayedTime != 0 {
 		return true, nil
