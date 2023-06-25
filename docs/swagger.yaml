@@ -1233,7 +1233,6 @@ definitions:
         - ta
         type: string
     required:
-    - answer_url
     - order_id
     - send_to
     - send_type

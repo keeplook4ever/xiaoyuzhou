@@ -4188,7 +4188,6 @@ const docTemplate = `{
         "v1.SendMailForm": {
             "type": "object",
             "required": [
-                "answer_url",
                 "order_id",
                 "send_to",
                 "send_type"
