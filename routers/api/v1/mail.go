@@ -10,6 +10,7 @@ import (
 	"xiaoyuzhou/pkg/e"
 	"xiaoyuzhou/pkg/logging"
 	"xiaoyuzhou/pkg/mail"
+	"xiaoyuzhou/pkg/util"
 )
 
 type SendMailForm struct {
@@ -48,8 +49,9 @@ func SendMailToCustomer(c *gin.Context) {
 	//ansDate := time.Unix(order.PayedTime, 0).Format("2006-01-02")
 	// ta 代表塔罗
 	if form.SendType == "ta" {
-
-		tarots, _, err := models.GetTarots(0, 10000, "id = ? ", []interface{}{order.TarotList[0]})
+		// order.TarotList 是类似：[3]! 要转化成[]int
+		id := util.StringToIntSlice(order.TarotList)[0]
+		tarots, _, err := models.GetTarots(0, 10000, "id = ? ", []interface{}{id})
 		language := tarots[0].Language
 		subject := ""
 		HTML := ""
